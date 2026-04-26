@@ -1,23 +1,29 @@
 import { fetchPostById, formatDate } from '../../lib/blogger';
+import { localPosts } from '../../lib/localPosts';
 import Sidebar from '../../components/Sidebar';
 import Comments from '../../components/Comments';
 
+export async function generateStaticParams() {
+  return localPosts.map((post) => ({
+    id: post.id,
+  }));
+}
+
 export default async function PostPage(props: { params: Promise<{ id: string }> }) {
-  try {
-    const params = await props.params;
-    const postId = params.id;
-    const post = await fetchPostById(postId);
+  const params = await props.params;
+  const postId = params.id;
+  const post = await fetchPostById(postId);
 
-    if (!post) {
-      return (
-        <div className="main-layout" style={{ minHeight: '60vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <h1 style={{ color: '#fff' }}>Yazı bulunamadı.</h1>
-        </div>
-      );
-    }
+  if (!post) {
+    return (
+      <div className="main-layout" style={{ minHeight: '60vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <h1 style={{ color: '#fff' }}>Yazı bulunamadı.</h1>
+      </div>
+    );
+  }
 
-    // Use raw HTML from Blogger directly
-    const cleanHTML = post.content;
+  // Use raw HTML from Blogger directly
+  const cleanHTML = post.content;
 
   return (
     <div className="main-layout" style={{ marginTop: '20px' }}>
@@ -63,10 +69,7 @@ export default async function PostPage(props: { params: Promise<{ id: string }> 
         <div style={{ marginTop: '30px', display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
            <strong style={{ color: '#fff', fontSize: '13px' }}><i className="fa-solid fa-tags" style={{ color: '#e60000', marginRight: '5px' }}></i> Etiketler:</strong>
            {post.categories.map(cat => (
-             <span key={cat} style={{ background: '#1a1a1a', border: '1px solid #333', padding: '4px 10px', fontSize: '12px', color: '#bbb', cursor: 'pointer', transition: 'all 0.2s' }}
-               onMouseEnter={e => { e.currentTarget.style.color = '#fff'; e.currentTarget.style.borderColor = '#e60000' }}
-               onMouseLeave={e => { e.currentTarget.style.color = '#bbb'; e.currentTarget.style.borderColor = '#333' }}
-             >
+             <span key={cat} className="post-tag">
                {cat}
              </span>
            ))}
@@ -95,15 +98,9 @@ export default async function PostPage(props: { params: Promise<{ id: string }> 
         .post-body pre, .post-body code { background: #1a1a1a; padding: 10px; border-radius: 4px; border: 1px solid #333; overflow-x: auto; color: #56b6c2; font-family: monospace; }
         .post-body blockquote { border-left: 4px solid #e60000; margin: 15px 0; padding-left: 15px; font-style: italic; color: #999; }
         .post-body ul, .post-body ol { margin-left: 20px; margin-bottom: 15px; }
+        .post-tag { background: #1a1a1a; border: 1px solid #333; padding: 4px 10px; font-size: 12px; color: #bbb; cursor: pointer; transition: all 0.2s; display: inline-block; }
+        .post-tag:hover { color: #fff; border-color: #e60000; }
       `}} />
     </div>
   );
-  } catch (err: any) {
-    return (
-      <div style={{ color: 'red', padding: '50px' }}>
-        <h1>DEBUG ERROR:</h1>
-        <pre>{err.stack || String(err)}</pre>
-      </div>
-    );
-  }
 }
