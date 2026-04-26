@@ -194,38 +194,71 @@ export default function Comments({ postId }: { postId: string }) {
         {comments.length} Yorum
       </h3>
 
-      <form onSubmit={handleSubmit} style={{ marginBottom: '30px', background: '#1a1a1a', padding: '15px', borderRadius: '4px', border: '1px solid #333' }}>
-        <h4 style={{ color: '#ddd', marginTop: 0, marginBottom: '15px', fontSize: '14px' }}>
-          {replyingTo ? 'Yanıtlama İptal Et' : 'Yorum Bırakın'}
-          {replyingTo && (
-             <button type="button" onClick={() => setReplyingTo(null)} style={{ marginLeft: '10px', background: 'transparent', border: 'none', color: '#e60000', cursor: 'pointer', fontSize: '12px' }}>
-                İptal
-             </button>
-          )}
-        </h4>
-        <div style={{ display: 'flex', gap: '10px', marginBottom: '10px' }}>
-          <input 
-            type="text" 
-            placeholder="İsminiz..." 
-            value={authorName} 
-            onChange={(e) => setAuthorName(e.target.value)}
+      {/* Comment Form */}
+      {user ? (
+        <form onSubmit={handleSubmit} style={{ marginBottom: '30px', background: '#1a1a1a', padding: '15px', borderRadius: '4px', border: '1px solid #333' }}>
+          <h4 style={{ color: '#ddd', marginTop: 0, marginBottom: '15px', fontSize: '14px' }}>
+            {replyingTo ? 'Yanıtlama İptal Et' : 'Yorum Bırakın'}
+            {replyingTo && (
+               <button type="button" onClick={() => setReplyingTo(null)} style={{ marginLeft: '10px', background: 'transparent', border: 'none', color: '#e60000', cursor: 'pointer', fontSize: '12px' }}>
+                  İptal
+               </button>
+            )}
+          </h4>
+          <div style={{ display: 'flex', gap: '10px', marginBottom: '10px' }}>
+            <input 
+              type="text" 
+              placeholder="İsminiz..." 
+              value={authorName} 
+              onChange={(e) => setAuthorName(e.target.value)}
+              required
+              disabled={true}
+              style={{ flex: 1, padding: '10px', background: '#111', border: '1px solid #444', color: '#888', borderRadius: '3px' }}
+            />
+          </div>
+          <textarea 
+            placeholder="Yorumunuzu buraya yazın..."
+            value={content}
+            onChange={(e) => setContent(e.target.value)}
             required
-            disabled={!!user}
-            style={{ flex: 1, padding: '10px', background: user ? '#111' : '#222', border: '1px solid #444', color: user ? '#888' : '#fff', borderRadius: '3px' }}
+            rows={4}
+            style={{ width: '100%', padding: '10px', background: '#222', border: '1px solid #444', color: '#fff', borderRadius: '3px', marginBottom: '10px' }}
           />
+          <button type="submit" disabled={isSubmitting} style={{ background: '#e60000', color: '#fff', border: 'none', padding: '10px 20px', fontWeight: 'bold', borderRadius: '3px', cursor: isSubmitting ? 'not-allowed' : 'pointer' }}>
+            {isSubmitting ? 'Gönderiliyor...' : 'Gönder'}
+          </button>
+        </form>
+      ) : (
+        <div style={{ 
+          marginBottom: '30px', 
+          background: '#1a1a1a', 
+          padding: '30px', 
+          borderRadius: '4px', 
+          border: '1px solid #333',
+          textAlign: 'center',
+          boxShadow: 'inset 0 0 10px rgba(230, 0, 0, 0.1)'
+        }}>
+          <i className="fa-solid fa-lock" style={{ color: '#e60000', fontSize: '28px', marginBottom: '15px' }}></i>
+          <p style={{ color: '#fff', fontSize: '15px', fontWeight: 'bold', marginBottom: '10px' }}>YORUM YAPMAK İÇİN SİSTEME SIZMANIZ GEREKİYOR</p>
+          <p style={{ color: '#888', fontSize: '13px', marginBottom: '20px' }}>Lütfen yukarıdaki butonu kullanarak giriş yapın veya kimlik oluşturun.</p>
+          <button 
+            onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+            style={{ 
+              background: '#e60000', 
+              color: '#fff', 
+              border: 'none', 
+              padding: '10px 25px', 
+              borderRadius: '4px', 
+              fontWeight: '900',
+              cursor: 'pointer',
+              textTransform: 'uppercase',
+              letterSpacing: '1px'
+            }}
+          >
+            Giriş Yap / Kayıt Ol
+          </button>
         </div>
-        <textarea 
-          placeholder="Yorumunuzu buraya yazın..."
-          value={content}
-          onChange={(e) => setContent(e.target.value)}
-          required
-          rows={4}
-          style={{ width: '100%', padding: '10px', background: '#222', border: '1px solid #444', color: '#fff', borderRadius: '3px', marginBottom: '10px' }}
-        />
-        <button type="submit" disabled={isSubmitting} style={{ background: '#e60000', color: '#fff', border: 'none', padding: '10px 20px', fontWeight: 'bold', borderRadius: '3px', cursor: isSubmitting ? 'not-allowed' : 'pointer' }}>
-          {isSubmitting ? 'Gönderiliyor...' : 'Gönder'}
-        </button>
-      </form>
+      )}
 
       {loading ? (
         <div style={{ color: '#888', textAlign: 'center' }}>Yorumlar yükleniyor...</div>
