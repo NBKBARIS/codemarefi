@@ -97,12 +97,12 @@ export default function Navbar() {
       <div style={{ maxWidth: '1300px', margin: '0 auto', padding: '6px 15px 0' }}>
         {/* Yeşil bar */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px', border: '1px solid #2ea44f', background: 'rgba(46,164,79,0.06)', padding: '8px 14px', marginBottom: '5px', fontSize: '13px', fontWeight: 600, minHeight: '38px' }}>
-          <span style={{ fontSize: '16px' }}>📢</span>
+          <i className="fa-solid fa-bullhorn" style={{ fontSize: '15px', color: '#2ea44f' }}></i>
           <span style={{ color: '#fff' }}>{greenText}<span style={{ color: '#e60000', animation: 'blink 0.7s infinite' }}>|</span></span>
         </div>
         {/* Kırmızı bar */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px', border: '1px solid #e60000', background: 'rgba(230,0,0,0.06)', padding: '8px 14px', fontSize: '13px', fontWeight: 600, minHeight: '38px' }}>
-          <span style={{ fontSize: '16px' }}>📢</span>
+          <i className="fa-solid fa-bullhorn" style={{ fontSize: '15px', color: '#e60000' }}></i>
           <span style={{ color: '#fff' }}>{redText}<span style={{ color: '#e60000', animation: 'blink 0.7s infinite' }}>|</span></span>
         </div>
       </div>
