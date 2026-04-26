@@ -146,13 +146,13 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
         <form onSubmit={handleAuth}>
           {!isLogin && (
             <div style={{ marginBottom: '20px' }}>
-              <label style={{ display: 'block', color: '#e60000', marginBottom: '8px', fontSize: '12px', fontWeight: 'bold', letterSpacing: '1px' }}>[ AD SOYAD ]</label>
+              <label style={{ display: 'block', color: '#e60000', marginBottom: '8px', fontSize: '12px', fontWeight: 'bold', letterSpacing: '1px' }}>[ KULLANICI ADI ]</label>
               <input 
                 type="text" 
                 value={fullName}
                 onChange={e => setFullName(e.target.value)}
                 required
-                placeholder="Kimlik İsmi"
+                placeholder="Hacker Adı / Nick"
                 style={{
                   width: '100%',
                   padding: '12px 15px',

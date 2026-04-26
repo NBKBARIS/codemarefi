@@ -162,7 +162,7 @@ export default function ProfilePage() {
 
         <form onSubmit={updateProfile}>
           <div style={{ marginBottom: '20px' }}>
-            <label style={{ display: 'block', color: '#8b949e', marginBottom: '8px', fontSize: '14px' }}>Görünen Ad Soyad</label>
+            <label style={{ display: 'block', color: '#8b949e', marginBottom: '8px', fontSize: '14px' }}>Kullanıcı Adı</label>
             <input 
               type="text" 
               value={fullName}
