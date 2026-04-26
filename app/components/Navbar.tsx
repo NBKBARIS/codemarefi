@@ -1,5 +1,5 @@
-'use client';
-import { useState, useEffect, useRef } from 'react';
+import { supabase } from '../lib/supabase';
+import AuthModal from './AuthModal';
 import Link from 'next/link';
 
 const GREEN_MSGS = [
@@ -31,8 +31,29 @@ function useTypewriter(msgs: string[], charDelay = 60, deleteDelay = 30, pause =
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
+  const [isAuthOpen, setIsAuthOpen] = useState(false);
+  const [user, setUser] = useState<any>(null);
+  const [profile, setProfile] = useState<any>(null);
   const greenText = useTypewriter(GREEN_MSGS, 55, 25, 3000);
   const redText = useTypewriter(RED_MSGS, 65, 28, 2800);
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setUser(session?.user ?? null);
+    });
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null);
+    });
+    return () => subscription.unsubscribe();
+  }, []);
+
+  useEffect(() => {
+    if (user) {
+      supabase.from('profiles').select('*').eq('id', user.id).single().then(({ data }) => setProfile(data));
+    } else {
+      setProfile(null);
+    }
+  }, [user]);
 
   useEffect(() => {
     const fn = () => setScrolled(window.scrollY > 60);
@@ -89,6 +110,43 @@ export default function Navbar() {
             >
               <i className="fa-solid fa-magnifying-glass"></i>
             </a>
+
+            {/* Giriş / Profil Butonu */}
+            <div style={{ marginLeft: '10px', display: 'flex', alignItems: 'center' }}>
+              {user ? (
+                <Link href="/profil" style={{ display: 'flex', alignItems: 'center', gap: '8px', textDecoration: 'none', color: '#fff' }}>
+                  {profile?.avatar_url ? (
+                    <img src={profile.avatar_url} alt="avatar" style={{ width: '24px', height: '24px', borderRadius: '50%', objectFit: 'cover', border: '1px solid #e60000' }} />
+                  ) : (
+                    <div style={{ width: '24px', height: '24px', borderRadius: '50%', background: '#333', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid #e60000' }}>
+                      <i className="fa-solid fa-user" style={{ fontSize: '10px', color: '#fff' }}></i>
+                    </div>
+                  )}
+                  <span style={{ fontSize: '12px', fontWeight: 600 }}>{profile?.full_name || 'Profilim'}</span>
+                </Link>
+              ) : (
+                <button 
+                  onClick={() => setIsAuthOpen(true)}
+                  style={{
+                    background: '#e60000',
+                    color: '#fff',
+                    border: 'none',
+                    borderRadius: '4px',
+                    padding: '4px 12px',
+                    fontSize: '11px',
+                    fontWeight: 700,
+                    cursor: 'pointer',
+                    textTransform: 'uppercase',
+                    transition: 'background 0.2s'
+                  }}
+                  onMouseEnter={e => (e.currentTarget.style.background = '#cc0000')}
+                  onMouseLeave={e => (e.currentTarget.style.background = '#e60000')}
+                >
+                  <i className="fa-solid fa-right-to-bracket" style={{ marginRight: '5px' }}></i>
+                  Giriş Yap
+                </button>
+              )}
+            </div>
           </div>
         </div>
       </div>
@@ -195,6 +253,8 @@ export default function Navbar() {
       >
         <i className="fa-solid fa-angle-up"></i>
       </button>
+
+      <AuthModal isOpen={isAuthOpen} onClose={() => setIsAuthOpen(false)} />
 
       <style>{`
         @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
