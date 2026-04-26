@@ -3,21 +3,21 @@ import Sidebar from '../../components/Sidebar';
 import Comments from '../../components/Comments';
 
 export default async function PostPage(props: { params: Promise<{ id: string }> }) {
-  // Use await directly on params if Next.js > 15 warns about sync access, but here we assume generic App router
-  const params = await props.params;
-  const postId = params.id;
-  const post = await fetchPostById(postId);
+  try {
+    const params = await props.params;
+    const postId = params.id;
+    const post = await fetchPostById(postId);
 
-  if (!post) {
-    return (
-      <div className="main-layout" style={{ minHeight: '60vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <h1 style={{ color: '#fff' }}>Yazı bulunamadı.</h1>
-      </div>
-    );
-  }
+    if (!post) {
+      return (
+        <div className="main-layout" style={{ minHeight: '60vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <h1 style={{ color: '#fff' }}>Yazı bulunamadı.</h1>
+        </div>
+      );
+    }
 
-  // Use raw HTML from Blogger directly (bypassing isomorphic-dompurify due to Vercel ESM issues)
-  const cleanHTML = post.content;
+    // Use raw HTML from Blogger directly
+    const cleanHTML = post.content;
 
   return (
     <div className="main-layout" style={{ marginTop: '20px' }}>
@@ -98,4 +98,12 @@ export default async function PostPage(props: { params: Promise<{ id: string }> 
       `}} />
     </div>
   );
+  } catch (err: any) {
+    return (
+      <div style={{ color: 'red', padding: '50px' }}>
+        <h1>DEBUG ERROR:</h1>
+        <pre>{err.stack || String(err)}</pre>
+      </div>
+    );
+  }
 }
