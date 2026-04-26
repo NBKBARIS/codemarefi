@@ -58,9 +58,16 @@ export default function Navbar() {
   }, [user]);
 
   useEffect(() => {
+    const handleOpenAuth = () => setIsAuthOpen(true);
+    window.addEventListener('open-auth-modal', handleOpenAuth);
+    
     const fn = () => setScrolled(window.scrollY > 60);
     window.addEventListener('scroll', fn);
-    return () => window.removeEventListener('scroll', fn);
+    
+    return () => {
+      window.removeEventListener('open-auth-modal', handleOpenAuth);
+      window.removeEventListener('scroll', fn);
+    };
   }, []);
 
   const navItems = [
@@ -128,7 +135,7 @@ export default function Navbar() {
                 </Link>
               ) : (
                 <button 
-                  onClick={() => setIsAuthOpen(true)}
+                  onClick={() => window.dispatchEvent(new CustomEvent('open-auth-modal'))}
                   style={{
                     background: '#e60000',
                     color: '#fff',

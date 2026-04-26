@@ -242,7 +242,7 @@ export default function Comments({ postId }: { postId: string }) {
           <p style={{ color: '#fff', fontSize: '15px', fontWeight: 'bold', marginBottom: '10px' }}>YORUM YAPMAK İÇİN SİSTEME SIZMANIZ GEREKİYOR</p>
           <p style={{ color: '#888', fontSize: '13px', marginBottom: '20px' }}>Lütfen yukarıdaki butonu kullanarak giriş yapın veya kimlik oluşturun.</p>
           <button 
-            onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+            onClick={() => window.dispatchEvent(new CustomEvent('open-auth-modal'))}
             style={{ 
               background: '#e60000', 
               color: '#fff', 
