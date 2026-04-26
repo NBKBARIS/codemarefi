@@ -1,22 +1,22 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { usePathname } from 'next/navigation';
 
 const FINAL_TEXT = "''CodeMareFi''{<@CMF$_#>}Yükleniyor...";
 const CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+{}[]|;:<>?,./";
 
 export default function Preloader() {
+  const pathname = usePathname();
   const [text, setText] = useState("");
   const [loading, setLoading] = useState(true);
   const [visible, setVisible] = useState(true);
 
   useEffect(() => {
-    // Only run the preloader once per session to avoid annoying the user on every reload
-    const hasLoaded = sessionStorage.getItem('cmf_preloader_done');
-    if (hasLoaded) {
-      setVisible(false);
-      return;
-    }
+    // Reset state on every route change
+    setLoading(true);
+    setVisible(true);
+    setText("");
 
     let iteration = 0;
     
@@ -32,7 +32,6 @@ export default function Preloader() {
         clearInterval(interval);
         setTimeout(() => {
           setLoading(false);
-          sessionStorage.setItem('cmf_preloader_done', 'true');
           setTimeout(() => setVisible(false), 500); // fade out duration
         }, 800);
       }
@@ -41,7 +40,7 @@ export default function Preloader() {
     }, 30);
 
     return () => clearInterval(interval);
-  }, []);
+  }, [pathname]);
 
   if (!visible) return null;
 
