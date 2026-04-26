@@ -140,7 +140,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
           letterSpacing: '3px',
           textShadow: '2px 2px #e60000'
         }}>
-          {isLogin ? 'ACCESS GRANTED' : 'INITIALIZE'}
+          {isLogin ? 'ERİŞİM ONAYLANDI' : 'KİMLİK OLUŞTUR'}
         </h2>
 
         <form onSubmit={handleAuth}>
@@ -152,7 +152,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
                 value={fullName}
                 onChange={e => setFullName(e.target.value)}
                 required
-                placeholder="Identity Name"
+                placeholder="Kimlik İsmi"
                 style={{
                   width: '100%',
                   padding: '12px 15px',
@@ -245,12 +245,12 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
               transition: 'all 0.3s'
             }}
           >
-            {loading ? 'HACKING...' : (isLogin ? 'CONNECT' : 'INITIALIZE')}
+            {loading ? 'SIZILIYOR...' : (isLogin ? 'BAĞLAN' : 'KAYIT OL')}
           </button>
         </form>
 
         <p style={{ textAlign: 'center', marginTop: '25px', color: '#888', fontSize: '13px', fontFamily: 'monospace' }}>
-          {isLogin ? '// NO ACCOUNT?' : '// ALREADY REGISTERED?'}
+          {isLogin ? '// HESABIN YOK MU?' : '// ZATEN KAYITLI MISIN?'}
           <button 
             onClick={() => setIsLogin(!isLogin)}
             style={{
@@ -260,7 +260,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
               textDecoration: 'underline'
             }}
           >
-            {isLogin ? 'CREATE_IDENTITY' : 'LINK_START'}
+            {isLogin ? 'HESAP_OLUŞTUR' : 'GİRİŞ_YAP'}
           </button>
         </p>
       </div>
