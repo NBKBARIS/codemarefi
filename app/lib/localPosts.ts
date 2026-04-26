@@ -24,7 +24,7 @@ export const localPosts: LocalPost[] = [
     commentCount: 15,
     content: `
       <div style="background: rgba(88, 101, 242, 0.1); border-left: 4px solid #5865F2; padding: 15px; margin-bottom: 20px; border-radius: 4px;">
-        <i class="fa-solid fa-robot" style="font-size: 24px; display: inline-block; animation: bounce 2s infinite; color: #5865F2;"></i>
+        <img src="/images/robot.svg" alt="robot" style="width: 48px; height: 48px; display: inline-block; vertical-align: middle; margin-right: 10px;" />
         <strong style="color: #5865F2; font-size: 18px; vertical-align: middle;">Hoş Geldiniz!</strong> 
         <p style="margin-top: 10px; color: #ccc;">2026 yılı itibarıyla Discord bot geliştirmede kullanılan en son teknolojiler, yeni Node.js sürümleri ve discord.js v15 yapısını adım adım inceliyoruz.</p>
       </div>
@@ -49,7 +49,7 @@ client.on('ready', () => {
 client.login('SENIN_BOT_TOKEN_BURAYA');</code></pre>
 
       <div style="background: #2b1d1d; border: 1px solid #e60000; padding: 15px; border-radius: 4px; margin-top: 20px;">
-        <i class="fa-solid fa-triangle-exclamation" style="font-size: 20px; display: inline-block; animation: pulse 1.5s infinite; color: #e60000;"></i>
+        <img src="/images/warning.svg" alt="warning" style="width: 32px; height: 32px; display: inline-block; vertical-align: middle; margin-right: 10px;" />
         <strong style="color: #e60000;">ÖNEMLİ UYARI:</strong> Bot token'ınızı kesinlikle kimseyle paylaşmayın ve GitHub gibi açık platformlara yüklemeyin.
       </div>
       
@@ -130,7 +130,7 @@ console.log(siteAdi + " sitemize hoş geldiniz!");</code></pre>
       <p>ES6 (ECMAScript 2015) standartlarıyla birlikte gelen Arrow Function yapıları, kodlarımızı çok daha sade ve okunabilir hale getirdi.</p>
 
       <div style="display: flex; gap: 15px; margin-top: 30px; align-items: center; background: #1a1a1a; padding: 15px; border-radius: 6px;">
-        <i class="fa-solid fa-rocket" style="font-size: 30px; animation: bounce 3s infinite; color: #e60000;"></i>
+        <img src="/images/rocket.svg" alt="rocket" style="width: 48px; height: 48px;" />
         <div>
           <strong style="color: #fff;">Hemen Başla!</strong>
           <p style="color: #aaa; margin: 5px 0 0 0; font-size: 14px;">Tarayıcınızın F12 tuşuna basıp "Console" sekmesine geçerek kendi JavaScript kodlarınızı anında deneyebilirsiniz.</p>
