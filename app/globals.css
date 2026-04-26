@@ -1,40 +1,20 @@
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
-html {
-  height: 100%;
-}
-
-html,
-body {
-  max-width: 100vw;
-  overflow-x: hidden;
-}
-
-body {
-  min-height: 100%;
-  display: flex;
-  flex-direction: column;
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
+/* ============================================
+   CodeMareFi - Global CSS
+   Birebir orijinal tasarım
+   ============================================ */
 
 * {
   box-sizing: border-box;
-  padding: 0;
   margin: 0;
+  padding: 0;
+}
+
+body {
+  background-color: #1a1a1a;
+  color: #ffffff;
+  font-family: 'Arial', sans-serif;
+  font-size: 14px;
+  line-height: 1.6;
 }
 
 a {
@@ -42,8 +22,1006 @@ a {
   text-decoration: none;
 }
 
-@media (prefers-color-scheme: dark) {
-  html {
-    color-scheme: dark;
+img {
+  max-width: 100%;
+}
+
+/* ============================================
+   LAYOUT
+   ============================================ */
+.wrapper {
+  max-width: 1300px;
+  margin: 0 auto;
+  padding: 0 15px;
+}
+
+.main-layout {
+  display: grid;
+  grid-template-columns: 1fr 300px;
+  gap: 20px;
+  max-width: 1300px;
+  margin: 0 auto;
+  padding: 15px;
+}
+
+@media (max-width: 900px) {
+  .main-layout {
+    grid-template-columns: 1fr;
   }
+}
+
+/* ============================================
+   TOP SOCIAL BAR (en üstteki sosyal medya çubuğu)
+   ============================================ */
+.top-social-bar {
+  background-color: #111111;
+  border-bottom: 1px solid #333;
+  padding: 6px 15px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 12px;
+}
+
+.top-social-bar a {
+  color: #aaa;
+  margin: 0 5px;
+  transition: color 0.3s;
+}
+
+.top-social-bar a:hover {
+  color: #e60000;
+}
+
+/* ============================================
+   RECENT POSTS HORIZONTAL TICKER (en üst şerit)
+   ============================================ */
+.recent-posts-ticker {
+  background-color: #0d0d0d;
+  border-bottom: 2px solid #e60000;
+  overflow: hidden;
+}
+
+.ticker-inner {
+  display: flex;
+  gap: 0;
+}
+
+.ticker-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 15px;
+  min-width: 260px;
+  border-right: 1px solid #222;
+  cursor: pointer;
+  transition: background 0.3s;
+  flex-shrink: 0;
+}
+
+.ticker-item:hover {
+  background: #222;
+}
+
+.ticker-item img {
+  width: 60px;
+  height: 45px;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.ticker-item-text {
+  flex: 1;
+  overflow: hidden;
+}
+
+.ticker-item-date {
+  font-size: 10px;
+  color: #888;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-bottom: 3px;
+}
+
+.ticker-item-title {
+  font-size: 12px;
+  font-weight: bold;
+  color: #ddd;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  line-height: 1.3;
+}
+
+/* ============================================
+   TYPEWRITER DUYURU BARLARI
+   ============================================ */
+.announcement-bars {
+  padding: 8px 15px;
+  background: #1a1a1a;
+}
+
+.announcement-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 15px;
+  margin-bottom: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  border: 1px solid;
+  position: relative;
+}
+
+.announcement-bar.green {
+  border-color: #2ea44f;
+  background: rgba(46, 164, 79, 0.08);
+  color: #fff;
+}
+
+.announcement-bar.red {
+  border-color: #e60000;
+  background: rgba(230, 0, 0, 0.08);
+  color: #fff;
+}
+
+.announcement-bar .bar-icon {
+  font-size: 16px;
+  flex-shrink: 0;
+}
+
+.typewriter-cursor::after {
+  content: '|';
+  animation: blink-cursor 0.7s infinite;
+  color: #e60000;
+}
+
+@keyframes blink-cursor {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+/* ============================================
+   HEADER (Logo + Reklam Alanı)
+   ============================================ */
+.site-header {
+  background: #1a1a1a;
+  padding: 20px 15px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 1300px;
+  margin: 0 auto;
+}
+
+.site-logo img {
+  max-height: 80px;
+  width: auto;
+}
+
+/* ============================================
+   NAVBAR
+   ============================================ */
+.navbar {
+  background: #111111;
+  border-bottom: 2px solid #e60000;
+  position: sticky;
+  top: 0;
+  z-index: 999;
+  width: 100%;
+}
+
+.navbar-inner {
+  max-width: 1300px;
+  margin: 0 auto;
+  display: flex;
+  align-items: stretch;
+}
+
+.navbar-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 18px;
+  height: 48px;
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #ffffff;
+  cursor: pointer;
+  transition: background 0.25s, color 0.25s;
+  border-right: 1px solid #222;
+  white-space: nowrap;
+  letter-spacing: 0.3px;
+}
+
+.navbar-item:hover {
+  background: #222;
+  color: #e60000;
+}
+
+.navbar-item.active {
+  background: #e60000;
+  color: #fff;
+}
+
+.navbar-item .nav-icon {
+  font-size: 14px;
+}
+
+.navbar-shuffle {
+  margin-left: auto;
+  background: #e60000;
+  width: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 16px;
+  flex-shrink: 0;
+  transition: background 0.2s;
+}
+
+.navbar-shuffle:hover {
+  background: #cc0000;
+}
+
+/* ============================================
+   RECENT POST TICKER (navbar altındaki)
+   ============================================ */
+.post-ticker-bar {
+  background: #111;
+  border-bottom: 1px solid #333;
+  display: flex;
+  align-items: center;
+  max-width: 1300px;
+  margin: 0 auto;
+}
+
+.post-ticker-content {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  padding: 8px 12px;
+  gap: 12px;
+  overflow: hidden;
+  cursor: pointer;
+  text-decoration: none;
+  color: inherit;
+  transition: background 0.2s;
+}
+
+.post-ticker-content:hover {
+  background: #1a1a1a;
+}
+
+.post-ticker-img {
+  width: 48px;
+  height: 36px;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.post-ticker-info {
+  flex: 1;
+  overflow: hidden;
+}
+
+.post-ticker-meta {
+  font-size: 10px;
+  color: #888;
+}
+
+.post-ticker-title {
+  font-size: 13px;
+  font-weight: bold;
+  color: #ddd;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.post-ticker-controls {
+  display: flex;
+  align-items: center;
+  padding: 0 12px;
+  gap: 10px;
+  border-left: 1px solid #333;
+  flex-shrink: 0;
+}
+
+.ticker-btn {
+  background: none;
+  border: none;
+  color: #888;
+  cursor: pointer;
+  font-size: 14px;
+  padding: 4px;
+  transition: color 0.2s;
+}
+
+.ticker-btn:hover {
+  color: #e60000;
+}
+
+/* ============================================
+   FEATURED POSTS / SLIDER ALANI
+   ============================================ */
+.featured-section {
+  margin-bottom: 0;
+}
+
+.featured-grid {
+  display: grid;
+  grid-template-columns: 60% 40%;
+  gap: 2px;
+  height: 420px;
+  background: #000;
+  overflow: hidden;
+}
+
+.featured-main {
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  background: #111;
+  height: 420px;
+}
+
+.featured-main img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+  display: block;
+}
+
+.featured-main:hover img {
+  transform: scale(1.05);
+}
+
+.featured-main-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.3) 50%, transparent 100%);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.featured-main-content {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 20px;
+  z-index: 3;
+}
+
+.featured-slider-dots {
+  position: absolute;
+  top: 15px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 6px;
+  z-index: 4;
+}
+
+.featured-main-content {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 20px;
+}
+
+.featured-slider-dots {
+  position: absolute;
+  top: 15px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 6px;
+  z-index: 5;
+}
+
+.slider-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.5);
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.slider-dot.active {
+  background: #e60000;
+}
+
+.featured-cat-badge {
+  display: inline-block;
+  background: #e60000;
+  color: #fff;
+  font-size: 10px;
+  font-weight: bold;
+  padding: 3px 8px;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+  letter-spacing: 0.5px;
+}
+
+.featured-main-title {
+  color: #fff;
+  font-size: 20px;
+  font-weight: bold;
+  line-height: 1.3;
+  margin-bottom: 8px;
+  text-shadow: 1px 1px 3px #000;
+}
+
+.featured-main-meta {
+  color: #ccc;
+  font-size: 11px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Sağ taraf 2x2 grid */
+.featured-side {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  gap: 2px;
+  background: #000;
+}
+
+.featured-small {
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  height: 210px;
+  background: #111;
+}
+
+.featured-small img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.4s;
+  display: block;
+}
+
+.featured-small:hover img {
+  transform: scale(1.08);
+}
+
+.featured-small-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.2) 60%, transparent 100%);
+  z-index: 1;
+}
+
+.featured-small-content {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 10px;
+  z-index: 2;
+}
+
+.featured-small-content {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 10px;
+}
+
+.featured-small-cat {
+  display: inline-block;
+  font-size: 9px;
+  font-weight: bold;
+  padding: 2px 6px;
+  color: #fff;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+
+.featured-small-title {
+  color: #fff;
+  font-size: 12px;
+  font-weight: bold;
+  line-height: 1.2;
+  text-shadow: 1px 1px 2px #000;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.featured-small-meta {
+  color: #ccc;
+  font-size: 10px;
+  margin-top: 3px;
+}
+
+/* ============================================
+   POSTS LIST (Sol ana içerik alanı)
+   ============================================ */
+.posts-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.post-card {
+  background: #111;
+  border-bottom: 1px solid #2a2a2a;
+  display: flex;
+  align-items: stretch;
+  overflow: hidden;
+  transition: background 0.25s;
+  text-decoration: none;
+  color: inherit;
+}
+
+.post-card:hover {
+  background: #191919;
+}
+
+.post-card-thumb-wrap {
+  width: 220px;
+  min-height: 150px;
+  flex-shrink: 0;
+  position: relative;
+  overflow: hidden;
+}
+
+.post-card-thumb-wrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.4s;
+}
+
+.post-card:hover .post-card-thumb-wrap img {
+  transform: scale(1.06);
+}
+
+.post-card-body {
+  flex: 1;
+  padding: 15px 18px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.post-card-cats {
+  display: flex;
+  gap: 5px;
+  margin-bottom: 8px;
+  flex-wrap: wrap;
+}
+
+.cat-badge {
+  font-size: 9px;
+  font-weight: bold;
+  padding: 2px 7px;
+  color: #fff;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.cat-discord { background: #5865f2; }
+.cat-js { background: #f7df1e; color: #000 !important; }
+.cat-blogger { background: #ff5722; }
+.cat-genel { background: #2ea44f; }
+.cat-web { background: #0070f3; }
+.cat-python { background: #306998; }
+.cat-default { background: #555; }
+
+.post-card-title {
+  font-size: 16px;
+  font-weight: bold;
+  color: #ffffff;
+  line-height: 1.4;
+  margin-bottom: 8px;
+  transition: color 0.2s;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.post-card:hover .post-card-title {
+  color: #e60000;
+}
+
+.post-card-excerpt {
+  font-size: 12px;
+  color: #888;
+  line-height: 1.5;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  margin-bottom: 10px;
+}
+
+.post-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 11px;
+  color: #666;
+}
+
+.post-card-meta-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.post-card-author {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.read-more {
+  color: #e60000;
+  font-size: 10px;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  transition: gap 0.2s;
+}
+
+.post-card:hover .read-more {
+  gap: 8px;
+}
+
+/* ============================================
+   SECTION HEADERS (Trendler başlığı vb.)
+   ============================================ */
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 0;
+  margin-bottom: 5px;
+  border-bottom: 2px solid #e60000;
+}
+
+.section-header-tabs {
+  display: flex;
+  gap: 0;
+  border-bottom: 2px solid #333;
+  margin-bottom: 15px;
+}
+
+.section-tab {
+  padding: 10px 16px;
+  font-size: 12px;
+  font-weight: bold;
+  text-transform: uppercase;
+  color: #888;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -2px;
+  transition: color 0.2s;
+}
+
+.section-tab.active {
+  color: #fff;
+  border-bottom-color: #e60000;
+}
+
+/* ============================================
+   PAGINATION
+   ============================================ */
+.pagination {
+  display: flex;
+  justify-content: center;
+  gap: 5px;
+  padding: 25px 0;
+}
+
+.page-btn {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #333;
+  background: #111;
+  color: #888;
+  cursor: pointer;
+  font-size: 13px;
+  transition: all 0.2s;
+}
+
+.page-btn:hover,
+.page-btn.active {
+  background: #e60000;
+  border-color: #e60000;
+  color: #fff;
+}
+
+.page-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* ============================================
+   SIDEBAR
+   ============================================ */
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.sidebar-widget {
+  background: #111;
+  border: 1px solid #222;
+}
+
+.widget-header {
+  background: #222;
+  padding: 10px 15px;
+  font-size: 13px;
+  font-weight: bold;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-bottom: 2px solid #e60000;
+  color: #fff;
+}
+
+.widget-header i {
+  color: #e60000;
+}
+
+.widget-body {
+  padding: 12px 15px;
+}
+
+/* Kategoriler */
+.cat-list {
+  list-style: none;
+}
+
+.cat-list li {
+  border-bottom: 1px solid #1e1e1e;
+}
+
+.cat-list li a {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 0;
+  color: #aaa;
+  font-size: 12px;
+  transition: color 0.2s;
+}
+
+.cat-list li a:hover {
+  color: #e60000;
+}
+
+.cat-list li a i {
+  color: #e60000;
+  font-size: 10px;
+}
+
+/* Tag Cloud */
+.tag-cloud {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.tag-pill {
+  background: #1e1e1e;
+  border: 1px solid #2a2a2a;
+  color: #aaa;
+  font-size: 10px;
+  padding: 4px 10px;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-decoration: none;
+  display: inline-block;
+}
+
+.tag-pill:hover {
+  background: #e60000;
+  border-color: #e60000;
+  color: #fff;
+}
+
+/* ============================================
+   LOADING
+   ============================================ */
+.loading-spinner {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 60px;
+}
+
+.spinner {
+  width: 42px;
+  height: 42px;
+  border: 4px solid #222;
+  border-top-color: #e60000;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ============================================
+   FOOTER
+   ============================================ */
+.site-footer {
+  background: #0a0a0a;
+  border-top: 3px solid #e60000;
+  margin-top: 40px;
+}
+
+.footer-top {
+  padding: 30px 15px;
+  max-width: 1300px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 30px;
+}
+
+.footer-widget-title {
+  font-size: 13px;
+  font-weight: bold;
+  text-transform: uppercase;
+  color: #fff;
+  border-bottom: 1px solid #e60000;
+  padding-bottom: 8px;
+  margin-bottom: 15px;
+}
+
+.footer-links {
+  list-style: none;
+}
+
+.footer-links li {
+  margin-bottom: 8px;
+}
+
+.footer-links a {
+  color: #888;
+  font-size: 12px;
+  transition: color 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.footer-links a:hover {
+  color: #e60000;
+}
+
+.footer-bottom {
+  background: #060606;
+  padding: 15px;
+  text-align: center;
+  font-size: 12px;
+  color: #555;
+  border-top: 1px solid #1a1a1a;
+}
+
+.footer-bottom span {
+  color: #e60000;
+}
+
+/* ============================================
+   FLOATING BUTTONS
+   ============================================ */
+.back-to-top {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 36px;
+  height: 36px;
+  background: #e60000;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 1000;
+  font-size: 14px;
+  transition: background 0.2s;
+  border: none;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.back-to-top.visible {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.back-to-top:hover {
+  background: #cc0000;
+}
+
+/* ============================================
+   ANIMATIONS
+   ============================================ */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.fade-in {
+  animation: fadeIn 0.4s ease forwards;
+}
+
+/* Green ticker (top scrolling bar) */
+.top-ticker-wrap {
+  background: #111;
+  overflow: hidden;
+  border-bottom: 1px solid #2ea44f;
+  padding: 0;
+}
+
+.top-ticker-inner {
+  display: flex;
+  animation: scrollLeft 35s linear infinite;
+  white-space: nowrap;
+}
+
+.top-ticker-inner:hover {
+  animation-play-state: paused;
+}
+
+@keyframes scrollLeft {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+.top-ticker-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 20px;
+  color: #2ea44f;
+  font-size: 12px;
+  font-weight: 600;
+  border-right: 1px solid #1a1a1a;
+}
+
+.top-ticker-item i {
+  color: #2ea44f;
+}
+
+/* Hover glow effect */
+.hover-red:hover {
+  color: #e60000 !important;
 }
