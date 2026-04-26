@@ -32,6 +32,22 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
     setLoading(true);
     setMessage({ type: '', text: '' });
 
+    // Validation
+    if (!isLogin) {
+      if (!email.toLowerCase().endsWith('@gmail.com')) {
+        setMessage({ type: 'error', text: 'Yalnızca @gmail.com adresleri kabul edilmektedir!' });
+        setLoading(false);
+        return;
+      }
+
+      const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&._-])[A-Za-z\d@$!%*?&._-]{8,}$/;
+      if (!passwordRegex.test(password)) {
+        setMessage({ type: 'error', text: 'Şifre en az 8 karakter, büyük-küçük harf, rakam ve sembol içermelidir!' });
+        setLoading(false);
+        return;
+      }
+    }
+
     try {
       if (isLogin) {
         const { error } = await supabase.auth.signInWithPassword({
