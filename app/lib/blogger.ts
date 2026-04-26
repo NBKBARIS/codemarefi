@@ -108,12 +108,55 @@ export async function searchPosts(query: string): Promise<BlogPost[]> {
 }
 
 export async function fetchPostById(id: string): Promise<BlogPost | null> {
+  // On the server, bypass the proxy and hit Blogger directly to avoid self-fetch network/DNS issues on Vercel
+  if (typeof window === 'undefined') {
+    const BLOG_ID = process.env.BLOG_ID || '5795750681970782630';
+    const API_KEY = process.env.BLOGGER_API_KEY || '';
+    const url = `https://www.googleapis.com/blogger/v3/blogs/${BLOG_ID}/posts/${id}?key=${API_KEY}&fetchBody=true&fetchImages=true`;
+    
+    try {
+      const res = await fetch(url, { next: { revalidate: 1800 } });
+      if (!res.ok) return null;
+      const raw = await res.json();
+      
+      // Inline transform to match parsePost expectations
+      let thumb = raw.images?.[0]?.url || '';
+      if (!thumb && raw.content) {
+        const m = raw.content.match(/<img[^>]+src="([^">]+)"/);
+        if (m) thumb = m[1];
+      }
+      if (thumb) {
+        thumb = thumb.replace(/\/s\d+(-c)?\//, '/s1600/').replace('http://', 'https://');
+      }
+
+      const entry = {
+        id:        { $t: raw.id || '' },
+        title:     { $t: raw.title || '' },
+        content:   { $t: raw.content || '' },
+        published: { $t: raw.published || '' },
+        updated:   { $t: raw.updated || '' },
+        link: [
+          { rel: 'alternate', href: raw.url || '' },
+        ],
+        category:  (raw.labels || []).map((l: string) => ({ term: l })),
+        author:    [{ name: { $t: raw.author?.displayName || 'MareFi' } }],
+        'media$thumbnail': thumb ? { url: thumb } : undefined,
+        'thr$total': { $t: String(raw.replies?.totalItems || 0) },
+      };
+      
+      return parsePost(entry);
+    } catch (e) {
+      console.error('Direct Blogger fetch failed:', e);
+      return null;
+    }
+  }
+
+  // Client-side fallback (if ever called from the client)
   const params: Record<string, string> = { postId: id };
   const res = await fetch(apiUrl(params));
   if (!res.ok) return null;
 
   const data = await res.json();
-  // Handle different potential structures from proxy/blogger
   const entry = data.entry || (data.title ? data : null);
   if (!entry) return null;
 
