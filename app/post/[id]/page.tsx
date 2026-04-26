@@ -1,7 +1,6 @@
 import { fetchPostById, formatDate } from '../../lib/blogger';
 import Sidebar from '../../components/Sidebar';
 import Comments from '../../components/Comments';
-import DOMPurify from 'isomorphic-dompurify';
 
 export default async function PostPage({ params }: { params: { id: string } }) {
   // Use await directly on params if Next.js > 15 warns about sync access, but here we assume generic App router
@@ -16,8 +15,8 @@ export default async function PostPage({ params }: { params: { id: string } }) {
     );
   }
 
-  // Clean HTML from Blogger to prevent XSS and ensure safe rendering
-  const cleanHTML = DOMPurify.sanitize(post.content);
+  // Use raw HTML from Blogger directly (bypassing isomorphic-dompurify due to Vercel ESM issues)
+  const cleanHTML = post.content;
 
   return (
     <div className="main-layout" style={{ marginTop: '20px' }}>
