@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { usePathname } from 'next/navigation';
 
 const FINAL_TEXT = "''CodeMareFi''{<@CMF$_#>}Yükleniyor...";
@@ -11,9 +11,32 @@ export default function Preloader() {
   const [text, setText] = useState("");
   const [loading, setLoading] = useState(true);
   const [visible, setVisible] = useState(true);
+  
+  const isInitialLoad = useRef(true);
+  const isBackNavigation = useRef(false);
+
+  // Track browser back/forward buttons
+  useEffect(() => {
+    const handlePopState = () => {
+      isBackNavigation.current = true;
+    };
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, []);
 
   useEffect(() => {
-    // Reset state on every route change
+    const isPostPage = pathname.startsWith('/post/');
+    const shouldShow = isInitialLoad.current || (isPostPage && !isBackNavigation.current);
+
+    isInitialLoad.current = false;
+    isBackNavigation.current = false; // reset for next navigation
+
+    if (!shouldShow) {
+      setVisible(false);
+      setLoading(false);
+      return;
+    }
+
     setLoading(true);
     setVisible(true);
     setText("");
