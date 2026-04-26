@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
 
 interface AuthModalProps {
@@ -16,6 +16,15 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState({ type: '', text: '' });
 
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+    return () => { document.body.style.overflow = 'unset'; };
+  }, [isOpen]);
+
   if (!isOpen) return null;
 
   const handleAuth = async (e: React.FormEvent) => {
@@ -30,11 +39,11 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
           password,
         });
         if (error) throw error;
-        setMessage({ type: 'success', text: 'Giriş başarılı! Yönlendiriliyorsunuz...' });
+        setMessage({ type: 'success', text: 'Sisteme Sızıldı! Giriş Yapılıyor...' });
         setTimeout(() => {
           onClose();
           window.location.reload();
-        }, 1500);
+        }, 1200);
       } else {
         const { error } = await supabase.auth.signUp({
           email,
@@ -46,11 +55,11 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
           },
         });
         if (error) throw error;
-        setMessage({ type: 'success', text: 'Kayıt başarılı! Giriş yapabilirsiniz.' });
-        setIsLogin(true);
+        setMessage({ type: 'success', text: 'Kayıt Başarılı! Protokoller Hazır.' });
+        setTimeout(() => setIsLogin(true), 1500);
       }
     } catch (error: any) {
-      setMessage({ type: 'error', text: error.message || 'Bir hata oluştu.' });
+      setMessage({ type: 'error', text: error.message || 'Erişim Engellendi!' });
     } finally {
       setLoading(false);
     }
@@ -60,114 +69,159 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
     <div style={{
       position: 'fixed',
       top: 0, left: 0, right: 0, bottom: 0,
-      backgroundColor: 'rgba(0,0,0,0.85)',
+      backgroundColor: 'rgba(0,0,0,0.92)',
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
       zIndex: 10000,
-      backdropFilter: 'blur(5px)'
+      backdropFilter: 'blur(10px)',
+      padding: '20px'
     }} onClick={onClose}>
+      
+      {/* Background Animation (Scanlines) */}
+      <div style={{
+        position: 'absolute',
+        top: 0, left: 0, right: 0, bottom: 0,
+        background: 'linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06))',
+        backgroundSize: '100% 2px, 3px 100%',
+        pointerEvents: 'none',
+        zIndex: -1
+      }}></div>
+
       <div 
+        className="cyber-modal"
         style={{
-          width: '90%',
-          maxWidth: '400px',
-          background: '#161b22',
-          border: '1px solid #30363d',
-          borderRadius: '12px',
-          padding: '30px',
+          width: '100%',
+          maxWidth: '440px',
+          background: '#0a0a0a',
+          border: '2px solid #e60000',
+          borderRadius: '4px',
+          padding: '40px 30px',
           position: 'relative',
-          boxShadow: '0 10px 40px rgba(0,0,0,0.5)'
+          boxShadow: '0 0 20px rgba(230, 0, 0, 0.3), inset 0 0 10px rgba(230, 0, 0, 0.1)',
+          overflow: 'hidden'
         }} 
         onClick={e => e.stopPropagation()}
       >
+        {/* Animated Corner Decorations */}
+        <div style={{ position: 'absolute', top: 0, left: 0, width: '20px', height: '20px', borderTop: '4px solid #e60000', borderLeft: '4px solid #e60000' }}></div>
+        <div style={{ position: 'absolute', top: 0, right: 0, width: '20px', height: '20px', borderTop: '4px solid #e60000', borderRight: '4px solid #e60000' }}></div>
+        <div style={{ position: 'absolute', bottom: 0, left: 0, width: '20px', height: '20px', borderBottom: '4px solid #e60000', borderLeft: '4px solid #e60000' }}></div>
+        <div style={{ position: 'absolute', bottom: 0, right: 0, width: '20px', height: '20px', borderBottom: '4px solid #e60000', borderRight: '4px solid #e60000' }}></div>
+
+        {/* Robot Animation Icon */}
+        <div style={{ textAlign: 'center', marginBottom: '20px' }}>
+          <img src="/images/robot.svg" alt="Robot" style={{ width: '60px', height: '60px' }} />
+        </div>
+
         <button 
           onClick={onClose}
           style={{
             position: 'absolute',
             top: '15px', right: '15px',
             background: 'none', border: 'none',
-            color: '#8b949e', cursor: 'pointer',
-            fontSize: '20px'
+            color: '#e60000', cursor: 'pointer',
+            fontSize: '24px',
+            transition: 'transform 0.2s'
           }}
+          onMouseEnter={e => (e.currentTarget.style.transform = 'rotate(90deg)')}
+          onMouseLeave={e => (e.currentTarget.style.transform = 'rotate(0deg)')}
         >
           <i className="fa-solid fa-xmark"></i>
         </button>
 
-        <h2 style={{ color: '#fff', marginBottom: '25px', textAlign: 'center', fontSize: '24px' }}>
-          {isLogin ? 'Hoş Geldin' : 'Aramıza Katıl'}
+        <h2 style={{ 
+          color: '#fff', 
+          marginBottom: '30px', 
+          textAlign: 'center', 
+          fontSize: '26px',
+          fontWeight: '900',
+          textTransform: 'uppercase',
+          letterSpacing: '3px',
+          textShadow: '2px 2px #e60000'
+        }}>
+          {isLogin ? 'ACCESS GRANTED' : 'INITIALIZE'}
         </h2>
 
         <form onSubmit={handleAuth}>
           {!isLogin && (
-            <div style={{ marginBottom: '15px' }}>
-              <label style={{ display: 'block', color: '#8b949e', marginBottom: '5px', fontSize: '14px' }}>Ad Soyad</label>
+            <div style={{ marginBottom: '20px' }}>
+              <label style={{ display: 'block', color: '#e60000', marginBottom: '8px', fontSize: '12px', fontWeight: 'bold', letterSpacing: '1px' }}>[ AD SOYAD ]</label>
               <input 
                 type="text" 
                 value={fullName}
                 onChange={e => setFullName(e.target.value)}
                 required
+                placeholder="Identity Name"
                 style={{
                   width: '100%',
-                  padding: '12px',
-                  borderRadius: '6px',
-                  background: '#0d1117',
-                  border: '1px solid #30363d',
+                  padding: '12px 15px',
+                  background: '#111',
+                  border: '1px solid #333',
+                  borderLeft: '4px solid #e60000',
                   color: '#fff',
-                  outline: 'none'
+                  outline: 'none',
+                  fontFamily: 'monospace'
                 }}
               />
             </div>
           )}
 
-          <div style={{ marginBottom: '15px' }}>
-            <label style={{ display: 'block', color: '#8b949e', marginBottom: '5px', fontSize: '14px' }}>E-posta</label>
+          <div style={{ marginBottom: '20px' }}>
+            <label style={{ display: 'block', color: '#e60000', marginBottom: '8px', fontSize: '12px', fontWeight: 'bold', letterSpacing: '1px' }}>[ E-POSTA ]</label>
             <input 
               type="email" 
               value={email}
               onChange={e => setEmail(e.target.value)}
               required
+              placeholder="user@codemarefi.com"
               style={{
                 width: '100%',
-                padding: '12px',
-                borderRadius: '6px',
-                background: '#0d1117',
-                border: '1px solid #30363d',
+                padding: '12px 15px',
+                background: '#111',
+                border: '1px solid #333',
+                borderLeft: '4px solid #e60000',
                 color: '#fff',
-                outline: 'none'
+                outline: 'none',
+                fontFamily: 'monospace'
               }}
             />
           </div>
 
-          <div style={{ marginBottom: '25px' }}>
-            <label style={{ display: 'block', color: '#8b949e', marginBottom: '5px', fontSize: '14px' }}>Şifre</label>
+          <div style={{ marginBottom: '30px' }}>
+            <label style={{ display: 'block', color: '#e60000', marginBottom: '8px', fontSize: '12px', fontWeight: 'bold', letterSpacing: '1px' }}>[ ŞİFRE ]</label>
             <input 
               type="password" 
               value={password}
               onChange={e => setPassword(e.target.value)}
               required
+              placeholder="********"
               style={{
                 width: '100%',
-                padding: '12px',
-                borderRadius: '6px',
-                background: '#0d1117',
-                border: '1px solid #30363d',
+                padding: '12px 15px',
+                background: '#111',
+                border: '1px solid #333',
+                borderLeft: '4px solid #e60000',
                 color: '#fff',
-                outline: 'none'
+                outline: 'none',
+                fontFamily: 'monospace'
               }}
             />
           </div>
 
           {message.text && (
             <div style={{
-              padding: '10px',
-              borderRadius: '6px',
-              marginBottom: '15px',
-              fontSize: '14px',
+              padding: '12px',
+              marginBottom: '20px',
+              fontSize: '13px',
               textAlign: 'center',
               backgroundColor: message.type === 'error' ? 'rgba(230,0,0,0.1)' : 'rgba(46,164,79,0.1)',
               color: message.type === 'error' ? '#e60000' : '#2ea44f',
-              border: `1px solid ${message.type === 'error' ? '#e60000' : '#2ea44f'}`
+              border: `1px solid ${message.type === 'error' ? '#e60000' : '#2ea44f'}`,
+              fontFamily: 'monospace',
+              textTransform: 'uppercase'
             }}>
+              {message.type === 'error' && <i className="fa-solid fa-triangle-exclamation" style={{ marginRight: '8px' }}></i>}
               {message.text}
             </div>
           )}
@@ -175,37 +229,56 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
           <button 
             type="submit" 
             disabled={loading}
+            className="cyber-button"
             style={{
               width: '100%',
-              padding: '14px',
-              borderRadius: '6px',
-              background: '#238636',
+              padding: '16px',
+              background: '#e60000',
               color: '#fff',
               border: 'none',
-              fontWeight: 'bold',
+              fontWeight: '900',
+              fontSize: '16px',
               cursor: loading ? 'not-allowed' : 'pointer',
-              opacity: loading ? 0.7 : 1,
-              transition: 'background 0.2s'
+              textTransform: 'uppercase',
+              letterSpacing: '2px',
+              boxShadow: '0 4px 15px rgba(230, 0, 0, 0.4)',
+              transition: 'all 0.3s'
             }}
           >
-            {loading ? 'İşlem yapılıyor...' : (isLogin ? 'Giriş Yap' : 'Kayıt Ol')}
+            {loading ? 'HACKING...' : (isLogin ? 'CONNECT' : 'INITIALIZE')}
           </button>
         </form>
 
-        <p style={{ textAlign: 'center', marginTop: '20px', color: '#8b949e', fontSize: '14px' }}>
-          {isLogin ? 'Hesabın yok mu?' : 'Zaten üye misin?'}
+        <p style={{ textAlign: 'center', marginTop: '25px', color: '#888', fontSize: '13px', fontFamily: 'monospace' }}>
+          {isLogin ? '// NO ACCOUNT?' : '// ALREADY REGISTERED?'}
           <button 
             onClick={() => setIsLogin(!isLogin)}
             style={{
               background: 'none', border: 'none',
-              color: '#58a6ff', cursor: 'pointer',
-              marginLeft: '5px', fontWeight: 'bold'
+              color: '#fff', cursor: 'pointer',
+              marginLeft: '8px', fontWeight: 'bold',
+              textDecoration: 'underline'
             }}
           >
-            {isLogin ? 'Kayıt Ol' : 'Giriş Yap'}
+            {isLogin ? 'CREATE_IDENTITY' : 'LINK_START'}
           </button>
         </p>
       </div>
+
+      <style>{`
+        .cyber-modal {
+          animation: glitch-border 2s infinite;
+        }
+        @keyframes glitch-border {
+          0%, 100% { border-color: #e60000; box-shadow: 0 0 20px rgba(230, 0, 0, 0.3); }
+          50% { border-color: #ff4d4d; box-shadow: 0 0 30px rgba(255, 77, 77, 0.5); }
+        }
+        .cyber-button:hover {
+          background: #fff !important;
+          color: #e60000 !important;
+          box-shadow: 0 0 30px #fff !important;
+        }
+      `}</style>
     </div>
   );
 }
