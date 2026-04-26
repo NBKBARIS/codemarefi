@@ -24,7 +24,7 @@ export const localPosts: LocalPost[] = [
     commentCount: 15,
     content: `
       <div style="background: rgba(88, 101, 242, 0.1); border-left: 4px solid #5865F2; padding: 15px; margin-bottom: 20px; border-radius: 4px;">
-        <span style="font-size: 24px; display: inline-block; animation: bounce 2s infinite;">🤖</span>
+        <i class="fa-solid fa-robot" style="font-size: 24px; display: inline-block; animation: bounce 2s infinite; color: #5865F2;"></i>
         <strong style="color: #5865F2; font-size: 18px;">Hoş Geldiniz!</strong> 
         <p style="margin-top: 10px; color: #ccc;">2026 yılı itibarıyla Discord bot geliştirmede kullanılan en son teknolojiler, yeni Node.js sürümleri ve discord.js v15 yapısını adım adım inceliyoruz.</p>
       </div>
@@ -49,7 +49,7 @@ client.on('ready', () => {
 client.login('SENIN_BOT_TOKEN_BURAYA');</code></pre>
 
       <div style="background: #2b1d1d; border: 1px solid #e60000; padding: 15px; border-radius: 4px; margin-top: 20px;">
-        <span style="font-size: 20px; display: inline-block; animation: pulse 1.5s infinite;">⚠️</span>
+        <i class="fa-solid fa-triangle-exclamation" style="font-size: 20px; display: inline-block; animation: pulse 1.5s infinite; color: #e60000;"></i>
         <strong style="color: #e60000;">ÖNEMLİ UYARI:</strong> Bot token'ınızı kesinlikle kimseyle paylaşmayın ve GitHub gibi açık platformlara yüklemeyin.
       </div>
       
@@ -73,7 +73,7 @@ client.login('SENIN_BOT_TOKEN_BURAYA');</code></pre>
     commentCount: 8,
     content: `
       <div style="text-align: center; margin-bottom: 30px;">
-        <span style="font-size: 48px; display: inline-block; animation: spin 4s linear infinite;">🎨</span>
+        <i class="fa-solid fa-palette" style="font-size: 48px; display: inline-block; animation: spin 4s linear infinite; color: #e60000;"></i>
         <h2 style="color: #fff; margin-top: 10px;">Geleceğin Tasarım Dili</h2>
       </div>
 
@@ -89,7 +89,7 @@ client.login('SENIN_BOT_TOKEN_BURAYA');</code></pre>
 }</code></pre>
 
       <div style="background: rgba(0, 255, 128, 0.1); border-left: 4px solid #00ff80; padding: 15px; border-radius: 4px; margin-top: 20px;">
-        <span style="font-size: 20px; display: inline-block; animation: bounce 2s infinite;">💡</span>
+        <i class="fa-solid fa-lightbulb" style="font-size: 20px; display: inline-block; animation: bounce 2s infinite; color: #00ff80;"></i>
         <strong style="color: #00ff80;">Biliyor muydunuz?</strong> Doğru kontrast oranlarını kullanmak, sitenizin erişilebilirliğini artırır ve Google SEO puanınıza doğrudan olumlu etki eder.
       </div>
       
@@ -113,7 +113,7 @@ client.login('SENIN_BOT_TOKEN_BURAYA');</code></pre>
     commentCount: 22,
     content: `
       <div style="background: rgba(247, 223, 30, 0.1); padding: 20px; border-radius: 8px; margin-bottom: 25px; text-align: center; border: 1px solid #f7df1e;">
-        <span style="font-size: 50px; display: inline-block; animation: pulse 2s infinite;">⚡</span>
+        <i class="fa-solid fa-bolt" style="font-size: 50px; display: inline-block; animation: pulse 2s infinite; color: #f7df1e;"></i>
         <h3 style="color: #f7df1e; margin: 10px 0 0 0;">JavaScript Dünyasına Hoş Geldin!</h3>
       </div>
 
@@ -130,7 +130,7 @@ console.log(siteAdi + " sitemize hoş geldiniz!");</code></pre>
       <p>ES6 (ECMAScript 2015) standartlarıyla birlikte gelen Arrow Function yapıları, kodlarımızı çok daha sade ve okunabilir hale getirdi.</p>
 
       <div style="display: flex; gap: 15px; margin-top: 30px; align-items: center; background: #1a1a1a; padding: 15px; border-radius: 6px;">
-        <div style="font-size: 30px; animation: bounce 3s infinite;">🚀</div>
+        <i class="fa-solid fa-rocket" style="font-size: 30px; animation: bounce 3s infinite; color: #e60000;"></i>
         <div>
           <strong style="color: #fff;">Hemen Başla!</strong>
           <p style="color: #aaa; margin: 5px 0 0 0; font-size: 14px;">Tarayıcınızın F12 tuşuna basıp "Console" sekmesine geçerek kendi JavaScript kodlarınızı anında deneyebilirsiniz.</p>
@@ -155,7 +155,7 @@ console.log(siteAdi + " sitemize hoş geldiniz!");</code></pre>
     commentCount: 42,
     content: `
       <div style="text-align: center; margin-bottom: 25px;">
-        <span style="font-size: 48px; display: inline-block; animation: spin 5s linear infinite;">⚙️</span>
+        <i class="fa-solid fa-gear" style="font-size: 48px; display: inline-block; animation: spin 5s linear infinite; color: #aaa;"></i>
       </div>
 
       <p>React tabanlı en güçlü framework olan <strong>Next.js</strong> ve onun yaratıcısı olan <strong>Vercel</strong> ile projeleri canlıya almak oldukça kolaydır. Ancak Server-Side Rendering (SSR) kullanan dinamik projelerde bazen beklenmedik 500 hataları ile karşılaşabilirsiniz.</p>
@@ -171,7 +171,7 @@ export async function generateStaticParams() {
 
       <div style="background: rgba(230, 0, 0, 0.1); border: 1px solid #e60000; padding: 15px; border-radius: 4px; margin-top: 25px;">
         <strong style="color: #e60000; display: flex; align-items: center; gap: 8px;">
-          <span style="animation: pulse 1s infinite;">🔥</span> CodeMareFi Tavsiyesi
+          <i class="fa-solid fa-fire" style="animation: pulse 1s infinite; color: #e60000; margin-right: 5px;"></i> CodeMareFi Tavsiyesi
         </strong>
         <p style="color: #ccc; margin-top: 10px;">Web siteniz ne kadar az dış bağımlılığa sahip olursa o kadar stabil çalışır. AdSense onayı için Google, hatasız çalışan ve kullanıcıya en hızlı tepkiyi veren statik veya iyi yapılandırılmış sunucu taraflı siteleri tercih eder.</p>
       </div>
