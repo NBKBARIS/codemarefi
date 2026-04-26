@@ -49,7 +49,7 @@ client.on('ready', () => {
 client.login('SENIN_BOT_TOKEN_BURAYA');</code></pre>
 
       <div style="background: #2b1d1d; border: 1px solid #e60000; padding: 15px; border-radius: 4px; margin-top: 20px;">
-        <i class="fa-solid fa-triangle-exclamation" style="font-size: 20px; display: inline-block; animation: pulse 1.5s infinite; color: #e60000;"></i>
+        <img src="https://media.giphy.com/media/26tn33aiTi1jIGsLu/giphy.gif" alt="warning" style="width: 32px; height: 32px; display: inline-block; vertical-align: middle; margin-right: 10px; border-radius: 4px;" />
         <strong style="color: #e60000;">ÖNEMLİ UYARI:</strong> Bot token'ınızı kesinlikle kimseyle paylaşmayın ve GitHub gibi açık platformlara yüklemeyin.
       </div>
       
@@ -130,7 +130,7 @@ console.log(siteAdi + " sitemize hoş geldiniz!");</code></pre>
       <p>ES6 (ECMAScript 2015) standartlarıyla birlikte gelen Arrow Function yapıları, kodlarımızı çok daha sade ve okunabilir hale getirdi.</p>
 
       <div style="display: flex; gap: 15px; margin-top: 30px; align-items: center; background: #1a1a1a; padding: 15px; border-radius: 6px;">
-        <i class="fa-solid fa-rocket" style="font-size: 30px; animation: bounce 3s infinite; color: #e60000;"></i>
+        <img src="https://media.giphy.com/media/3oCozeQzR9zxyA2Fm8/giphy.gif" alt="rocket" style="width: 48px; height: 48px; border-radius: 8px;" />
         <div>
           <strong style="color: #fff;">Hemen Başla!</strong>
           <p style="color: #aaa; margin: 5px 0 0 0; font-size: 14px;">Tarayıcınızın F12 tuşuna basıp "Console" sekmesine geçerek kendi JavaScript kodlarınızı anında deneyebilirsiniz.</p>
@@ -171,7 +171,7 @@ export async function generateStaticParams() {
 
       <div style="background: rgba(230, 0, 0, 0.1); border: 1px solid #e60000; padding: 15px; border-radius: 4px; margin-top: 25px;">
         <strong style="color: #e60000; display: flex; align-items: center; gap: 8px;">
-          <i class="fa-solid fa-fire" style="animation: pulse 1s infinite; color: #e60000; margin-right: 5px;"></i> CodeMareFi Tavsiyesi
+          <img src="https://media.giphy.com/media/3o6ZsW4XzMcebhkU2k/giphy.gif" alt="fire" style="width: 24px; height: 24px; border-radius: 4px;" /> CodeMareFi Tavsiyesi
         </strong>
         <p style="color: #ccc; margin-top: 10px;">Web siteniz ne kadar az dış bağımlılığa sahip olursa o kadar stabil çalışır. AdSense onayı için Google, hatasız çalışan ve kullanıcıya en hızlı tepkiyi veren statik veya iyi yapılandırılmış sunucu taraflı siteleri tercih eder.</p>
       </div>
