@@ -15,6 +15,8 @@ export const metadata: Metadata = {
   },
 };
 
+import Preloader from "./components/Preloader";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -29,6 +31,7 @@ export default function RootLayout({
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
       </head>
       <body style={{ fontFamily: "'Outfit', Arial, sans-serif" }}>
+        <Preloader />
         <Navbar />
         <main>{children}</main>
         <Footer />
