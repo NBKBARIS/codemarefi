@@ -24,8 +24,8 @@ export const localPosts: LocalPost[] = [
     commentCount: 15,
     content: `
       <div style="background: rgba(88, 101, 242, 0.1); border-left: 4px solid #5865F2; padding: 15px; margin-bottom: 20px; border-radius: 4px;">
-        <i class="fa-solid fa-robot" style="font-size: 24px; display: inline-block; animation: bounce 2s infinite; color: #5865F2;"></i>
-        <strong style="color: #5865F2; font-size: 18px;">Hoş Geldiniz!</strong> 
+        <img src="https://cdn3.emoji.gg/emojis/3304_pepe_dance.gif" alt="pepe" style="width: 48px; height: 48px; display: inline-block; vertical-align: middle; margin-right: 10px;" />
+        <strong style="color: #5865F2; font-size: 18px; vertical-align: middle;">Hoş Geldiniz!</strong> 
         <p style="margin-top: 10px; color: #ccc;">2026 yılı itibarıyla Discord bot geliştirmede kullanılan en son teknolojiler, yeni Node.js sürümleri ve discord.js v15 yapısını adım adım inceliyoruz.</p>
       </div>
 
