@@ -2,8 +2,9 @@ import { fetchPostById, formatDate } from '../../lib/blogger';
 import Sidebar from '../../components/Sidebar';
 import Comments from '../../components/Comments';
 
-export default async function PostPage({ params }: { params: { id: string } }) {
+export default async function PostPage(props: { params: Promise<{ id: string }> }) {
   // Use await directly on params if Next.js > 15 warns about sync access, but here we assume generic App router
+  const params = await props.params;
   const postId = params.id;
   const post = await fetchPostById(postId);
 

@@ -65,7 +65,16 @@ function parsePost(entry: any): BlogPost {
 }
 
 function apiUrl(params: Record<string, string>): string {
-  const base = typeof window !== 'undefined' ? '' : 'http://localhost:3000';
+  let base = '';
+  if (typeof window === 'undefined') {
+    if (process.env.NEXT_PUBLIC_SITE_URL) {
+      base = process.env.NEXT_PUBLIC_SITE_URL;
+    } else if (process.env.VERCEL_URL) {
+      base = `https://${process.env.VERCEL_URL}`;
+    } else {
+      base = 'http://localhost:3000';
+    }
+  }
   const qs = new URLSearchParams(params).toString();
   return `${base}/api/posts?${qs}`;
 }
