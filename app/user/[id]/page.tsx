@@ -92,7 +92,11 @@ export default function PublicProfilePage() {
         <h1 style={{ fontSize: '32px', marginBottom: '5px', color: '#e60000', fontWeight: '800' }}>{profile.full_name}</h1>
         <p style={{ color: '#888', fontSize: '14px', marginBottom: '30px' }}>
           <i className="fa-solid fa-calendar-days" style={{ marginRight: '8px' }}></i>
-          {new Date(profile.created_at).toLocaleDateString('tr-TR', { day: 'numeric', month: 'long', year: 'numeric' })} tarihinde katıldı
+          {profile.created_at && !isNaN(new Date(profile.created_at).getTime()) ? (
+            new Date(profile.created_at).toLocaleDateString('tr-TR', { day: 'numeric', month: 'long', year: 'numeric' })
+          ) : (
+            'Yeni'
+          )} tarihinde katıldı
         </p>
 
         {/* Stats Grid */}
@@ -120,7 +124,7 @@ export default function PublicProfilePage() {
                 <div key={comment.id} style={{ background: '#111', padding: '15px', borderRadius: '10px', borderLeft: '4px solid #e60000' }}>
                   <div style={{ fontSize: '11px', color: '#e60000', marginBottom: '5px' }}>
                     <i className="fa-solid fa-comment" style={{ marginRight: '5px' }}></i>
-                    Yorum Yaptı • {new Date(comment.created_at).toLocaleDateString('tr-TR')}
+                    Yorum Yaptı • {comment.created_at && !isNaN(new Date(comment.created_at).getTime()) ? new Date(comment.created_at).toLocaleDateString('tr-TR') : 'Bilinmiyor'}
                   </div>
                   <div style={{ fontSize: '14px', color: '#ddd', fontStyle: 'italic', marginBottom: '10px' }}>
                     "{comment.content}"

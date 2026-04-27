@@ -12,6 +12,223 @@ function formatCommentDate(dateStr: string) {
   return `${day} ${month} ${year} ${time}`;
 }
 
+function buildTree(flatComments: CommentType[]) {
+  const map = new Map<string, CommentType>();
+  const roots: CommentType[] = [];
+  flatComments.forEach(c => map.set(c.id, { ...c, replies: [] }));
+  flatComments.forEach(c => {
+    if (c.parent_id) {
+      const parent = map.get(c.parent_id);
+      if (parent) parent.replies!.push(map.get(c.id)!);
+    } else {
+      roots.push(map.get(c.id)!);
+    }
+  });
+  return roots;
+}
+
+const CommentNode = ({ 
+  comment, 
+  isReply = false, 
+  authorName, 
+  editingId, 
+  setEditingId, 
+  editContent, 
+  setEditContent, 
+  handleUpdate, 
+  handleDelete, 
+  setReplyingTo,
+  profile
+}: { 
+  comment: CommentType, 
+  isReply?: boolean,
+  authorName: string,
+  editingId: string | null,
+  setEditingId: (id: string | null) => void,
+  editContent: string,
+  setEditContent: (val: string) => void,
+  handleUpdate: (id: string) => void,
+  handleDelete: (id: string) => void,
+  setReplyingTo: (id: string | null) => void,
+  profile: any
+}) => {
+  const isAdminAuthor = comment.role === 'admin';
+  const isModAuthor = comment.role === 'mod';
+  const isMemberAuthor = comment.role === 'member' || (!isAdminAuthor && !isModAuthor && comment.role !== 'guest');
+  const isEditing = editingId === comment.id;
+  const isGlobalAdmin = profile?.role === 'admin';
+
+  return (
+    <div style={{ marginBottom: '15px', marginLeft: isReply ? '45px' : '0' }}>
+      <div style={{ display: 'flex', gap: '15px' }}>
+        <div style={{ flexShrink: 0 }}>
+        <Link 
+          href={comment.user_id ? `/user/${comment.user_id}` : '#'} 
+          style={{ 
+            cursor: comment.user_id ? 'pointer' : 'default',
+            transition: 'transform 0.2s',
+            display: 'flex',
+            alignItems: 'flex-start'
+          }}
+          onMouseEnter={(e) => comment.user_id && (e.currentTarget.style.transform = 'scale(1.05)')}
+          onMouseLeave={(e) => comment.user_id && (e.currentTarget.style.transform = 'scale(1)')}
+        >
+          <img 
+            src={comment.avatar_url || 'https://api.dicebear.com/7.x/avataaars/svg?seed=Felix'} 
+            alt={comment.author_name} 
+            style={{ width: '42px', height: '42px', borderRadius: '50%', objectFit: 'cover', border: `2px solid ${isAdminAuthor ? '#e60000' : (isModAuthor ? '#2ea44f' : (isMemberAuthor ? '#00d2ff' : '#444'))}` }} 
+          />
+        </Link>
+        </div>
+
+        <div style={{ flexGrow: 1 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px', flexWrap: 'wrap' }}>
+              <Link 
+                href={comment.user_id ? `/user/${comment.user_id}` : '#'}
+                className="tooltip-container" 
+                style={{ 
+                  fontWeight: 'bold', 
+                  fontSize: '14px', 
+                  color: isAdminAuthor ? '#e60000' : (isModAuthor ? '#2ea44f' : (isMemberAuthor ? '#00d2ff' : '#ddd')), 
+                  cursor: comment.user_id ? 'pointer' : 'default',
+                  textDecoration: 'none',
+                  transition: 'color 0.2s'
+                }}
+                onMouseEnter={(e) => comment.user_id && (e.currentTarget.style.color = '#fff')}
+                onMouseLeave={(e) => comment.user_id && (e.currentTarget.style.color = isAdminAuthor ? '#e60000' : (isModAuthor ? '#2ea44f' : (isMemberAuthor ? '#00d2ff' : '#ddd')))}
+              >
+                {comment.author_name}
+                <span className="tooltip-text" style={{ width: '100px', marginLeft: '-50px' }}>
+                  {isAdminAuthor ? 'Sistem Yöneticisi' : (isModAuthor ? 'Moderatör' : (isMemberAuthor ? 'Onaylı Üye' : 'Ziyaretçi'))}
+                </span>
+              </Link>
+
+              {isAdminAuthor && (
+                <span className="tooltip-container" style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', cursor: 'default', position: 'relative' }}>
+                  <span style={{ background: '#e60000', color: 'white', fontSize: '10px', padding: '1px 4px', borderRadius: '2px', fontWeight: 'bold' }}>Yönetici</span>
+                  <i className="fa-solid fa-crown" style={{ color: '#ffd700', fontSize: '12px' }}></i>
+                  <span className="tooltip-text">Yönetici</span>
+                </span>
+              )}
+              {isModAuthor && (
+                <span className="tooltip-container" style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', cursor: 'default', position: 'relative' }}>
+                  <span style={{ background: '#2ea44f', color: 'white', fontSize: '10px', padding: '1px 4px', borderRadius: '2px', fontWeight: 'bold' }}>Moderatör</span>
+                  <i className="fa-solid fa-shield-halved" style={{ color: '#2ea44f', fontSize: '12px' }}></i>
+                  <span className="tooltip-text">Moderatör</span>
+                </span>
+              )}
+              {isMemberAuthor && (
+                <span className="tooltip-container" style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', cursor: 'default', position: 'relative' }}>
+                  <img 
+                    src="https://cdn3.emoji.gg/emojis/9440-verified.png" 
+                    alt="Üye" 
+                    style={{ width: '16px', height: '16px', objectFit: 'contain' }} 
+                    onError={(e) => {
+                      e.currentTarget.style.display = 'none';
+                      const next = e.currentTarget.nextElementSibling as HTMLElement;
+                      if (next) next.style.display = 'inline-block';
+                    }}
+                  />
+                  <i className="fa-solid fa-circle-check" style={{ color: '#00d2ff', fontSize: '12px', display: 'none' }}></i>
+                  <span className="tooltip-text">Üye</span>
+                </span>
+              )}
+
+              <span style={{ color: '#666', fontSize: '12px' }}>
+                <i className="fa-regular fa-clock" style={{ marginRight: '4px' }}></i> {formatCommentDate(comment.created_at)}
+              </span>
+           </div>
+
+           <div style={{ color: '#bbb', fontSize: '14px', lineHeight: '1.5', marginBottom: '8px', wordBreak: 'break-word' }}>
+              {isEditing ? (
+                <div style={{ marginTop: '10px' }}>
+                  <textarea 
+                    value={editContent}
+                    onChange={(e) => setEditContent(e.target.value)}
+                    style={{ width: '100%', padding: '10px', background: '#222', border: '1px solid #444', color: '#fff', borderRadius: '4px', marginBottom: '8px' }}
+                  />
+                  <div style={{ display: 'flex', gap: '10px' }}>
+                    <button 
+                      onClick={() => handleUpdate(comment.id)}
+                      style={{ background: '#2ea44f', color: '#fff', border: 'none', padding: '5px 15px', borderRadius: '4px', fontSize: '12px', cursor: 'pointer' }}
+                    >
+                      Kaydet
+                    </button>
+                    <button 
+                      onClick={() => setEditingId(null)}
+                      style={{ background: '#444', color: '#fff', border: 'none', padding: '5px 15px', borderRadius: '4px', fontSize: '12px', cursor: 'pointer' }}
+                    >
+                      Vazgeç
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                comment.content
+              )}
+           </div>
+
+            <div style={{ display: 'flex', gap: '15px', alignItems: 'center', marginTop: '10px', padding: '5px 0' }}>
+              {!isEditing && (
+                <>
+                  <button 
+                    onClick={() => setReplyingTo(comment.id)} 
+                    style={{ background: 'transparent', border: 'none', color: '#ff4d4d', fontSize: '13px', fontWeight: 'bold', cursor: 'pointer', padding: '5px 0' }}
+                  >
+                    <i className="fa-solid fa-reply"></i> Yanıtla
+                  </button>
+
+                  {/* DÜZENLE - İsim tutuyorsa göster */}
+                  {(comment.author_name === authorName) && (
+                    <button 
+                      onClick={() => {
+                        setEditingId(comment.id);
+                        setEditContent(comment.content);
+                      }}
+                      style={{ background: 'none', border: 'none', color: '#ffffff', fontSize: '13px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '5px' }}
+                    >
+                      <i className="fa-solid fa-pen-to-square"></i> Düzenle
+                    </button>
+                  )}
+
+                  {/* SİL - İsim tutuyorsa veya Adminse göster */}
+                  {(isGlobalAdmin || comment.author_name === authorName) && (
+                    <button 
+                      onClick={() => handleDelete(comment.id)}
+                      style={{ background: 'none', border: 'none', color: '#aaaaaa', fontSize: '13px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '5px' }}
+                    >
+                      <i className="fa-solid fa-trash-can"></i> Sil
+                    </button>
+                  )}
+                </>
+              )}
+            </div>
+
+           {comment.replies && comment.replies.length > 0 && (
+             <div style={{ marginTop: '15px', borderLeft: '2px solid #333', paddingTop: '10px' }}>
+               {comment.replies.map(reply => (
+                  <CommentNode 
+                    key={reply.id} 
+                    comment={reply} 
+                    isReply={true} 
+                    authorName={authorName}
+                    editingId={editingId}
+                    setEditingId={setEditingId}
+                    editContent={editContent}
+                    setEditContent={setEditContent}
+                    handleUpdate={handleUpdate}
+                    handleDelete={handleDelete}
+                    setReplyingTo={setReplyingTo}
+                    profile={profile}
+                  />
+               ))}
+             </div>
+           )}
+        </div>
+      </div>
+    </div>
+  );
+};
+
 export default function Comments({ postId }: { postId: string }) {
   const [comments, setComments] = useState<CommentType[]>([]);
   const [loading, setLoading] = useState(true);
@@ -75,20 +292,9 @@ export default function Comments({ postId }: { postId: string }) {
     setLoading(false);
   }
 
-  function buildTree(flatComments: CommentType[]) {
-    const map = new Map<string, CommentType>();
-    const roots: CommentType[] = [];
-    flatComments.forEach(c => map.set(c.id, { ...c, replies: [] }));
-    flatComments.forEach(c => {
-      if (c.parent_id) {
-        const parent = map.get(c.parent_id);
-        if (parent) parent.replies!.push(map.get(c.id)!);
-      } else {
-        roots.push(map.get(c.id)!);
-      }
-    });
-    return roots;
   }
+
+  async function handleSubmit(e: React.FormEvent) {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -167,182 +373,7 @@ export default function Comments({ postId }: { postId: string }) {
     }
   };
 
-  const CommentNode = ({ comment, isReply = false }: { comment: CommentType, isReply?: boolean }) => {
-    // Debug logları (F12 Console'dan bakabilirsin kanka)
-    if (comment) {
-      console.log(`Checking Comment ${comment?.id}: author=${comment?.author_name}, currentAuthor=${authorName}`);
-    }
-    
-    const isAdminAuthor = comment.role === 'admin';
-    const isModAuthor = comment.role === 'mod';
-    const isMemberAuthor = comment.role === 'member' || (!isAdminAuthor && !isModAuthor && comment.role !== 'guest');
-    const isEditing = editingId === comment.id;
-    const isGlobalAdmin = profile?.role === 'admin';
 
-    return (
-      <div style={{ marginBottom: '15px', marginLeft: isReply ? '45px' : '0' }}>
-        <div style={{ display: 'flex', gap: '15px' }}>
-          <div style={{ flexShrink: 0 }}>
-          <Link 
-            href={comment.user_id ? `/user/${comment.user_id}` : '#'} 
-            style={{ 
-              cursor: comment.user_id ? 'pointer' : 'default',
-              transition: 'transform 0.2s',
-              display: 'flex',
-              alignItems: 'flex-start'
-            }}
-            onMouseEnter={(e) => comment.user_id && (e.currentTarget.style.transform = 'scale(1.05)')}
-            onMouseLeave={(e) => comment.user_id && (e.currentTarget.style.transform = 'scale(1)')}
-          >
-            <img 
-              src={comment.avatar_url || 'https://api.dicebear.com/7.x/avataaars/svg?seed=Felix'} 
-              alt={comment.author_name} 
-              style={{ width: '42px', height: '42px', borderRadius: '50%', objectFit: 'cover', border: `2px solid ${isAdminAuthor ? '#e60000' : (isModAuthor ? '#2ea44f' : (isMemberAuthor ? '#00d2ff' : '#444'))}` }} 
-            />
-          </Link>
-          </div>
-
-          <div style={{ flexGrow: 1 }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px', flexWrap: 'wrap' }}>
-                <Link 
-                  href={comment.user_id ? `/user/${comment.user_id}` : '#'}
-                  className="tooltip-container" 
-                  style={{ 
-                    fontWeight: 'bold', 
-                    fontSize: '14px', 
-                    color: isAdminAuthor ? '#e60000' : (isModAuthor ? '#2ea44f' : (isMemberAuthor ? '#00d2ff' : '#ddd')), 
-                    cursor: comment.user_id ? 'pointer' : 'default',
-                    textDecoration: 'none',
-                    transition: 'color 0.2s'
-                  }}
-                  onMouseEnter={(e) => comment.user_id && (e.currentTarget.style.color = '#fff')}
-                  onMouseLeave={(e) => comment.user_id && (e.currentTarget.style.color = isAdminAuthor ? '#e60000' : (isModAuthor ? '#2ea44f' : (isMemberAuthor ? '#00d2ff' : '#ddd')))}
-                >
-                  {comment.author_name}
-                  <span className="tooltip-text" style={{ width: '100px', marginLeft: '-50px' }}>
-                    {isAdminAuthor ? 'Sistem Yöneticisi' : (isModAuthor ? 'Moderatör' : (isMemberAuthor ? 'Onaylı Üye' : 'Ziyaretçi'))}
-                  </span>
-                </Link>
-
-                {isAdminAuthor && (
-                  <span className="tooltip-container" style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', cursor: 'default', position: 'relative' }}>
-                    <span style={{ background: '#e60000', color: 'white', fontSize: '10px', padding: '1px 4px', borderRadius: '2px', fontWeight: 'bold' }}>Yönetici</span>
-                    <i className="fa-solid fa-crown" style={{ color: '#ffd700', fontSize: '12px' }}></i>
-                    <span className="tooltip-text">Yönetici</span>
-                  </span>
-                )}
-                {isModAuthor && (
-                  <span className="tooltip-container" style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', cursor: 'default', position: 'relative' }}>
-                    <span style={{ background: '#2ea44f', color: 'white', fontSize: '10px', padding: '1px 4px', borderRadius: '2px', fontWeight: 'bold' }}>Moderatör</span>
-                    <i className="fa-solid fa-shield-halved" style={{ color: '#2ea44f', fontSize: '12px' }}></i>
-                    <span className="tooltip-text">Moderatör</span>
-                  </span>
-                )}
-                {isMemberAuthor && (
-                  <span className="tooltip-container" style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', cursor: 'default', position: 'relative' }}>
-                    <img 
-                      src="https://cdn3.emoji.gg/emojis/9440-verified.png" 
-                      alt="Üye" 
-                      style={{ width: '16px', height: '16px', objectFit: 'contain' }} 
-                      onError={(e) => {
-                        e.currentTarget.style.display = 'none';
-                        const next = e.currentTarget.nextElementSibling as HTMLElement;
-                        if (next) next.style.display = 'inline-block';
-                      }}
-                    />
-                    <i className="fa-solid fa-circle-check" style={{ color: '#00d2ff', fontSize: '12px', display: 'none' }}></i>
-                    <span className="tooltip-text">Üye</span>
-                  </span>
-                )}
-                {isAdminAuthor && (
-                  <span className="tooltip-container" style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', cursor: 'default', position: 'relative' }}>
-                    <span style={{ background: '#e60000', color: 'white', fontSize: '10px', padding: '1px 4px', borderRadius: '2px', fontWeight: 'bold' }}>Yönetici</span>
-                    <i className="fa-solid fa-crown" style={{ color: '#ffd700', fontSize: '12px' }}></i>
-                    <span className="tooltip-text">Yönetici</span>
-                  </span>
-                )}
-
-                <span style={{ color: '#666', fontSize: '12px' }}>
-                  <i className="fa-regular fa-clock" style={{ marginRight: '4px' }}></i> {formatCommentDate(comment.created_at)}
-                </span>
-             </div>
-
-             <div style={{ color: '#bbb', fontSize: '14px', lineHeight: '1.5', marginBottom: '8px', wordBreak: 'break-word' }}>
-                {isEditing ? (
-                  <div style={{ marginTop: '10px' }}>
-                    <textarea 
-                      value={editContent}
-                      onChange={(e) => setEditContent(e.target.value)}
-                      style={{ width: '100%', padding: '10px', background: '#222', border: '1px solid #444', color: '#fff', borderRadius: '4px', marginBottom: '8px' }}
-                    />
-                    <div style={{ display: 'flex', gap: '10px' }}>
-                      <button 
-                        onClick={() => handleUpdate(comment.id)}
-                        style={{ background: '#2ea44f', color: '#fff', border: 'none', padding: '5px 15px', borderRadius: '4px', fontSize: '12px', cursor: 'pointer' }}
-                      >
-                        Kaydet
-                      </button>
-                      <button 
-                        onClick={() => setEditingId(null)}
-                        style={{ background: '#444', color: '#fff', border: 'none', padding: '5px 15px', borderRadius: '4px', fontSize: '12px', cursor: 'pointer' }}
-                      >
-                        Vazgeç
-                      </button>
-                    </div>
-                  </div>
-                ) : (
-                  comment.content
-                )}
-             </div>
-
-              <div style={{ display: 'flex', gap: '15px', alignItems: 'center', marginTop: '10px', padding: '5px 0' }}>
-                {!isEditing && (
-                  <>
-                    <button 
-                      onClick={() => setReplyingTo(comment.id)} 
-                      style={{ background: 'transparent', border: 'none', color: '#ff4d4d', fontSize: '13px', fontWeight: 'bold', cursor: 'pointer', padding: '5px 0' }}
-                    >
-                      <i className="fa-solid fa-reply"></i> Yanıtla
-                    </button>
-
-                    {/* DÜZENLE - İsim tutuyorsa göster */}
-                    {(comment.author_name === authorName) && (
-                      <button 
-                        onClick={() => {
-                          setEditingId(comment.id);
-                          setEditContent(comment.content);
-                        }}
-                        style={{ background: 'none', border: 'none', color: '#ffffff', fontSize: '13px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '5px' }}
-                      >
-                        <i className="fa-solid fa-pen-to-square"></i> Düzenle
-                      </button>
-                    )}
-
-                    {/* SİL - İsim tutuyorsa veya Adminse göster */}
-                    {(isGlobalAdmin || comment.author_name === authorName) && (
-                      <button 
-                        onClick={() => handleDelete(comment.id)}
-                        style={{ background: 'none', border: 'none', color: '#aaaaaa', fontSize: '13px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '5px' }}
-                      >
-                        <i className="fa-solid fa-trash-can"></i> Sil
-                      </button>
-                    )}
-                  </>
-                )}
-              </div>
-
-             {comment.replies && comment.replies.length > 0 && (
-               <div style={{ marginTop: '15px', borderLeft: '2px solid #333', paddingTop: '10px' }}>
-                 {comment.replies.map(reply => (
-                    <CommentNode key={reply.id} comment={reply} isReply={true} />
-                 ))}
-               </div>
-             )}
-          </div>
-        </div>
-      </div>
-    );
-  };
 
   return (
     <div style={{ marginTop: '40px', borderTop: '2px solid #e60000', paddingTop: '20px' }}>
@@ -451,7 +482,19 @@ export default function Comments({ postId }: { postId: string }) {
       ) : (
         <div>
           {comments.map(comment => (
-            <CommentNode key={comment.id} comment={comment} />
+            <CommentNode 
+              key={comment.id} 
+              comment={comment} 
+              authorName={authorName}
+              editingId={editingId}
+              setEditingId={setEditingId}
+              editContent={editContent}
+              setEditContent={setEditContent}
+              handleUpdate={handleUpdate}
+              handleDelete={handleDelete}
+              setReplyingTo={setReplyingTo}
+              profile={profile}
+            />
           ))}
         </div>
       )}
