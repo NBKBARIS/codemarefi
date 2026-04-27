@@ -19,19 +19,12 @@ function SearchContent() {
   }, [searchParams]);
 
   useEffect(() => {
-    console.log('SearchContent: useEffect tetiklendi, query:', query);
-    if (!query) {
-      console.log('SearchContent: Query yok, arama yapılmadı.');
-      return;
-    }
+    if (!query) return;
     setLoading(true);
-    console.log('SearchContent: searchPosts çağrılıyor...');
     searchPosts(query).then(results => {
-      console.log('SearchContent: searchPosts sonuçları:', results);
       setPosts(results);
       setLoading(false);
-    }).catch(err => {
-      console.error('SearchContent: searchPosts hatası:', err);
+    }).catch(() => {
       setLoading(false);
     });
   }, [query]);

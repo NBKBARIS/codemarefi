@@ -177,9 +177,9 @@ export default function HomePage() {
             </div>
           </div>
 
-          {/* TABBED İÇERİK: Büyük sol + 4 yatay kart sağ */}
+          {/* TABBED ICERIK: Buyuk sol + 4 yatay kart sag */}
           {posts.length > 0 && (
-            <div style={{ display: 'grid', gridTemplateColumns: '60% 40%', height: '430px', marginBottom: '30px', gap: '15px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: '60% 40%', marginBottom: '30px', gap: '15px' }}>
               
               {/* SOL: Büyük Kart */}
               {posts[0] && (
@@ -197,9 +197,9 @@ export default function HomePage() {
                   onMouseEnter={e => e.currentTarget.style.transform = 'translateY(-2px)'}
                   onMouseLeave={e => e.currentTarget.style.transform = 'translateY(0)'}
                 >
-                  <div style={{ width: '100%', height: '65%', position: 'relative', background: '#000' }}>
+                  <div style={{ width: '100%', position: 'relative', background: '#000' }}>
                     {posts[0].thumbnail && (
-                      <img src={posts[0].thumbnail} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                      <img src={posts[0].thumbnail} alt="" style={{ width: '100%', display: 'block' }} />
                     )}
                   </div>
                   <div style={{ padding: '20px', flex: 1, display: 'flex', flexDirection: 'column' }}>
