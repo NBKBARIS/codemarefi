@@ -16,6 +16,14 @@ export default function HomePage() {
   const [sliderIdx, setSliderIdx] = useState(0);
   const [tickerIdx, setTickerIdx] = useState(0);
   const [tickerPaused, setTickerPaused] = useState(false);
+  const [bannerIdx, setBannerIdx] = useState(0);
+
+  const banners = [
+    { text: "TÜRKİYENİN EN BÜYÜK VE KALİTELİ DİSCORD BOT KOD PAYLAŞIM SİTESİ {CodeMareFi}", color: "#8cc63f", icon: "fa-solid fa-leaf" },
+    { text: "SİTEMİZE HOŞ GELDİNİZ! YENİ NESİL KOD PAYLAŞIM PLATFORMU", color: "#e60000", icon: "fa-solid fa-fire" },
+    { text: "BİLGİSAYAR, YAZILIM VE BOT KODLARI HAKKINDA HER ŞEY BURADA", color: "#00a8cc", icon: "fa-solid fa-code" },
+    { text: "DİSCORD SUNUCUMUZA KATILARAK BİZE DESTEK OLABİLİRSİNİZ", color: "#5865f2", icon: "fa-brands fa-discord" },
+  ];
 
   useEffect(() => {
     setLoading(true);
@@ -39,6 +47,12 @@ export default function HomePage() {
     const t = setInterval(() => setTickerIdx(i => (i + 1) % Math.min(posts.length, 8)), 4000);
     return () => clearInterval(t);
   }, [posts, tickerPaused]);
+
+  // Banner auto-advance
+  useEffect(() => {
+    const t = setInterval(() => setBannerIdx(i => (i + 1) % banners.length), 3500);
+    return () => clearInterval(t);
+  }, [banners.length]);
 
   const totalPages = Math.ceil(total / POSTS_PER_PAGE);
   const slider = posts[sliderIdx] || null;
@@ -148,10 +162,10 @@ export default function HomePage() {
       <div className="main-layout">
         <div>
 
-          {/* GREEN BANNER */}
-          <div style={{ background: '#8cc63f', padding: '12px 15px', color: '#fff', fontSize: '13px', display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '20px', borderRadius: '2px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-            <i className="fa-solid fa-leaf" style={{ fontSize: '14px' }}></i>
-            TÜRKİYENİN EN BÜYÜK VE KALİTELİ DİSCORD BOT KOD PAYLAŞIM SİTESİ &#123;CodeMareFi&#125;
+          {/* DİNAMİK ROTATING BANNER */}
+          <div style={{ background: banners[bannerIdx].color, padding: '12px 15px', color: '#fff', fontSize: '13px', display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '20px', borderRadius: '2px', textTransform: 'uppercase', letterSpacing: '0.5px', transition: 'background 0.5s ease' }}>
+            <i className={banners[bannerIdx].icon} style={{ fontSize: '14px' }}></i>
+            <span style={{ transition: 'opacity 0.3s ease', animation: 'fadeIn 0.5s' }} key={bannerIdx}>{banners[bannerIdx].text}</span>
           </div>
 
           {/* TABS */}
