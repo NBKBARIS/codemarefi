@@ -166,10 +166,11 @@ export default function Comments({ postId }: { postId: string }) {
   };
 
   const CommentNode = ({ comment, isReply = false }: { comment: CommentType, isReply?: boolean }) => {
-    const isAdmin = comment.role === 'admin';
-    const isMod = comment.role === 'mod';
-    const isMember = comment.role === 'member' || (!isAdmin && !isMod && comment.role !== 'guest');
+    const isAdminAuthor = comment.role === 'admin';
+    const isModAuthor = comment.role === 'mod';
+    const isMemberAuthor = comment.role === 'member' || (!isAdminAuthor && !isModAuthor && comment.role !== 'guest');
     const isEditing = editingId === comment.id;
+    const isGlobalAdmin = profile?.role === 'admin';
 
     return (
       <div style={{ marginBottom: '15px', marginLeft: isReply ? '45px' : '0' }}>
@@ -189,7 +190,7 @@ export default function Comments({ postId }: { postId: string }) {
             <img 
               src={comment.avatar_url || 'https://api.dicebear.com/7.x/avataaars/svg?seed=Felix'} 
               alt={comment.author_name} 
-              style={{ width: '42px', height: '42px', borderRadius: '50%', objectFit: 'cover', border: `2px solid ${isAdmin ? '#e60000' : (isMod ? '#2ea44f' : (isMember ? '#00d2ff' : '#444'))}` }} 
+              style={{ width: '42px', height: '42px', borderRadius: '50%', objectFit: 'cover', border: `2px solid ${isAdminAuthor ? '#e60000' : (isModAuthor ? '#2ea44f' : (isMemberAuthor ? '#00d2ff' : '#444'))}` }} 
             />
           </Link>
           </div>
@@ -202,35 +203,35 @@ export default function Comments({ postId }: { postId: string }) {
                   style={{ 
                     fontWeight: 'bold', 
                     fontSize: '14px', 
-                    color: isAdmin ? '#e60000' : (isMod ? '#2ea44f' : (isMember ? '#00d2ff' : '#ddd')), 
+                    color: isAdminAuthor ? '#e60000' : (isModAuthor ? '#2ea44f' : (isMemberAuthor ? '#00d2ff' : '#ddd')), 
                     cursor: comment.user_id ? 'pointer' : 'default',
                     textDecoration: 'none',
                     transition: 'color 0.2s'
                   }}
                   onMouseEnter={(e) => comment.user_id && (e.currentTarget.style.color = '#fff')}
-                  onMouseLeave={(e) => comment.user_id && (e.currentTarget.style.color = isAdmin ? '#e60000' : (isMod ? '#2ea44f' : (isMember ? '#00d2ff' : '#ddd')))}
+                  onMouseLeave={(e) => comment.user_id && (e.currentTarget.style.color = isAdminAuthor ? '#e60000' : (isModAuthor ? '#2ea44f' : (isMemberAuthor ? '#00d2ff' : '#ddd')))}
                 >
                   {comment.author_name}
                   <span className="tooltip-text" style={{ width: '100px', marginLeft: '-50px' }}>
-                    {isAdmin ? 'Sistem Yöneticisi' : (isMod ? 'Moderatör' : (isMember ? 'Onaylı Üye' : 'Ziyaretçi'))}
+                    {isAdminAuthor ? 'Sistem Yöneticisi' : (isModAuthor ? 'Moderatör' : (isMemberAuthor ? 'Onaylı Üye' : 'Ziyaretçi'))}
                   </span>
                 </Link>
 
-                {isAdmin && (
+                {isAdminAuthor && (
                   <span className="tooltip-container" style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', cursor: 'default', position: 'relative' }}>
                     <span style={{ background: '#e60000', color: 'white', fontSize: '10px', padding: '1px 4px', borderRadius: '2px', fontWeight: 'bold' }}>Yönetici</span>
                     <i className="fa-solid fa-crown" style={{ color: '#ffd700', fontSize: '12px' }}></i>
                     <span className="tooltip-text">Yönetici</span>
                   </span>
                 )}
-                {isMod && (
+                {isModAuthor && (
                   <span className="tooltip-container" style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', cursor: 'default', position: 'relative' }}>
                     <span style={{ background: '#2ea44f', color: 'white', fontSize: '10px', padding: '1px 4px', borderRadius: '2px', fontWeight: 'bold' }}>Moderatör</span>
                     <i className="fa-solid fa-shield-halved" style={{ color: '#2ea44f', fontSize: '12px' }}></i>
                     <span className="tooltip-text">Moderatör</span>
                   </span>
                 )}
-                {isMember && (
+                {isMemberAuthor && (
                   <span className="tooltip-container" style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', cursor: 'default', position: 'relative' }}>
                     <img 
                       src="https://cdn3.emoji.gg/emojis/9440-verified.png" 
@@ -246,7 +247,12 @@ export default function Comments({ postId }: { postId: string }) {
                     <span className="tooltip-text">Üye</span>
                   </span>
                 )}
-n>
+                {isAdminAuthor && (
+                  <span className="tooltip-container" style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', cursor: 'default', position: 'relative' }}>
+                    <span style={{ background: '#e60000', color: 'white', fontSize: '10px', padding: '1px 4px', borderRadius: '2px', fontWeight: 'bold' }}>Yönetici</span>
+                    <i className="fa-solid fa-crown" style={{ color: '#ffd700', fontSize: '12px' }}></i>
+                    <span className="tooltip-text">Yönetici</span>
+                  </span>
                 )}
 
                 <span style={{ color: '#666', fontSize: '12px' }}>
@@ -303,7 +309,7 @@ n>
                      </button>
                    )}
 
-                   {(isAdmin || (user && comment.user_id === user.id)) && (
+                   {(isGlobalAdmin || (user && comment.user_id === user.id)) && (
                      <button 
                        onClick={() => handleDelete(comment.id)}
                        style={{ background: 'none', border: 'none', color: '#666', fontSize: '12px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '5px', padding: '0' }}
