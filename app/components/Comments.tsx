@@ -116,7 +116,7 @@ const CommentNode = ({
               {isMemberAuthor && (
                 <span className="tooltip-container" style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', cursor: 'default', position: 'relative' }}>
                   <img 
-                    src="https://cdn3.emoji.gg/emojis/9440-verified.png" 
+                    src="https://cdn3.emoji.gg/emojis/249130-member.png" 
                     alt="Üye" 
                     style={{ width: '16px', height: '16px', objectFit: 'contain' }} 
                     onError={(e) => {
