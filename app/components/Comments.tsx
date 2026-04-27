@@ -168,7 +168,9 @@ export default function Comments({ postId }: { postId: string }) {
 
   const CommentNode = ({ comment, isReply = false }: { comment: CommentType, isReply?: boolean }) => {
     // Debug logları (F12 Console'dan bakabilirsin kanka)
-    console.log(`Checking Comment ${comment.id}: author=${comment.author_name}, currentAuthor=${authorName}`);
+    if (comment) {
+      console.log(`Checking Comment ${comment?.id}: author=${comment?.author_name}, currentAuthor=${authorName}`);
+    }
     
     const isAdminAuthor = comment.role === 'admin';
     const isModAuthor = comment.role === 'mod';
