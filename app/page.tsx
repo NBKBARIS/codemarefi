@@ -67,10 +67,7 @@ export default function HomePage() {
 
   return (
     <>
-      {/* ═══════════════════════════════════════
-          SON YAZILAR - üst yatay thumbnail şerit
-          (orijinalde navbar altında 5 kart yan yana)
-      ═══════════════════════════════════════ */}
+      {/* SON YAZILAR - ust yatay thumbnail serit */}
       {posts.length > 0 && (
         <div style={{ background: '#111', borderBottom: '1px solid #222' }}>
           <div style={{ maxWidth: '1300px', margin: '0 auto', display: 'flex', overflow: 'hidden' }}>
@@ -120,9 +117,7 @@ export default function HomePage() {
         </div>
       )}
 
-      {/* ═══════════════════════════════════════
-          SON YAZILAR TICKER (tek satır cycling)
-      ═══════════════════════════════════════ */}
+      {/* SON YAZILAR TICKER */}
       {tickerPosts.length > 0 && (
         <div style={{ background: '#141414', borderBottom: '1px solid #1e1e1e' }}>
           <div style={{ maxWidth: '1300px', margin: '0 auto' }}>
@@ -156,9 +151,7 @@ export default function HomePage() {
         </div>
       )}
 
-      {/* ═══════════════════════════════════════
-          ANA İÇERİK + SIDEBAR
-      ═══════════════════════════════════════ */}
+      {/* ANA ICERIK + SIDEBAR */}
       <div className="main-layout">
         <div>
 
@@ -265,13 +258,13 @@ export default function HomePage() {
           )}
 
 
-          {/* ── TRENDLER BAŞLIĞI ── */}
+          {/* TRENDLER BASLIGI */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '0 0 8px', marginBottom: '10px', borderBottom: '2px solid #e60000' }}>
             <i className="fa-solid fa-fire" style={{ color: '#e60000', fontSize: '15px' }}></i>
             <span style={{ fontSize: '13px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.5px', color: '#fff' }}>NBK BARIŞ Trendler</span>
           </div>
 
-          {/* ── YAZI LİSTESİ ── */}
+          {/* YAZI LISTESI */}
           {loading ? (
             <div className="loading-spinner"><div className="spinner"></div></div>
           ) : (
