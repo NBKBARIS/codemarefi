@@ -147,19 +147,26 @@ export default function Comments({ postId }: { postId: string }) {
 
           <div style={{ flexGrow: 1 }}>
              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px', flexWrap: 'wrap' }}>
-                <span style={{ fontWeight: 'bold', fontSize: '14px', color: isAdmin ? '#e60000' : (isMember ? '#00d2ff' : '#ddd') }}>
+                <span 
+                  title={isAdmin ? 'Sistem Yöneticisi' : (isMember ? 'Onaylı Üye' : 'Ziyaretçi')}
+                  style={{ fontWeight: 'bold', fontSize: '14px', color: isAdmin ? '#e60000' : (isMember ? '#00d2ff' : '#ddd'), cursor: 'default' }}
+                >
                   {comment.author_name}
                 </span>
 
                 {isAdmin && (
-                  <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                  <span title="Yönetici" style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', cursor: 'help' }}>
                     <span style={{ background: '#e60000', color: 'white', fontSize: '10px', padding: '1px 4px', borderRadius: '2px', fontWeight: 'bold' }}>Yönetici</span>
                     <i className="fa-solid fa-crown" style={{ color: '#ffd700', fontSize: '12px' }}></i>
                   </span>
                 )}
                 {isMember && (
-                  <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
-                    <i className="fa-solid fa-check-double" style={{ color: '#00d2ff', fontSize: '12px' }}></i>
+                  <span title="Üye" style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', cursor: 'help' }}>
+                    <img 
+                      src="https://emoji.gg/assets/emoji/5759-member.png" 
+                      alt="Üye" 
+                      style={{ width: '16px', height: '16px', objectFit: 'contain' }} 
+                    />
                   </span>
                 )}
 
