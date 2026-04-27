@@ -10,15 +10,19 @@ interface AuthModalProps {
 
 export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
   const [isLogin, setIsLogin] = useState(true);
+  const [step, setStep] = useState<'form' | 'verify'>('form');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [fullName, setFullName] = useState('');
+  const [otpCode, setOtpCode] = useState('');
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState({ type: '', text: '' });
 
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = 'hidden';
+      setStep('form');
+      setMessage({ type: '', text: '' });
     } else {
       document.body.style.overflow = 'unset';
     }
@@ -33,7 +37,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
     setMessage({ type: '', text: '' });
 
     // Validation
-    if (!isLogin) {
+    if (step === 'form' && !isLogin) {
       if (!email.toLowerCase().endsWith('@gmail.com')) {
         setMessage({ type: 'error', text: 'Yalnızca @gmail.com adresleri kabul edilmektedir!' });
         setLoading(false);
@@ -49,30 +53,53 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
     }
 
     try {
-      if (isLogin) {
-        const { error } = await supabase.auth.signInWithPassword({
-          email,
-          password,
-        });
-        if (error) throw error;
-        setMessage({ type: 'success', text: 'Sisteme Sızıldı! Giriş Yapılıyor...' });
-        setTimeout(() => {
-          onClose();
-          window.location.reload();
-        }, 1200);
-      } else {
-        const { error } = await supabase.auth.signUp({
-          email,
-          password,
-          options: {
-            data: {
-              full_name: fullName,
+      if (step === 'form') {
+        if (isLogin) {
+          const { error } = await supabase.auth.signInWithPassword({
+            email,
+            password,
+          });
+          if (error) throw error;
+          setMessage({ type: 'success', text: 'Sisteme Sızıldı! Giriş Yapılıyor...' });
+          setTimeout(() => {
+            onClose();
+            window.location.reload();
+          }, 1200);
+        } else {
+          const { data, error } = await supabase.auth.signUp({
+            email,
+            password,
+            options: {
+              data: {
+                full_name: fullName,
+              },
             },
-          },
+          });
+          if (error) throw error;
+          
+          if (data.user && data.session === null) {
+            // Verification required
+            setStep('verify');
+            setMessage({ type: 'success', text: 'Gmail adresine 6 haneli doğrulama kodu gönderildi!' });
+          } else {
+            setMessage({ type: 'success', text: 'Kayıt Başarılı! Protokoller Hazır.' });
+            setTimeout(() => setIsLogin(true), 1500);
+          }
+        }
+      } else {
+        // Verification step
+        const { error } = await supabase.auth.verifyOtp({
+          email,
+          token: otpCode,
+          type: 'signup',
         });
         if (error) throw error;
-        setMessage({ type: 'success', text: 'Kayıt Başarılı! Protokoller Hazır.' });
-        setTimeout(() => setIsLogin(true), 1500);
+        
+        setMessage({ type: 'success', text: 'Kimlik Doğrulandı! Giriş yapabilirsiniz.' });
+        setTimeout(() => {
+          setIsLogin(true);
+          setStep('form');
+        }, 1500);
       }
     } catch (error: any) {
       setMessage({ type: 'error', text: error.message || 'Erişim Engellendi!' });
@@ -156,74 +183,105 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
           letterSpacing: '3px',
           textShadow: '2px 2px #e60000'
         }}>
-          {isLogin ? 'ERİŞİM ONAYLANDI' : 'KİMLİK OLUŞTUR'}
+          {step === 'verify' ? 'DOĞRULAMA' : (isLogin ? 'ERİŞİM ONAYLANDI' : 'KİMLİK OLUŞTUR')}
         </h2>
 
         <form onSubmit={handleAuth}>
-          {!isLogin && (
-            <div style={{ marginBottom: '20px' }}>
-              <label style={{ display: 'block', color: '#e60000', marginBottom: '8px', fontSize: '12px', fontWeight: 'bold', letterSpacing: '1px' }}>[ KULLANICI ADI ]</label>
+          {step === 'form' ? (
+            <>
+              {!isLogin && (
+                <div style={{ marginBottom: '20px' }}>
+                  <label style={{ display: 'block', color: '#e60000', marginBottom: '8px', fontSize: '12px', fontWeight: 'bold', letterSpacing: '1px' }}>[ KULLANICI ADI ]</label>
+                  <input 
+                    type="text" 
+                    value={fullName}
+                    onChange={e => setFullName(e.target.value)}
+                    required
+                    placeholder="Hacker Adı / Nick"
+                    style={{
+                      width: '100%',
+                      padding: '12px 15px',
+                      background: '#111',
+                      border: '1px solid #333',
+                      borderLeft: '4px solid #e60000',
+                      color: '#fff',
+                      outline: 'none',
+                      fontFamily: 'monospace'
+                    }}
+                  />
+                </div>
+              )}
+
+              <div style={{ marginBottom: '20px' }}>
+                <label style={{ display: 'block', color: '#e60000', marginBottom: '8px', fontSize: '12px', fontWeight: 'bold', letterSpacing: '1px' }}>[ E-POSTA ]</label>
+                <input 
+                  type="email" 
+                  value={email}
+                  onChange={e => setEmail(e.target.value)}
+                  required
+                  placeholder="user@codemarefi.com"
+                  style={{
+                    width: '100%',
+                    padding: '12px 15px',
+                    background: '#111',
+                    border: '1px solid #333',
+                    borderLeft: '4px solid #e60000',
+                    color: '#fff',
+                    outline: 'none',
+                    fontFamily: 'monospace'
+                  }}
+                />
+              </div>
+
+              <div style={{ marginBottom: '30px' }}>
+                <label style={{ display: 'block', color: '#e60000', marginBottom: '8px', fontSize: '12px', fontWeight: 'bold', letterSpacing: '1px' }}>[ ŞİFRE ]</label>
+                <input 
+                  type="password" 
+                  value={password}
+                  onChange={e => setPassword(e.target.value)}
+                  required
+                  placeholder="********"
+                  style={{
+                    width: '100%',
+                    padding: '12px 15px',
+                    background: '#111',
+                    border: '1px solid #333',
+                    borderLeft: '4px solid #e60000',
+                    color: '#fff',
+                    outline: 'none',
+                    fontFamily: 'monospace'
+                  }}
+                />
+              </div>
+            </>
+          ) : (
+            <div style={{ marginBottom: '30px' }}>
+              <label style={{ display: 'block', color: '#e60000', marginBottom: '8px', fontSize: '12px', fontWeight: 'bold', letterSpacing: '1px' }}>[ DOĞRULAMA KODU ]</label>
               <input 
                 type="text" 
-                value={fullName}
-                onChange={e => setFullName(e.target.value)}
+                value={otpCode}
+                onChange={e => setOtpCode(e.target.value)}
                 required
-                placeholder="Hacker Adı / Nick"
+                placeholder="6 Haneli Kod"
+                maxLength={6}
                 style={{
                   width: '100%',
-                  padding: '12px 15px',
+                  padding: '15px',
                   background: '#111',
-                  border: '1px solid #333',
-                  borderLeft: '4px solid #e60000',
+                  border: '1px solid #e60000',
                   color: '#fff',
                   outline: 'none',
-                  fontFamily: 'monospace'
+                  fontFamily: 'monospace',
+                  fontSize: '24px',
+                  textAlign: 'center',
+                  letterSpacing: '8px'
                 }}
               />
+              <p style={{ color: '#888', fontSize: '11px', marginTop: '10px', textAlign: 'center' }}>
+                {email} adresine gelen kodu buraya girin.
+              </p>
             </div>
           )}
-
-          <div style={{ marginBottom: '20px' }}>
-            <label style={{ display: 'block', color: '#e60000', marginBottom: '8px', fontSize: '12px', fontWeight: 'bold', letterSpacing: '1px' }}>[ E-POSTA ]</label>
-            <input 
-              type="email" 
-              value={email}
-              onChange={e => setEmail(e.target.value)}
-              required
-              placeholder="user@codemarefi.com"
-              style={{
-                width: '100%',
-                padding: '12px 15px',
-                background: '#111',
-                border: '1px solid #333',
-                borderLeft: '4px solid #e60000',
-                color: '#fff',
-                outline: 'none',
-                fontFamily: 'monospace'
-              }}
-            />
-          </div>
-
-          <div style={{ marginBottom: '30px' }}>
-            <label style={{ display: 'block', color: '#e60000', marginBottom: '8px', fontSize: '12px', fontWeight: 'bold', letterSpacing: '1px' }}>[ ŞİFRE ]</label>
-            <input 
-              type="password" 
-              value={password}
-              onChange={e => setPassword(e.target.value)}
-              required
-              placeholder="********"
-              style={{
-                width: '100%',
-                padding: '12px 15px',
-                background: '#111',
-                border: '1px solid #333',
-                borderLeft: '4px solid #e60000',
-                color: '#fff',
-                outline: 'none',
-                fontFamily: 'monospace'
-              }}
-            />
-          </div>
 
           {message.text && (
             <div style={{
@@ -261,24 +319,45 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
               transition: 'all 0.3s'
             }}
           >
-            {loading ? 'SIZILIYOR...' : (isLogin ? 'BAĞLAN' : 'KAYIT OL')}
+            {loading ? 'YÜKLENİYOR...' : (step === 'verify' ? 'DOĞRULA' : (isLogin ? 'BAĞLAN' : 'KAYIT OL'))}
           </button>
+          
+          {step === 'verify' && (
+            <button 
+              type="button"
+              onClick={() => setStep('form')}
+              style={{
+                width: '100%',
+                marginTop: '10px',
+                background: 'transparent',
+                border: 'none',
+                color: '#888',
+                fontSize: '12px',
+                cursor: 'pointer',
+                textDecoration: 'underline'
+              }}
+            >
+              Geri Dön
+            </button>
+          )}
         </form>
 
-        <p style={{ textAlign: 'center', marginTop: '25px', color: '#888', fontSize: '13px', fontFamily: 'monospace' }}>
-          {isLogin ? '// HESABIN YOK MU?' : '// ZATEN KAYITLI MISIN?'}
-          <button 
-            onClick={() => setIsLogin(!isLogin)}
-            style={{
-              background: 'none', border: 'none',
-              color: '#fff', cursor: 'pointer',
-              marginLeft: '8px', fontWeight: 'bold',
-              textDecoration: 'underline'
-            }}
-          >
-            {isLogin ? 'HESAP_OLUŞTUR' : 'GİRİŞ_YAP'}
-          </button>
-        </p>
+        {step === 'form' && (
+          <p style={{ textAlign: 'center', marginTop: '25px', color: '#888', fontSize: '13px', fontFamily: 'monospace' }}>
+            {isLogin ? '// HESABIN YOK MU?' : '// ZATEN KAYITLI MISIN?'}
+            <button 
+              onClick={() => setIsLogin(!isLogin)}
+              style={{
+                background: 'none', border: 'none',
+                color: '#fff', cursor: 'pointer',
+                marginLeft: '8px', fontWeight: 'bold',
+                textDecoration: 'underline'
+              }}
+            >
+              {isLogin ? 'HESAP_OLUŞTUR' : 'GİRİŞ_YAP'}
+            </button>
+          </p>
+        )}
       </div>
 
       <style>{`
