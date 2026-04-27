@@ -181,5 +181,41 @@ export async function generateStaticParams() {
         @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
       </style>
     `
+  },
+  {
+    id: "5",
+    title: "Discord Bot Client: Arayüz ile Kolayca Yönetmek",
+    slug: "discord-bot-client-arayuz",
+    thumbnail: "/discord-bot-banner.png",
+    author: "NBK BARIŞ",
+    published: "2026-04-22T15:00:00Z",
+    updated: "2026-04-22T15:00:00Z",
+    categories: ["Discord-Bot-Tanıtımı", "Projeler"],
+    commentCount: 55,
+    content: `
+      <div style="background: rgba(88, 101, 242, 0.1); border-left: 4px solid #5865F2; padding: 15px; margin-bottom: 20px; border-radius: 4px;">
+        <strong style="color: #5865F2; font-size: 18px; vertical-align: middle;">Botunuzu Görsel Olarak Yönetin!</strong> 
+        <p style="margin-top: 10px; color: #ccc;">Sürekli terminal ekranına bakmaktan sıkılmadınız mı? Artık Discord botlarınızı modern bir web arayüzü (Dashboard) üzerinden kontrol edebilirsiniz.</p>
+      </div>
+
+      <p>Bot komutlarını kapatıp açmak, veritabanı yedeği almak veya sunucularınızdaki logları takip etmek için Discord.js ile React/Next.js teknolojilerini birleştirerek harika admin panelleri geliştirebilirsiniz.</p>
+
+      <h3 style="color: #fff; margin-top: 25px;">API Tasarımı</h3>
+      <p>Öncelikle bot projemizde küçük bir Express sunucusu başlatıyoruz:</p>
+      <pre><code>const express = require('express');
+const app = express();
+
+app.get('/api/stats', (req, res) => {
+  res.json({
+    guilds: client.guilds.cache.size,
+    users: client.users.cache.size,
+    ping: client.ws.ping
+  });
+});
+
+app.listen(3000, () => console.log('Dashboard API aktif!'));</code></pre>
+
+      <p style="margin-top: 20px;">Bu basit API sayesinde web sitemizden botumuzun güncel istatistiklerini çekebilir ve dilediğimiz gibi arayüze yansıtabiliriz. Detaylı rehberimiz yakında sizlerle olacak.</p>
+    `
   }
 ];
