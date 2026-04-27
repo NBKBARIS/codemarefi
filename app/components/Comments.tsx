@@ -163,10 +163,16 @@ export default function Comments({ postId }: { postId: string }) {
                 {isMember && (
                   <span title="Üye" style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', cursor: 'help' }}>
                     <img 
-                      src="https://emoji.gg/assets/emoji/5759-member.png" 
+                      src="https://cdn3.emoji.gg/emojis/9440-verified.png" 
                       alt="Üye" 
                       style={{ width: '16px', height: '16px', objectFit: 'contain' }} 
+                      onError={(e) => {
+                        e.currentTarget.style.display = 'none';
+                        const next = e.currentTarget.nextElementSibling as HTMLElement;
+                        if (next) next.style.display = 'inline-block';
+                      }}
                     />
+                    <i className="fa-solid fa-circle-check" style={{ color: '#00d2ff', fontSize: '12px', display: 'none' }}></i>
                   </span>
                 )}
 
