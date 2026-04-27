@@ -212,43 +212,61 @@ export default function HomePage() {
                 )}
               </div>
 
-              {/* SAĞ: 2 tall kart yan yana (orijinalden birebir) */}
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2px' }}>
-                {posts.slice(1, 3).map((p, idx) => (
-                  <Link
-                    key={p.id}
-                    href={p.url}
-                    style={{
-                      display: 'block',
-                      position: 'relative',
-                      overflow: 'hidden',
-                      textDecoration: 'none',
-                      backgroundImage: p.thumbnail ? `url(${p.thumbnail})` : 'none',
-                      backgroundSize: 'cover',
-                      backgroundPosition: 'center',
-                      backgroundColor: '#111',
-                    }}
-                  >
-                    {/* Kategori label üstte */}
-                    <div style={{ position: 'absolute', top: 0, left: 0, right: 0, background: CAT_COLORS[idx % CAT_COLORS.length], padding: '5px 10px', zIndex: 2 }}>
-                      <span style={{ color: '#fff', fontSize: '11px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-                        {p.categories[0]?.replace(/-/g, ' ') || 'GENEL'}
-                      </span>
-                    </div>
-                    {/* Overlay */}
-                    <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(0,0,0,0.92) 0%, rgba(0,0,0,0.1) 60%, transparent 100%)', zIndex: 1 }}></div>
-                    {/* Content altta */}
-                    <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, padding: '10px', zIndex: 2 }}>
-                      <div style={{ color: '#fff', fontSize: '12px', fontWeight: 700, lineHeight: 1.3, display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical', overflow: 'hidden', textShadow: '1px 1px 2px #000', marginBottom: '5px' }}>
-                        {p.title}
+              {/* SAĞ: 4 küçük kart (2x2 grid) */}
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gridTemplateRows: '1fr 1fr', gap: '2px' }}>
+                {posts.slice(1, 5).map((p, idx) => {
+                  const colors = ['#7289da', '#f57c00', '#00a8cc', '#ffca28', '#2ea44f'];
+                  const catColor = colors[idx % colors.length];
+                  
+                  return (
+                    <Link
+                      key={p.id}
+                      href={p.url}
+                      style={{
+                        display: 'block',
+                        position: 'relative',
+                        overflow: 'hidden',
+                        textDecoration: 'none',
+                        backgroundImage: p.thumbnail ? `url(${p.thumbnail})` : 'none',
+                        backgroundSize: 'cover',
+                        backgroundPosition: 'center',
+                        backgroundColor: '#111',
+                      }}
+                      onMouseEnter={(e) => {
+                        const img = e.currentTarget;
+                        img.style.transform = 'scale(1.02)';
+                        img.style.transition = 'transform 0.3s ease';
+                        img.style.zIndex = '10';
+                      }}
+                      onMouseLeave={(e) => {
+                        const img = e.currentTarget;
+                        img.style.transform = 'scale(1)';
+                        img.style.zIndex = '1';
+                      }}
+                    >
+                      {/* Kategori label sol üst (kutu şeklinde) */}
+                      <div style={{ position: 'absolute', top: '10px', left: '10px', background: catColor, padding: '4px 8px', zIndex: 2, borderRadius: '2px' }}>
+                        <span style={{ color: '#fff', fontSize: '10px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                          {p.categories[0]?.replace(/-/g, ' ') || 'GENEL'}
+                        </span>
                       </div>
-                      <div style={{ color: '#bbb', fontSize: '10px', display: 'flex', gap: '8px' }}>
-                        <span><i className="fa-regular fa-clock" style={{ marginRight: '3px', fontSize: '9px' }}></i>{fmtDate(p.published)}</span>
-                        <span><i className="fa-solid fa-user" style={{ marginRight: '3px', fontSize: '9px', color: '#e60000' }}></i>{p.author}</span>
+                      
+                      {/* Overlay */}
+                      <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.4) 50%, transparent 100%)', zIndex: 1 }}></div>
+                      
+                      {/* Content altta */}
+                      <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, padding: '12px', zIndex: 2 }}>
+                        <div style={{ color: '#fff', fontSize: '13px', fontWeight: 700, lineHeight: 1.3, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden', textShadow: '1px 1px 3px #000', marginBottom: '6px' }}>
+                          {p.title}
+                        </div>
+                        <div style={{ color: '#bbb', fontSize: '10px', display: 'flex', gap: '8px', alignItems: 'center' }}>
+                          <span><i className="fa-regular fa-clock" style={{ marginRight: '4px', fontSize: '9px' }}></i>{fmtDate(p.published)}</span>
+                          <span><i className="fa-solid fa-user" style={{ marginRight: '4px', fontSize: '9px', color: '#fff' }}></i>{p.author}</span>
+                        </div>
                       </div>
-                    </div>
-                  </Link>
-                ))}
+                    </Link>
+                  );
+                })}
               </div>
 
             </div>
