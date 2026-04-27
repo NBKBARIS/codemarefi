@@ -30,27 +30,35 @@ export default function KategoriPage() {
   const totalPages = Math.ceil(total / POSTS_PER_PAGE);
 
   function getCatIcon(cat: string) {
-    const icons: { [key: string]: string } = {
-      'Discord-bot-kodları': 'https://cdn3.emoji.gg/emojis/8468-discord-robot.gif',
-      'Discord-bot-konuları': 'https://cdn3.emoji.gg/emojis/9129-blurple-chat.gif',
-      'Discord-Konuları': 'https://cdn3.emoji.gg/emojis/3894-gamepad.gif',
-      'Hazır': 'https://cdn3.emoji.gg/emojis/8743-neon-lightning.gif',
-      'Genel': 'https://cdn3.emoji.gg/emojis/3547-book.gif',
-      'JavaScript': 'https://cdn3.emoji.gg/emojis/9454-javascript.png',
-      'Blogger': 'https://cdn3.emoji.gg/emojis/7808-edit.gif',
-      'CSS': 'https://cdn3.emoji.gg/emojis/8316-css3.png',
-      'Html': 'https://cdn3.emoji.gg/emojis/9519-html5.png',
-      'Python': 'https://cdn3.emoji.gg/emojis/7888-python.png',
-      'Tavsiye': 'https://cdn3.emoji.gg/emojis/2208-verify-red.gif',
-      'Popüler': 'https://cdn3.emoji.gg/emojis/4473-fire.gif',
+    const icons: { [key: string]: { icon: string; color: string; anim: string } } = {
+      'Discord-bot-kodları': { icon: 'fa-solid fa-robot', color: '#5865F2', anim: 'float 3s ease-in-out infinite' },
+      'Discord-bot-konuları': { icon: 'fa-solid fa-comments', color: '#5865F2', anim: 'pulse 2s infinite' },
+      'Discord-Konuları': { icon: 'fa-solid fa-gamepad', color: '#7289da', anim: 'bounce 2s infinite' },
+      'Hazır': { icon: 'fa-solid fa-bolt', color: '#f1c40f', anim: 'flash 1.5s infinite' },
+      'Genel': { icon: 'fa-solid fa-book', color: '#3498db', anim: 'float 3s ease-in-out infinite' },
+      'JavaScript': { icon: 'fa-brands fa-js', color: '#f7df1e', anim: 'pulse 2s infinite' },
+      'Blogger': { icon: 'fa-solid fa-pen-nib', color: '#e67e22', anim: 'float 3s ease-in-out infinite' },
+      'CSS': { icon: 'fa-brands fa-css3-alt', color: '#2980b9', anim: 'pulse 2s infinite' },
+      'Html': { icon: 'fa-brands fa-html5', color: '#e67e22', anim: 'pulse 2s infinite' },
+      'Python': { icon: 'fa-brands fa-python', color: '#3498db', anim: 'float 3s ease-in-out infinite' },
+      'Tavsiye': { icon: 'fa-solid fa-thumbs-up', color: '#2ecc71', anim: 'bounce 2s infinite' },
+      'Popüler': { icon: 'fa-solid fa-fire', color: '#e60000', anim: 'pulse 1.5s infinite' },
     };
 
     const match = Object.keys(icons).find(k => cat.includes(k));
-    return match ? icons[match] : 'https://cdn3.emoji.gg/emojis/1234-folder.gif';
+    return match ? icons[match] : { icon: 'fa-solid fa-folder', color: '#999', anim: 'none' };
   }
+  const catData = getCatIcon(category);
 
   return (
     <>
+      <style dangerouslySetInnerHTML={{ __html: `
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+        @keyframes pulse { 0% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.1); opacity: 0.8; } 100% { transform: scale(1); opacity: 1; } }
+        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
+        @keyframes flash { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+      `}} />
+
       <div style={{
         background: 'var(--bg-secondary)',
         borderBottom: '1px solid var(--border)',
@@ -59,15 +67,18 @@ export default function KategoriPage() {
         alignItems: 'center',
         gap: '1.5rem'
       }}>
-        <img 
-          src={getCatIcon(category)} 
-          alt="" 
-          style={{ width: '64px', height: '64px', objectFit: 'contain' }} 
-          onError={(e) => {
-            (e.currentTarget as HTMLImageElement).src = 'https://emoji.gg/assets/emoji/1234-folder.gif';
-            (e.currentTarget as HTMLImageElement).onerror = null;
-          }}
-        />
+        <div style={{ 
+          width: '64px', 
+          height: '64px', 
+          display: 'flex', 
+          alignItems: 'center', 
+          justifyContent: 'center',
+          fontSize: '3rem',
+          color: catData.color,
+          animation: catData.anim
+        }}>
+          <i className={catData.icon}></i>
+        </div>
         <div>
           <div style={{ color: 'var(--text-muted)', fontSize: '0.85rem', marginBottom: '0.25rem' }}>Kategori</div>
           <h1 style={{ fontSize: '1.6rem', fontWeight: 700 }}>{category.replace(/-/g, ' ')}</h1>
