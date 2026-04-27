@@ -126,7 +126,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
       zIndex: 10000,
       backdropFilter: 'blur(10px)',
       padding: '20px'
-    }} onClick={onClose}>
+    }}>
       
       {/* Background Animation (Scanlines) */}
       <div style={{
