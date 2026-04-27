@@ -1,7 +1,7 @@
 'use client';
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
-import { fetchPosts } from './lib/blogger';
+import { fetchPosts, formatDate } from './lib/blogger';
 import PostCard from './components/PostCard';
 import Sidebar from './components/Sidebar';
 
@@ -58,8 +58,6 @@ export default function HomePage() {
   const tickerPosts = posts.slice(0, 8);
   const listPosts = posts.slice(0, POSTS_PER_PAGE);
 
-  const fmtDate = (d: string) => new Date(d).toLocaleDateString('tr-TR', { day: '2-digit', month: 'short', year: 'numeric' }).replace(',', '');
-
   return (
     <>
       {/* SON YAZILAR - ust yatay thumbnail serit */}
@@ -97,7 +95,7 @@ export default function HomePage() {
                 <div style={{ padding: '6px 8px', background: '#111', flex: 1 }}>
                   <div style={{ color: '#888', fontSize: '10px', marginBottom: '3px' }}>
                     <i className="fa-regular fa-clock" style={{ marginRight: '3px' }}></i>
-                    {fmtDate(p.published)}
+                    {formatDate(p.published)}
                   </div>
                   <div style={{
                     color: '#ddd', fontSize: '12px', fontWeight: 600, lineHeight: 1.3,
@@ -125,7 +123,7 @@ export default function HomePage() {
                 <div className="post-ticker-info">
                   <div className="post-ticker-meta">
                     <i className="fa-solid fa-user" style={{ marginRight: '4px', color: '#e60000', fontSize: '9px' }}></i>
-                    {tickerPosts[tickerIdx]?.author} — {tickerPosts[tickerIdx]?.published ? fmtDate(tickerPosts[tickerIdx].published) : ''}
+                    {tickerPosts[tickerIdx]?.author} — {tickerPosts[tickerIdx]?.published ? formatDate(tickerPosts[tickerIdx].published) : ''}
                   </div>
                   <div className="post-ticker-title">{tickerPosts[tickerIdx]?.title}</div>
                 </div>
@@ -214,7 +212,7 @@ export default function HomePage() {
                       </div>
                       <div style={{ color: '#eee', fontSize: '11px', display: 'flex', gap: '15px', alignItems: 'center' }}>
                         <span><i className="fa-solid fa-user" style={{ color: '#e60000', marginRight: '6px' }}></i>{posts[heroIdx].author}</span>
-                        <span><i className="fa-regular fa-clock" style={{ marginRight: '6px' }}></i>{fmtDate(posts[heroIdx].published)}</span>
+                        <span><i className="fa-regular fa-clock" style={{ marginRight: '6px' }}></i>{formatDate(posts[heroIdx].published)}</span>
                       </div>
                     </div>
                   </Link>
@@ -275,7 +273,7 @@ export default function HomePage() {
                         {p.title}
                       </div>
                       <div style={{ color: '#bbb', fontSize: '10px', marginTop: '8px', display: 'flex', justifyContent: 'space-between' }}>
-                        <span>{fmtDate(p.published)}</span>
+                        <span>{formatDate(p.published)}</span>
                       </div>
                     </div>
                   </Link>
