@@ -17,8 +17,13 @@ export default function Sidebar() {
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
+    console.log('Sidebar: handleSearch tetiklendi, query:', searchQuery);
     if (searchQuery.trim()) {
-      router.push(`/arama?q=${encodeURIComponent(searchQuery.trim())}`);
+      const url = `/arama?q=${encodeURIComponent(searchQuery.trim())}`;
+      console.log('Sidebar: Yönlendiriliyor:', url);
+      router.push(url);
+    } else {
+      console.log('Sidebar: Query boş, işlem yapılmadı.');
     }
   };
 
@@ -69,8 +74,13 @@ export default function Sidebar() {
             onKeyDown={(e) => {
               if (e.key === 'Enter') {
                 e.preventDefault();
+                console.log('Sidebar: Enter tuşuna basıldı, query:', searchQuery);
                 if (searchQuery.trim()) {
-                  router.push(`/arama?q=${encodeURIComponent(searchQuery.trim())}`);
+                  const url = `/arama?q=${encodeURIComponent(searchQuery.trim())}`;
+                  console.log('Sidebar: Yönlendiriliyor (Enter):', url);
+                  router.push(url);
+                } else {
+                  console.log('Sidebar: Query boş (Enter), işlem yapılmadı.');
                 }
               }
             }}
