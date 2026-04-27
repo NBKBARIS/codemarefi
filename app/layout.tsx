@@ -17,6 +17,9 @@ export const metadata: Metadata = {
     url: "https://codemarefi.com",
     images: ['/favicon.png'],
   },
+  verification: {
+    google: "8aOQLQYj5GxcMWcGMtjF5y7D_pJh-BV4hUYSZb6BMmE",
+  },
 };
 
 import Preloader from "./components/Preloader";
