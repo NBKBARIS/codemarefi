@@ -4,14 +4,18 @@ import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 
 export const metadata: Metadata = {
-  title: "CodeMareFi | Blogger Eklentileri ve Discord Bot Kod Paylaşım",
-  description: "Blogger konuları, Discord bot komutları, JavaScript kod paylaşımları ve daha fazlası. Kodlara dair her şey CodeMareFi'de!",
-  keywords: "discord bot kodları, discord bot komutları, blogger eklentileri, javascript kod paylaşım, codemarefi",
+  title: "CodeMareFi - Modern Yazılım ve Discord Bot Geliştirme Platformu",
+  description: "Türkiye'nin en kaliteli Discord bot kodları, güncel yazılım haberleri ve modern web teknolojileri rehberi. CodeMareFi ile geleceğin kodlarını keşfedin.",
+  keywords: "discord bot kodları, discord bot komutları, yazılım geliştirme, javascript kod paylaşım, teknoloji haberleri, codemarefi",
+  icons: {
+    icon: '/favicon.png',
+  },
   openGraph: {
-    title: "CodeMareFi | Discord Bot Kodları & Blogger Eklentileri",
-    description: "Türkiye'nin en büyük Discord Bot Kod Paylaşım Sitesi",
+    title: "CodeMareFi - Yazılım & Discord Bot Dünyası",
+    description: "Türkiye'nin en büyük ve modern Discord Bot Kod Paylaşım Platformu",
     type: "website",
-    url: "https://codemarefi.vercel.app",
+    url: "https://codemarefi-site.vercel.app",
+    images: ['/favicon.png'],
   },
 };
 
