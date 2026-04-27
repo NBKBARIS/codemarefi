@@ -5,10 +5,11 @@ const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'missing-ke
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
-export type CommentRole = 'admin' | 'member' | 'guest';
+export type CommentRole = 'admin' | 'mod' | 'member' | 'guest';
 
 export interface CommentType {
   id: string;
+  user_id: string | null;
   post_id: string;
   parent_id: string | null;
   author_name: string;

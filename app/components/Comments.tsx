@@ -295,7 +295,7 @@ export default function Comments({ postId }: { postId: string }) {
                      Yanıtla <i className="fa-solid fa-reply"></i>
                    </button>
 
-                   {user && comment.user_id === user.id && (
+                   {user && comment.user_id && String(comment.user_id) === String(user.id) && (
                      <button 
                        onClick={() => {
                          setEditingId(comment.id);
@@ -309,7 +309,7 @@ export default function Comments({ postId }: { postId: string }) {
                      </button>
                    )}
 
-                   {(isGlobalAdmin || (user && comment.user_id === user.id)) && (
+                   {(isGlobalAdmin || (user && comment.user_id && String(comment.user_id) === String(user.id))) && (
                      <button 
                        onClick={() => handleDelete(comment.id)}
                        style={{ background: 'none', border: 'none', color: '#666', fontSize: '12px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '5px', padding: '0' }}
