@@ -379,6 +379,63 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
           >
             {loading ? 'YÜKLENİYOR...' : (step === 'verify' ? 'DOĞRULA' : (isLogin ? 'BAĞLAN' : 'KAYIT OL'))}
           </button>
+
+          {step === 'form' && (
+            <>
+              <div style={{ display: 'flex', alignItems: 'center', margin: '20px 0' }}>
+                <div style={{ flex: 1, height: '1px', background: '#333' }}></div>
+                <span style={{ padding: '0 10px', color: '#666', fontSize: '12px', fontFamily: 'monospace' }}>VEYA</span>
+                <div style={{ flex: 1, height: '1px', background: '#333' }}></div>
+              </div>
+
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
+                <button 
+                  type="button"
+                  onClick={() => supabase.auth.signInWithOAuth({ provider: 'google' })}
+                  style={{
+                    padding: '12px',
+                    background: '#111',
+                    border: '1px solid #4285F4',
+                    color: '#fff',
+                    borderRadius: '4px',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '10px',
+                    fontSize: '13px',
+                    transition: 'all 0.3s'
+                  }}
+                  onMouseEnter={e => (e.currentTarget.style.background = '#4285F4')}
+                  onMouseLeave={e => (e.currentTarget.style.background = '#111')}
+                >
+                  <i className="fa-brands fa-google"></i> Google
+                </button>
+                <button 
+                  type="button"
+                  onClick={() => supabase.auth.signInWithOAuth({ provider: 'discord' })}
+                  style={{
+                    padding: '12px',
+                    background: '#111',
+                    border: '1px solid #5865F2',
+                    color: '#fff',
+                    borderRadius: '4px',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '10px',
+                    fontSize: '13px',
+                    transition: 'all 0.3s'
+                  }}
+                  onMouseEnter={e => (e.currentTarget.style.background = '#5865F2')}
+                  onMouseLeave={e => (e.currentTarget.style.background = '#111')}
+                >
+                  <i className="fa-brands fa-discord"></i> Discord
+                </button>
+              </div>
+            </>
+          )}
           
           {step === 'verify' && (
             <button 
