@@ -13,7 +13,7 @@ export default function HomePage() {
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
-  const [sliderIdx, setSliderIdx] = useState(0);
+  const [heroIdx, setHeroIdx] = useState(0);
   const [tickerIdx, setTickerIdx] = useState(0);
   const [tickerPaused, setTickerPaused] = useState(false);
   const [bannerIdx, setBannerIdx] = useState(0);
@@ -34,10 +34,10 @@ export default function HomePage() {
     });
   }, [page]);
 
-  // Slider auto-advance
+  // Hero Slider auto-advance
   useEffect(() => {
     if (!posts.length) return;
-    const t = setInterval(() => setSliderIdx(i => (i + 1) % Math.min(posts.length, 8)), 5000);
+    const t = setInterval(() => setHeroIdx(i => (i + 1) % Math.min(posts.length, 5)), 6000);
     return () => clearInterval(t);
   }, [posts]);
 
@@ -55,15 +55,8 @@ export default function HomePage() {
   }, [banners.length]);
 
   const totalPages = Math.ceil(total / POSTS_PER_PAGE);
-  const slider = posts[sliderIdx] || null;
-  // Sağdaki 2 kart için: slider'ın bir öncesi ve sonrası
-  const rightCards = posts.slice(1, 3);
   const tickerPosts = posts.slice(0, 8);
   const listPosts = posts.slice(0, POSTS_PER_PAGE);
-
-  const fmtDate = (d: string) => new Date(d).toLocaleDateString('tr-TR', { day: '2-digit', month: 'short', year: 'numeric' }).replace(',', '');
-  const prev = () => setSliderIdx(i => (i - 1 + Math.min(posts.length, 8)) % Math.min(posts.length, 8));
-  const next = () => setSliderIdx(i => (i + 1) % Math.min(posts.length, 8));
 
   return (
     <>
@@ -177,53 +170,77 @@ export default function HomePage() {
             </div>
           </div>
 
-          {/* PREMIUM FEATURED SECTION: 1 Buyuk Sol + 2x2 Grid Sag */}
+          {/* PREMIUM FEATURED SECTION: 1 Buyuk Slider Sol + 2x2 Grid Sag */}
           {posts.length > 0 && (
             <div style={{ display: 'grid', gridTemplateColumns: '1.4fr 1fr', gap: '15px', marginBottom: '30px', height: '500px' }}>
               
-              {/* SOL: Buyuk Hero Kart */}
-              {posts[0] && (
-                <Link
-                  href={posts[0].url}
-                  style={{
-                    position: 'relative',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    background: '#000',
-                    textDecoration: 'none',
-                    overflow: 'hidden',
-                    borderRadius: '4px',
-                    transition: 'transform 0.3s ease',
-                    height: '100%'
-                  }}
-                  onMouseEnter={e => e.currentTarget.style.transform = 'scale(1.01)'}
-                  onMouseLeave={e => e.currentTarget.style.transform = 'scale(1)'}
-                >
-                  {posts[0].thumbnail && (
-                    <img src={posts[0].thumbnail} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', opacity: 0.7 }} />
-                  )}
-                  {/* Overlay */}
-                  <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, padding: '30px', background: 'linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.6) 50%, transparent 100%)' }}>
-                    <div style={{ background: '#e60000', color: '#fff', fontSize: '10px', fontWeight: 800, padding: '4px 8px', borderRadius: '2px', display: 'inline-block', marginBottom: '12px', textTransform: 'uppercase' }}>
-                      {posts[0].categories[0] || 'GÜNCEL'}
+              {/* SOL: Buyuk Hero Slider Kart */}
+              {posts[heroIdx] && (
+                <div style={{ position: 'relative', height: '100%', overflow: 'hidden', borderRadius: '4px' }}>
+                  <Link
+                    href={posts[heroIdx].url}
+                    style={{
+                      position: 'relative',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      background: '#000',
+                      textDecoration: 'none',
+                      height: '100%',
+                      transition: 'transform 0.3s ease',
+                    }}
+                    onMouseEnter={e => e.currentTarget.style.transform = 'scale(1.01)'}
+                    onMouseLeave={e => e.currentTarget.style.transform = 'scale(1)'}
+                  >
+                    {posts[heroIdx].thumbnail && (
+                      <img 
+                        key={heroIdx}
+                        src={posts[heroIdx].thumbnail} 
+                        alt="" 
+                        style={{ width: '100%', height: '100%', objectFit: 'cover', opacity: 0.7, animation: 'fadeIn 0.5s' }} 
+                      />
+                    )}
+                    {/* Overlay */}
+                    <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, padding: '30px', background: 'linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.6) 50%, transparent 100%)' }}>
+                      <div style={{ background: '#e60000', color: '#fff', fontSize: '10px', fontWeight: 800, padding: '4px 8px', borderRadius: '2px', display: 'inline-block', marginBottom: '12px', textTransform: 'uppercase' }}>
+                        {posts[heroIdx].categories[0] || 'GÜNCEL'}
+                      </div>
+                      <h2 style={{ color: '#fff', fontSize: '26px', fontWeight: 800, lineHeight: 1.2, marginBottom: '12px', textShadow: '0 2px 4px rgba(0,0,0,0.5)' }}>
+                        {posts[heroIdx].title}
+                      </h2>
+                      <div style={{ color: '#ccc', fontSize: '13px', lineHeight: 1.5, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden', marginBottom: '15px' }}>
+                        {posts[heroIdx].summary}
+                      </div>
+                      <div style={{ color: '#eee', fontSize: '11px', display: 'flex', gap: '15px', alignItems: 'center' }}>
+                        <span><i className="fa-solid fa-user" style={{ color: '#e60000', marginRight: '6px' }}></i>{posts[heroIdx].author}</span>
+                        <span><i className="fa-regular fa-clock" style={{ marginRight: '6px' }}></i>{fmtDate(posts[heroIdx].published)}</span>
+                      </div>
                     </div>
-                    <h2 style={{ color: '#fff', fontSize: '24px', fontWeight: 800, lineHeight: 1.2, marginBottom: '12px', textShadow: '0 2px 4px rgba(0,0,0,0.5)' }}>
-                      {posts[0].title}
-                    </h2>
-                    <div style={{ color: '#ccc', fontSize: '13px', lineHeight: 1.5, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden', marginBottom: '15px' }}>
-                      {posts[0].summary}
-                    </div>
-                    <div style={{ color: '#eee', fontSize: '11px', display: 'flex', gap: '15px', alignItems: 'center' }}>
-                      <span><i className="fa-solid fa-user" style={{ color: '#e60000', marginRight: '6px' }}></i>{posts[0].author}</span>
-                      <span><i className="fa-regular fa-clock" style={{ marginRight: '6px' }}></i>{fmtDate(posts[0].published)}</span>
-                    </div>
+                  </Link>
+
+                  {/* Navigation Dots */}
+                  <div style={{ position: 'absolute', top: '20px', right: '20px', display: 'flex', gap: '8px', zIndex: 10 }}>
+                    {posts.slice(0, 5).map((_, i) => (
+                      <div
+                        key={i}
+                        onClick={() => setHeroIdx(i)}
+                        style={{
+                          width: '10px',
+                          height: '10px',
+                          borderRadius: '50%',
+                          background: heroIdx === i ? '#e60000' : 'rgba(255,255,255,0.5)',
+                          cursor: 'pointer',
+                          transition: 'all 0.3s ease',
+                          border: heroIdx === i ? '2px solid #fff' : 'none'
+                        }}
+                      />
+                    ))}
                   </div>
-                </Link>
+                </div>
               )}
 
               {/* SAG: 2x2 Grid */}
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gridTemplateRows: '1fr 1fr', gap: '10px' }}>
-                {posts.slice(1, 5).map((p, idx) => (
+                {posts.slice(5, 9).map((p, idx) => (
                   <Link
                     key={p.id}
                     href={p.url}
