@@ -23,19 +23,13 @@ export default function Sidebar() {
     const monthName = months[d.getMonth()];
     const year = d.getFullYear();
     
-    let h = d.getHours();
+    const h = d.getHours().toString().padStart(2, '0');
     const m = d.getMinutes().toString().padStart(2, '0');
     const s = d.getSeconds().toString().padStart(2, '0');
-    const ampm = h >= 12 ? 'ÖS' : 'ÖÖ';
-    
-    h = h % 12;
-    h = h ? h : 12; // the hour '0' should be '12'
-    const hStr = h.toString().padStart(2, '0');
     
     return {
       dateStr: `${dayName}, ${day} ${monthName}, ${year}`,
-      timeStr: `${hStr} : ${m} : ${s}`,
-      ampm
+      timeStr: `${h} : ${m} : ${s}`
     };
   };
 
@@ -70,11 +64,8 @@ export default function Sidebar() {
             </div>
             {time && (
               <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '10px' }}>
-                <span style={{ color: '#fff', fontSize: '26px', letterSpacing: '2px' }}>
+                <span style={{ color: '#fff', fontSize: '32px', letterSpacing: '2px', fontWeight: 'bold' }}>
                   {formatTime(time).timeStr}
-                </span>
-                <span style={{ background: '#e60000', color: '#fff', padding: '4px 6px', fontSize: '14px', fontWeight: 'bold', borderRadius: '2px' }}>
-                  {formatTime(time).ampm}
                 </span>
               </div>
             )}
