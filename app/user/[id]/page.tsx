@@ -1,0 +1,145 @@
+'use client';
+import { useEffect, useState } from 'react';
+import { useParams } from 'next/navigation';
+import { supabase } from '@/app/lib/supabase';
+import Link from 'next/link';
+
+interface UserProfile {
+  id: string;
+  full_name: string;
+  avatar_url: string;
+  created_at: string;
+}
+
+interface UserComment {
+  id: string;
+  content: string;
+  created_at: string;
+  post_id: string;
+}
+
+export default function PublicProfilePage() {
+  const { id } = useParams();
+  const [profile, setProfile] = useState<UserProfile | null>(null);
+  const [comments, setComments] = useState<UserComment[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchUserData() {
+      if (!id) return;
+
+      // Profil bilgilerini çek
+      const { data: profileData } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', id)
+        .single();
+
+      if (profileData) {
+        setProfile(profileData);
+      }
+
+      // Kullanıcının yorumlarını çek
+      const { data: commentData } = await supabase
+        .from('comments')
+        .select('*')
+        .eq('user_id', id)
+        .order('created_at', { ascending: false });
+
+      if (commentData) {
+        setComments(commentData);
+      }
+
+      setLoading(false);
+    }
+
+    fetchUserData();
+  }, [id]);
+
+  if (loading) {
+    return (
+      <div style={{ minHeight: '80vh', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#e60000' }}>
+        <i className="fa-solid fa-spinner fa-spin fa-3x"></i>
+      </div>
+    );
+  }
+
+  if (!profile) {
+    return (
+      <div style={{ minHeight: '80vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', color: '#fff', gap: '20px' }}>
+        <i className="fa-solid fa-user-slash fa-4x" style={{ color: '#e60000' }}></i>
+        <h2>Kullanıcı Bulunamadı</h2>
+        <Link href="/" style={{ color: '#e60000', textDecoration: 'underline' }}>Ana Sayfaya Dön</4Link>
+      </div>
+    );
+  }
+
+  return (
+    <div style={{ minHeight: '100vh', background: '#0a0a0a', color: '#fff', paddingBottom: '50px' }}>
+      
+      {/* Banner Area */}
+      <div style={{ height: '200px', background: 'linear-gradient(45deg, #e60000 0%, #000 100%)', position: 'relative' }}>
+        <div style={{ position: 'absolute', bottom: '-60px', left: '50%', transform: 'translateX(-50%)', textAlign: 'center' }}>
+          <img 
+            src={profile.avatar_url || 'https://api.dicebear.com/7.x/avataaars/svg?seed=Felix'} 
+            alt={profile.full_name} 
+            style={{ width: '120px', height: '120px', borderRadius: '50%', border: '4px solid #0a0a0a', background: '#111', objectFit: 'cover' }}
+          />
+        </div>
+      </div>
+
+      <div className="container" style={{ maxWidth: '800px', margin: '80px auto 0', padding: '0 20px', textAlign: 'center' }}>
+        <h1 style={{ fontSize: '32px', marginBottom: '5px', color: '#e60000', fontWeight: '800' }}>{profile.full_name}</h1>
+        <p style={{ color: '#888', fontSize: '14px', marginBottom: '30px' }}>
+          <i className="fa-solid fa-calendar-days" style={{ marginRight: '8px' }}></i>
+          {new Date(profile.created_at).toLocaleDateString('tr-TR', { day: 'numeric', month: 'long', year: 'numeric' })} tarihinde katıldı
+        </p>
+
+        {/* Stats Grid */}
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '20px', marginBottom: '40px' }}>
+          <div style={{ background: '#111', padding: '20px', borderRadius: '12px', border: '1px solid #222' }}>
+            <div style={{ fontSize: '24px', fontWeight: 'bold', color: '#e60000' }}>{comments.length}</div>
+            <div style={{ fontSize: '12px', color: '#888', textTransform: 'uppercase', letterSpacing: '1px' }}>Toplam Yorum</div>
+          </div>
+        </div>
+
+        {/* Recent Activity */}
+        <div style={{ textAlign: 'left' }}>
+          <h3 style={{ borderBottom: '2px solid #e60000', display: 'inline-block', paddingBottom: '5px', marginBottom: '20px' }}>
+            <i className="fa-solid fa-bolt" style={{ marginRight: '10px', color: '#e60000' }}></i>
+            Son Aktiviteler
+          </h3>
+
+          {comments.length === 0 ? (
+            <div style={{ padding: '40px', textAlign: 'center', background: '#111', borderRadius: '12px', color: '#555' }}>
+              Henüz bir aktivite bulunmuyor.
+            </div>
+          ) : (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
+              {comments.map((comment) => (
+                <div key={comment.id} style={{ background: '#111', padding: '15px', borderRadius: '10px', borderLeft: '4px solid #e60000' }}>
+                  <div style={{ fontSize: '11px', color: '#e60000', marginBottom: '5px' }}>
+                    <i className="fa-solid fa-comment" style={{ marginRight: '5px' }}></i>
+                    Yorum Yaptı • {new Date(comment.created_at).toLocaleDateString('tr-TR')}
+                  </div>
+                  <div style={{ fontSize: '14px', color: '#ddd', fontStyle: 'italic', marginBottom: '10px' }}>
+                    "{comment.content}"
+                  </div>
+                  <Link 
+                    href={`/post/${comment.post_id}`} 
+                    style={{ fontSize: '12px', color: '#888', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '5px' }}
+                    onMouseEnter={(e) => e.currentTarget.style.color = '#e60000'}
+                    onMouseLeave={(e) => e.currentTarget.style.color = '#888'}
+                  >
+                    Konuyu Gör <i className="fa-solid fa-arrow-right" style={{ fontSize: '10px' }}></i>
+                  </Link>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+      </div>
+    </div>
+  );
+}

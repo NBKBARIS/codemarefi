@@ -111,7 +111,8 @@ export default function Comments({ postId }: { postId: string }) {
       content: content.trim(),
       role: role,
       avatar_url: finalAvatar,
-      is_approved: true
+      is_approved: true,
+      user_id: user?.id || null // Giriş yapmışsa kimliğini kaydet
     };
 
     const { error } = await supabase.from('comments').insert(newComment);
@@ -136,23 +137,46 @@ export default function Comments({ postId }: { postId: string }) {
       <div style={{ marginBottom: '15px', marginLeft: isReply ? '45px' : '0' }}>
         <div style={{ display: 'flex', gap: '15px' }}>
           <div style={{ flexShrink: 0 }}>
-             {comment.avatar_url ? (
-                <img src={comment.avatar_url} alt="Avatar" style={{ width: '48px', height: '48px', borderRadius: '50%', border: isAdmin ? '2px solid #e60000' : '1px solid #333', objectFit: 'cover' }} />
-             ) : (
-                <div style={{ width: '48px', height: '48px', borderRadius: '50%', background: '#333', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#888', fontSize: '24px', border: isMember ? '1px solid #00d2ff' : 'none' }}>
-                   <i className="fa-solid fa-user"></i>
-                </div>
-             )}
+          <Link 
+            href={comment.user_id ? `/user/${comment.user_id}` : '#'} 
+            style={{ 
+              cursor: comment.user_id ? 'pointer' : 'default',
+              transition: 'transform 0.2s',
+              display: 'flex',
+              alignItems: 'flex-start'
+            }}
+            onMouseEnter={(e) => comment.user_id && (e.currentTarget.style.transform = 'scale(1.05)')}
+            onMouseLeave={(e) => comment.user_id && (e.currentTarget.style.transform = 'scale(1)')}
+          >
+            <img 
+              src={comment.avatar_url || 'https://api.dicebear.com/7.x/avataaars/svg?seed=Felix'} 
+              alt={comment.author_name} 
+              style={{ width: '42px', height: '42px', borderRadius: '50%', objectFit: 'cover', border: `2px solid ${isAdmin ? '#e60000' : (isMember ? '#00d2ff' : '#444')}` }} 
+            />
+          </Link>
           </div>
 
           <div style={{ flexGrow: 1 }}>
              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px', flexWrap: 'wrap' }}>
-                <span 
-                  title={isAdmin ? 'Sistem Yöneticisi' : (isMember ? 'Onaylı Üye' : 'Ziyaretçi')}
-                  style={{ fontWeight: 'bold', fontSize: '14px', color: isAdmin ? '#e60000' : (isMember ? '#00d2ff' : '#ddd'), cursor: 'default' }}
+                <Link 
+                  href={comment.user_id ? `/user/${comment.user_id}` : '#'}
+                  className="tooltip-container" 
+                  style={{ 
+                    fontWeight: 'bold', 
+                    fontSize: '14px', 
+                    color: isAdmin ? '#e60000' : (isMember ? '#00d2ff' : '#ddd'), 
+                    cursor: comment.user_id ? 'pointer' : 'default',
+                    textDecoration: 'none',
+                    transition: 'color 0.2s'
+                  }}
+                  onMouseEnter={(e) => comment.user_id && (e.currentTarget.style.color = '#fff')}
+                  onMouseLeave={(e) => comment.user_id && (e.currentTarget.style.color = isAdmin ? '#e60000' : (isMember ? '#00d2ff' : '#ddd'))}
                 >
                   {comment.author_name}
-                </span>
+                  <span className="tooltip-text" style={{ width: '100px', marginLeft: '-50px' }}>
+                    {isAdmin ? 'Sistem Yöneticisi' : (isMember ? 'Onaylı Üye' : 'Ziyaretçi')}
+                  </span>
+                </Link>
 
                 {isAdmin && (
                   <span className="tooltip-container" style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', cursor: 'default', position: 'relative' }}>
