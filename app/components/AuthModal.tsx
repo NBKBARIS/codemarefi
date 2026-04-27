@@ -15,13 +15,30 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
   const [password, setPassword] = useState('');
   const [fullName, setFullName] = useState('');
   const [otpCode, setOtpCode] = useState('');
+  const [timer, setTimer] = useState(60);
+  const [canResend, setCanResend] = useState(false);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState({ type: '', text: '' });
+
+  useEffect(() => {
+    let interval: any;
+    if (step === 'verify' && timer > 0) {
+      interval = setInterval(() => {
+        setTimer((prev) => prev - 1);
+      }, 1000);
+    } else if (timer === 0) {
+      setCanResend(true);
+      clearInterval(interval);
+    }
+    return () => clearInterval(interval);
+  }, [step, timer]);
 
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = 'hidden';
       setStep('form');
+      setTimer(60);
+      setCanResend(false);
       setMessage({ type: '', text: '' });
     } else {
       document.body.style.overflow = 'unset';
@@ -30,6 +47,22 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
   }, [isOpen]);
 
   if (!isOpen) return null;
+
+  const resendOtp = async () => {
+    setLoading(true);
+    const { error } = await supabase.auth.resend({
+      type: 'signup',
+      email: email,
+    });
+    setLoading(false);
+    if (error) {
+      setMessage({ type: 'error', text: 'Kod gönderilemedi!' });
+    } else {
+      setTimer(60);
+      setCanResend(false);
+      setMessage({ type: 'success', text: 'Yeni kod gönderildi!' });
+    }
+  };
 
   const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -80,6 +113,8 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
           if (data.user && data.session === null) {
             // Verification required
             setStep('verify');
+            setTimer(60);
+            setCanResend(false);
             setMessage({ type: 'success', text: 'Gmail adresine 6 haneli doğrulama kodu gönderildi!' });
           } else {
             setMessage({ type: 'success', text: 'Kayıt Başarılı! Protokoller Hazır.' });
@@ -287,6 +322,22 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
               <p style={{ color: '#888', fontSize: '11px', marginTop: '10px', textAlign: 'center' }}>
                 {email} adresine gelen kodu buraya girin.
               </p>
+              
+              <div style={{ textAlign: 'center', marginTop: '15px' }}>
+                {canResend ? (
+                  <button 
+                    type="button" 
+                    onClick={resendOtp}
+                    style={{ background: 'none', border: 'none', color: '#e60000', cursor: 'pointer', fontSize: '12px', fontWeight: 'bold', textDecoration: 'underline' }}
+                  >
+                    Kodu Tekrar Gönder
+                  </button>
+                ) : (
+                  <p style={{ color: '#e60000', fontSize: '12px', fontFamily: 'monospace' }}>
+                    YENİ KOD İÇİN: {timer}s
+                  </p>
+                )}
+              </div>
             </div>
           )}
 
