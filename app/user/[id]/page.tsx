@@ -69,7 +69,7 @@ export default function PublicProfilePage() {
       <div style={{ minHeight: '80vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', color: '#fff', gap: '20px' }}>
         <i className="fa-solid fa-user-slash fa-4x" style={{ color: '#e60000' }}></i>
         <h2>Kullanıcı Bulunamadı</h2>
-        <Link href="/" style={{ color: '#e60000', textDecoration: 'underline' }}>Ana Sayfaya Dön</4Link>
+        <Link href="/" style={{ color: '#e60000', textDecoration: 'underline' }}>Ana Sayfaya Dön</Link>
       </div>
     );
   }
