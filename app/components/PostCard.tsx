@@ -23,6 +23,7 @@ function getCatClass(cat: string): string {
   return 'cat-default';
 }
 
+export default function PostCard({ post }: PostCardProps) {
   const [commentCount, setCommentCount] = useState<number | null>(null);
   const excerpt = stripHtml(post.content).slice(0, 180) + '...';
 
