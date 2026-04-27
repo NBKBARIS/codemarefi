@@ -148,7 +148,32 @@ export default function HomePage() {
       <div className="main-layout">
         <div>
 
-          {/* SLIDER: Büyük sol + 2 tall kart sağ */}
+          {/* GREEN BANNER */}
+          <div style={{ background: '#8cc63f', padding: '12px 15px', color: '#fff', fontSize: '13px', display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '20px', borderRadius: '2px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+            <i className="fa-solid fa-leaf" style={{ fontSize: '14px' }}></i>
+            TÜRKİYENİN EN BÜYÜK VE KALİTELİ DİSCORD BOT KOD PAYLAŞIM SİTESİ &#123;CodeMareFi&#125;
+          </div>
+
+          {/* TABS */}
+          <div style={{ display: 'flex', borderBottom: '1px solid #333', marginBottom: '20px', overflowX: 'auto', whiteSpace: 'nowrap' }}>
+            <div style={{ padding: '12px 15px', color: '#fff', fontSize: '13px', fontWeight: 'bold', borderBottom: '2px solid #e60000', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '-1px', transition: 'color 0.2s' }}>
+              <i className="fa-solid fa-gauge-high"></i> CODEMAREFI TRENDLER
+            </div>
+            <div style={{ padding: '12px 15px', color: '#888', fontSize: '13px', fontWeight: 'bold', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', transition: 'color 0.2s' }} onMouseEnter={e => e.currentTarget.style.color='#fff'} onMouseLeave={e => e.currentTarget.style.color='#888'}>
+              <i className="fa-solid fa-thumbs-up"></i> TAVSİYEMİZ
+            </div>
+            <div style={{ padding: '12px 15px', color: '#888', fontSize: '13px', fontWeight: 'bold', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', transition: 'color 0.2s' }} onMouseEnter={e => e.currentTarget.style.color='#fff'} onMouseLeave={e => e.currentTarget.style.color='#888'}>
+              <i className="fa-solid fa-star"></i> POPÜLERLER
+            </div>
+            <div style={{ padding: '12px 15px', color: '#888', fontSize: '13px', fontWeight: 'bold', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', transition: 'color 0.2s' }} onMouseEnter={e => e.currentTarget.style.color='#fff'} onMouseLeave={e => e.currentTarget.style.color='#888'}>
+              <i className="fa-solid fa-pen-nib"></i> BLOGGER
+            </div>
+            <div style={{ padding: '12px 15px', color: '#888', fontSize: '13px', fontWeight: 'bold', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', transition: 'color 0.2s' }} onMouseEnter={e => e.currentTarget.style.color='#fff'} onMouseLeave={e => e.currentTarget.style.color='#888'}>
+              <i className="fa-solid fa-code"></i> BOT KODLARI
+            </div>
+          </div>
+
+          {/* SLIDER: Büyük sol + 4 küçük kart sağ */}
           {posts.length > 0 && (
             <div style={{ display: 'grid', gridTemplateColumns: '60% 40%', height: '430px', marginBottom: '15px', overflow: 'hidden', background: '#000', gap: '2px' }}>
 
