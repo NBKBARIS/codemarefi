@@ -262,6 +262,7 @@ export default function HomePage() {
                 ))}
               </div>
             </div>
+          )}
 
 
           {/* ── TRENDLER BAŞLIĞI ── */}
