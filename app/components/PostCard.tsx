@@ -1,6 +1,8 @@
 'use client';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { BlogPost, formatDate, getTagClass } from '../lib/blogger';
+import { supabase } from '../lib/supabase';
 
 interface PostCardProps {
   post: BlogPost;
@@ -21,8 +23,26 @@ function getCatClass(cat: string): string {
   return 'cat-default';
 }
 
-export default function PostCard({ post }: PostCardProps) {
+  const [commentCount, setCommentCount] = useState<number | null>(null);
   const excerpt = stripHtml(post.content).slice(0, 180) + '...';
+
+  useEffect(() => {
+    async function fetchCommentCount() {
+      // Post ID olarak slug'ı veya Blogger ID'sini kullanıyoruz
+      const postId = post.id;
+      const { count, error } = await supabase
+        .from('comments')
+        .select('*', { count: 'exact', head: true })
+        .eq('post_id', postId);
+
+      if (!error && count !== null) {
+        setCommentCount(count);
+      } else {
+        setCommentCount(0);
+      }
+    }
+    fetchCommentCount();
+  }, [post.id]);
 
   return (
     <Link href={post.url} className="post-card">
@@ -66,12 +86,10 @@ export default function PostCard({ post }: PostCardProps) {
               <i className="fa-regular fa-clock" style={{ fontSize: '10px' }}></i>
               {formatDate(post.published)}
             </span>
-            {post.commentCount > 0 && (
-              <span style={{ color: '#555', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                <i className="fa-regular fa-comment" style={{ fontSize: '10px' }}></i>
-                {post.commentCount}
-              </span>
-            )}
+            <span style={{ color: '#555', display: 'flex', alignItems: 'center', gap: '4px' }}>
+              <i className="fa-regular fa-comment" style={{ fontSize: '10px' }}></i>
+              {commentCount !== null ? commentCount : '...'}
+            </span>
           </div>
           <span className="read-more">
             Devamını Oku <i className="fa-solid fa-angle-right" style={{ fontSize: '10px' }}></i>
