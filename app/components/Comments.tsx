@@ -1,6 +1,7 @@
 'use client';
 import { useState, useEffect } from 'react';
 import { supabase, CommentType, CommentRole } from '../lib/supabase';
+import { hasBadWords } from '../lib/badWords';
 import Link from 'next/link';
 
 function formatCommentDate(dateStr: string) {
@@ -276,6 +277,11 @@ export default function Comments({ postId }: { postId: string }) {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!content.trim() || !authorName.trim()) return;
+    
+    if (hasBadWords(content)) {
+      alert('Yorumunuz topluluk kurallarına aykırı kelimeler (argo/küfür) içeriyor olabilir. Lütfen daha uygun bir dil kullanın.');
+      return;
+    }
 
     setIsSubmitting(true);
     let role: CommentRole = 'guest';
@@ -335,6 +341,11 @@ export default function Comments({ postId }: { postId: string }) {
 
   const handleUpdate = async (commentId: string) => {
     if (!editContent.trim()) return;
+
+    if (hasBadWords(editContent)) {
+      alert('Yorumunuz topluluk kurallarına aykırı kelimeler içeriyor.');
+      return;
+    }
 
     const { error } = await supabase
       .from('comments')
