@@ -399,12 +399,12 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
             {loading ? 'YÜKLENİYOR...' : (step === 'verify' ? 'DOĞRULA' : (isLogin ? 'BAĞLAN' : 'KAYIT OL'))}
           </button>
 
-          {step === 'form' && (
+          {step === 'form' && isLogin && (
             <>
-              <div style={{ display: 'flex', alignItems: 'center', margin: '20px 0' }}>
-                <div style={{ flex: 1, height: '1px', background: '#333' }}></div>
-                <span style={{ padding: '0 10px', color: '#666', fontSize: '12px', fontFamily: 'monospace' }}>VEYA</span>
-                <div style={{ flex: 1, height: '1px', background: '#333' }}></div>
+              <div style={{ display: 'flex', alignItems: 'center', margin: '20px 0', color: '#555', fontSize: '11px', textTransform: 'uppercase', letterSpacing: '1px' }}>
+                <div style={{ flex: 1, height: '1px', background: '#222' }}></div>
+                <span style={{ padding: '0 10px' }}>veya</span>
+                <div style={{ flex: 1, height: '1px', background: '#222' }}></div>
               </div>
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
