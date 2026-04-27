@@ -288,40 +288,38 @@ export default function Comments({ postId }: { postId: string }) {
                 )}
              </div>
 
-             <div style={{ display: 'flex', gap: '15px', alignItems: 'center' }}>
-               {!isEditing && (
-                 <>
-                   <button onClick={() => setReplyingTo(comment.id)} style={{ background: 'transparent', border: 'none', color: '#e60000', fontSize: '12px', fontWeight: 'bold', cursor: 'pointer', padding: 0 }}>
-                     Yanıtla <i className="fa-solid fa-reply"></i>
-                   </button>
+              <div style={{ display: 'flex !important', gap: '15px', alignItems: 'center', marginTop: '5px' } as any}>
+                {!isEditing && (
+                  <>
+                    <button onClick={() => setReplyingTo(comment.id)} style={{ background: 'transparent', border: 'none', color: '#e60000', fontSize: '12px', fontWeight: 'bold', cursor: 'pointer', padding: 0 }}>
+                      Yanıtla <i className="fa-solid fa-reply"></i>
+                    </button>
 
-                   {user && comment.user_id && String(comment.user_id) === String(user.id) && (
-                     <button 
-                       onClick={() => {
-                         setEditingId(comment.id);
-                         setEditContent(comment.content);
-                       }}
-                       style={{ background: 'none', border: 'none', color: '#888', fontSize: '12px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '5px', padding: '0' }}
-                       onMouseEnter={(e) => e.currentTarget.style.color = '#fff'}
-                       onMouseLeave={(e) => e.currentTarget.style.color = '#888'}
-                     >
-                       Düzenle <i className="fa-solid fa-pen-to-square"></i>
-                     </button>
-                   )}
+                    {/* DÜZENLE BUTONU - Kendi yorumuysa mutlaka görünecek */}
+                    {user && (String(comment.user_id) === String(user.id) || comment.author_name === authorName) && (
+                      <button 
+                        onClick={() => {
+                          setEditingId(comment.id);
+                          setEditContent(comment.content);
+                        }}
+                        style={{ background: 'none', border: 'none', color: '#aaa', fontSize: '12px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '5px', padding: '0' }}
+                      >
+                        Düzenle <i className="fa-solid fa-pen-to-square"></i>
+                      </button>
+                    )}
 
-                   {(isGlobalAdmin || (user && comment.user_id && String(comment.user_id) === String(user.id))) && (
-                     <button 
-                       onClick={() => handleDelete(comment.id)}
-                       style={{ background: 'none', border: 'none', color: '#666', fontSize: '12px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '5px', padding: '0' }}
-                       onMouseEnter={(e) => e.currentTarget.style.color = '#e60000'}
-                       onMouseLeave={(e) => e.currentTarget.style.color = '#666'}
-                     >
-                       Sil <i className="fa-solid fa-trash-can"></i>
-                     </button>
-                   )}
-                 </>
-               )}
-             </div>
+                    {/* SİL BUTONU - Kendi yorumuysa veya Adminse mutlaka görünecek */}
+                    {(isGlobalAdmin || (user && (String(comment.user_id) === String(user.id) || comment.author_name === authorName))) && (
+                      <button 
+                        onClick={() => handleDelete(comment.id)}
+                        style={{ background: 'none', border: 'none', color: '#666', fontSize: '12px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '5px', padding: '0' }}
+                      >
+                        Sil <i className="fa-solid fa-trash-can"></i>
+                      </button>
+                    )}
+                  </>
+                )}
+              </div>
 
              {comment.replies && comment.replies.length > 0 && (
                <div style={{ marginTop: '15px', borderLeft: '2px solid #333', paddingTop: '10px' }}>
