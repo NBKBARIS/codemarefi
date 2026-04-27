@@ -170,6 +170,27 @@ export default function HomePage() {
             </div>
           </div>
 
+          {/* PREMIUM TABS: Trends, Recommended, etc. */}
+          <div style={{ display: 'flex', gap: '20px', marginBottom: '15px', borderBottom: '2px solid #222', paddingBottom: '5px' }}>
+            {['CODEMAREFI TRENDLER', 'TAVSİYEMİZ', 'POPÜLERLER', 'SON EKLENENLER'].map((tab, i) => (
+              <div key={tab} style={{ 
+                color: i === 0 ? '#fff' : '#888', 
+                fontSize: '13px', 
+                fontWeight: 700, 
+                cursor: 'pointer',
+                paddingBottom: '8px',
+                borderBottom: i === 0 ? '2px solid #e60000' : 'none',
+                textTransform: 'uppercase',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px'
+              }}>
+                <i className={['fa-solid fa-fire', 'fa-solid fa-thumbs-up', 'fa-solid fa-star', 'fa-solid fa-clock'][i]}></i>
+                {tab}
+              </div>
+            ))}
+          </div>
+
           {/* PREMIUM FEATURED SECTION: 1 Buyuk Slider Sol + 2x2 Grid Sag */}
           {posts.length > 0 && (
             <div style={{ display: 'grid', gridTemplateColumns: '1.4fr 1fr', gap: '15px', marginBottom: '30px', height: '500px' }}>
@@ -240,7 +261,7 @@ export default function HomePage() {
 
               {/* SAG: 2x2 Grid */}
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gridTemplateRows: '1fr 1fr', gap: '10px' }}>
-                {posts.slice(5, 9).map((p, idx) => (
+                {posts.slice(1, 5).map((p, idx) => (
                   <Link
                     key={p.id}
                     href={p.url}
