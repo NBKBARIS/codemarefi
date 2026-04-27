@@ -32,9 +32,12 @@ export default function ProfilePage() {
         .eq('id', userId)
         .single();
 
-      if (error) throw error;
-      setProfile(data);
-      setFullName(data.full_name || '');
+      if (error && error.code !== 'PGRST116') throw error;
+      
+      if (data) {
+        setProfile(data);
+        setFullName(data.full_name || '');
+      }
     } catch (error) {
       console.error('Error fetching profile:', error);
     } finally {
@@ -44,22 +47,28 @@ export default function ProfilePage() {
 
   const updateProfile = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!fullName.trim()) {
+      setMessage({ type: 'error', text: 'Kullanıcı adı boş bırakılamaz.' });
+      return;
+    }
+    
     setUpdating(true);
     setMessage({ type: '', text: '' });
 
     try {
       const { error } = await supabase
         .from('profiles')
-        .update({
-          full_name: fullName,
+        .upsert({
+          id: user.id,
+          full_name: fullName.trim(),
           updated_at: new Date().toISOString(),
-        })
-        .eq('id', user.id);
+        });
 
       if (error) throw error;
-      setMessage({ type: 'success', text: 'Profil güncellendi!' });
+      setMessage({ type: 'success', text: 'Sistem Güncellendi. Kimliğiniz Onaylandı.' });
+      fetchProfile(user.id); // Refresh data
     } catch (error: any) {
-      setMessage({ type: 'error', text: error.message || 'Hata oluştu.' });
+      setMessage({ type: 'error', text: error.message || 'Erişim reddedildi.' });
     } finally {
       setUpdating(false);
     }
@@ -75,30 +84,30 @@ export default function ProfilePage() {
       const fileName = `${user.id}-${Math.random()}.${fileExt}`;
       const filePath = `${fileName}`;
 
-      // 1. Upload to Storage
       const { error: uploadError } = await supabase.storage
         .from('avatars')
         .upload(filePath, file);
 
       if (uploadError) throw uploadError;
 
-      // 2. Get Public URL
       const { data: { publicUrl } } = supabase.storage
         .from('avatars')
         .getPublicUrl(filePath);
 
-      // 3. Update Profile Table
       const { error: updateError } = await supabase
         .from('profiles')
-        .update({ avatar_url: publicUrl })
-        .eq('id', user.id);
+        .upsert({ 
+          id: user.id,
+          avatar_url: publicUrl,
+          updated_at: new Date().toISOString()
+        });
 
       if (updateError) throw updateError;
 
       setProfile({ ...profile, avatar_url: publicUrl });
-      setMessage({ type: 'success', text: 'Profil resmi başarıyla yüklendi!' });
+      setMessage({ type: 'success', text: 'Görsel Veritabanına İşlendi.' });
     } catch (error: any) {
-      setMessage({ type: 'error', text: error.message || 'Resim yüklenemedi.' });
+      setMessage({ type: 'error', text: error.message || 'Veri transferi başarısız.' });
     } finally {
       setUpdating(false);
     }
@@ -112,41 +121,83 @@ export default function ProfilePage() {
 
   if (loading) {
     return (
-      <div style={{ minHeight: '80vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#0d1117', color: '#fff' }}>
-        <i className="fa-solid fa-circle-notch fa-spin" style={{ fontSize: '30px', color: '#e60000' }}></i>
+      <div style={{ minHeight: '80vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#000', color: '#fff' }}>
+        <div style={{ position: 'relative' }}>
+          <i className="fa-solid fa-circle-notch fa-spin" style={{ fontSize: '40px', color: '#ff0000' }}></i>
+          <div style={{ position: 'absolute', top: '0', left: '0', width: '100%', height: '100%', borderRadius: '50%', boxShadow: '0 0 20px rgba(255,0,0,0.5)', zIndex: -1 }}></div>
+        </div>
       </div>
     );
   }
 
   return (
-    <div style={{ minHeight: '80vh', background: '#0d1117', color: '#fff', padding: '40px 20px' }}>
-      <div style={{ maxWidth: '600px', margin: '0 auto', background: '#161b22', border: '1px solid #30363d', borderRadius: '12px', padding: '30px' }}>
-        <h1 style={{ textAlign: 'center', marginBottom: '30px', fontSize: '28px' }}>Profil Ayarları</h1>
+    <div style={{ minHeight: '90vh', background: '#000', color: '#fff', padding: '60px 20px', position: 'relative', overflow: 'hidden' }}>
+      <div style={{ position: 'absolute', top: '-10%', right: '-10%', width: '400px', height: '400px', background: 'radial-gradient(circle, rgba(230,0,0,0.15) 0%, transparent 70%)', pointerEvents: 'none' }}></div>
+      <div style={{ position: 'absolute', bottom: '-10%', left: '-10%', width: '400px', height: '400px', background: 'radial-gradient(circle, rgba(230,0,0,0.15) 0%, transparent 70%)', pointerEvents: 'none' }}></div>
+
+      <div style={{ 
+        maxWidth: '500px', 
+        margin: '0 auto', 
+        background: 'linear-gradient(145deg, #0a0a0a 0%, #111 100%)', 
+        border: '1px solid rgba(230,0,0,0.3)', 
+        borderRadius: '16px', 
+        padding: '40px',
+        boxShadow: '0 10px 40px rgba(0,0,0,0.5), 0 0 20px rgba(230,0,0,0.1)',
+        position: 'relative',
+        zIndex: 1
+      }}>
+        <div style={{ textAlign: 'center', marginBottom: '40px' }}>
+          <h1 style={{ 
+            fontSize: '24px', 
+            fontWeight: '900', 
+            textTransform: 'uppercase', 
+            letterSpacing: '3px',
+            background: 'linear-gradient(to right, #fff, #e60000)',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
+            marginBottom: '10px'
+          }}>
+            PROFİL AYARLARI
+          </h1>
+          <div style={{ width: '50px', height: '3px', background: '#e60000', margin: '0 auto', borderRadius: '2px' }}></div>
+        </div>
         
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: '30px' }}>
-          <div style={{ position: 'relative', width: '120px', height: '120px', marginBottom: '15px' }}>
-            {profile?.avatar_url ? (
-              <img 
-                src={profile.avatar_url} 
-                alt="Avatar" 
-                style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover', border: '3px solid #e60000' }} 
-              />
-            ) : (
-              <div style={{ width: '100%', height: '100%', borderRadius: '50%', background: '#30363d', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '3px solid #e60000' }}>
-                <i className="fa-solid fa-user" style={{ fontSize: '50px', color: '#8b949e' }}></i>
-              </div>
-            )}
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: '40px' }}>
+          <div style={{ position: 'relative', width: '130px', height: '130px', marginBottom: '20px' }}>
+            <div style={{ 
+              width: '100%', 
+              height: '100%', 
+              borderRadius: '50%', 
+              padding: '4px',
+              background: 'linear-gradient(45deg, #e60000, #333)',
+              boxShadow: '0 0 25px rgba(230,0,0,0.3)'
+            }}>
+              {profile?.avatar_url ? (
+                <img 
+                  src={profile.avatar_url} 
+                  alt="Avatar" 
+                  style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover', background: '#000' }} 
+                />
+              ) : (
+                <div style={{ width: '100%', height: '100%', borderRadius: '50%', background: '#111', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <i className="fa-solid fa-user-secret" style={{ fontSize: '55px', color: '#333' }}></i>
+                </div>
+              )}
+            </div>
+            
             <label 
               htmlFor="avatar-upload" 
               style={{
                 position: 'absolute', bottom: '5px', right: '5px',
                 background: '#e60000', color: '#fff',
-                width: '32px', height: '32px', borderRadius: '50%',
+                width: '36px', height: '36px', borderRadius: '50%',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
-                cursor: 'pointer', boxShadow: '0 2px 10px rgba(0,0,0,0.3)'
+                cursor: 'pointer', boxShadow: '0 4px 15px rgba(0,0,0,0.5)',
+                transition: 'all 0.3s ease',
+                border: '2px solid #000'
               }}
             >
-              <i className="fa-solid fa-camera" style={{ fontSize: '14px' }}></i>
+              <i className="fa-solid fa-camera" style={{ fontSize: '16px' }}></i>
               <input 
                 id="avatar-upload" 
                 type="file" 
@@ -157,75 +208,94 @@ export default function ProfilePage() {
               />
             </label>
           </div>
-          <p style={{ color: '#8b949e', fontSize: '14px' }}>{user?.email}</p>
+          <div style={{ textAlign: 'center' }}>
+            <p style={{ color: '#666', fontSize: '13px', letterSpacing: '1px', marginBottom: '5px' }}>SİSTEME KAYITLI E-POSTA</p>
+            <p style={{ color: '#fff', fontSize: '14px', fontWeight: 'bold' }}>{user?.email}</p>
+          </div>
         </div>
 
         <form onSubmit={updateProfile}>
-          <div style={{ marginBottom: '20px' }}>
-            <label style={{ display: 'block', color: '#8b949e', marginBottom: '8px', fontSize: '14px' }}>Kullanıcı Adı</label>
-            <input 
-              type="text" 
-              value={fullName}
-              onChange={e => setFullName(e.target.value)}
-              style={{
-                width: '100%',
-                padding: '12px',
-                borderRadius: '6px',
-                background: '#0d1117',
-                border: '1px solid #30363d',
-                color: '#fff',
-                outline: 'none'
-              }}
-            />
+          <div style={{ marginBottom: '30px' }}>
+            <label style={{ display: 'block', color: '#e60000', marginBottom: '10px', fontSize: '12px', fontWeight: '900', letterSpacing: '1.5px' }}>KULLANICI ADI (ZORUNLU)</label>
+            <div style={{ position: 'relative' }}>
+              <i className="fa-solid fa-terminal" style={{ position: 'absolute', left: '15px', top: '50%', transform: 'translateY(-50%)', color: '#444' }}></i>
+              <input 
+                type="text" 
+                value={fullName}
+                onChange={e => setFullName(e.target.value)}
+                placeholder="Kod adınızı belirleyin..."
+                required
+                style={{
+                  width: '100%',
+                  padding: '14px 14px 14px 45px',
+                  borderRadius: '8px',
+                  background: 'rgba(0,0,0,0.3)',
+                  border: '1px solid #333',
+                  color: '#fff',
+                  outline: 'none',
+                  fontSize: '15px',
+                  fontFamily: 'monospace'
+                }}
+              />
+            </div>
           </div>
 
           {message.text && (
             <div style={{
-              padding: '12px',
-              borderRadius: '6px',
-              marginBottom: '20px',
-              fontSize: '14px',
+              padding: '15px',
+              borderRadius: '8px',
+              marginBottom: '30px',
+              fontSize: '13px',
               textAlign: 'center',
-              backgroundColor: message.type === 'error' ? 'rgba(230,0,0,0.1)' : 'rgba(46,164,79,0.1)',
-              color: message.type === 'error' ? '#e60000' : '#2ea44f',
-              border: `1px solid ${message.type === 'error' ? '#e60000' : '#2ea44f'}`
+              backgroundColor: message.type === 'error' ? 'rgba(230,0,0,0.1)' : 'rgba(230,0,0,0.05)',
+              color: message.type === 'error' ? '#ff3333' : '#fff',
+              border: `1px solid ${message.type === 'error' ? '#e60000' : 'rgba(255,255,255,0.1)'}`,
             }}>
+              <i className={`fa-solid ${message.type === 'error' ? 'fa-triangle-exclamation' : 'fa-check-circle'}`} style={{ marginRight: '8px' }}></i>
               {message.text}
             </div>
           )}
 
-          <div style={{ display: 'flex', gap: '15px' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
             <button 
               type="submit" 
               disabled={updating}
               style={{
-                flex: 1,
-                padding: '14px',
-                borderRadius: '6px',
-                background: '#238636',
+                width: '100%',
+                padding: '16px',
+                borderRadius: '8px',
+                background: '#e60000',
                 color: '#fff',
                 border: 'none',
-                fontWeight: 'bold',
+                fontWeight: '900',
+                fontSize: '14px',
+                letterSpacing: '2px',
                 cursor: updating ? 'not-allowed' : 'pointer',
-                opacity: updating ? 0.7 : 1
+                opacity: updating ? 0.7 : 1,
+                boxShadow: '0 5px 20px rgba(230,0,0,0.3)',
               }}
             >
-              {updating ? 'Güncelleniyor...' : 'Değişiklikleri Kaydet'}
+              {updating ? 'VERİ İŞLENİYOR...' : 'SİSTEMİ GÜNCELLE'}
             </button>
+            
             <button 
               type="button"
               onClick={handleLogout}
               style={{
-                padding: '14px 20px',
-                borderRadius: '6px',
-                background: '#30363d',
-                color: '#f85149',
-                border: '1px solid #f85149',
+                width: '100%',
+                padding: '12px',
+                borderRadius: '8px',
+                background: 'transparent',
+                color: '#444',
+                border: '1px solid #222',
+                fontSize: '12px',
                 fontWeight: 'bold',
-                cursor: 'pointer'
+                letterSpacing: '1px',
+                cursor: 'pointer',
+                marginTop: '10px',
               }}
             >
-              Çıkış Yap
+              SİSTEMDEN ÇIKIŞ YAP
             </button>
           </div>
         </form>
