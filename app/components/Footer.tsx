@@ -22,16 +22,17 @@ export default function Footer() {
     }}>
       <div className="container" style={{ maxWidth: '1200px', margin: '0 auto' }}>
         
-        {/* Stylized Logo */}
-        <div style={{ 
-          fontFamily: "'UnifrakturMaguntia', cursive", 
-          fontSize: '70px', 
-          color: '#e60000', 
-          marginBottom: '30px',
-          textShadow: '0 0 10px rgba(230,0,0,0.3)',
-          letterSpacing: '2px'
-        }}>
-          CodeMareFi
+        {/* Stylized Logo Image */}
+        <div style={{ marginBottom: '30px' }}>
+          <img 
+            src="/logo.png" 
+            alt="CodeMareFi" 
+            style={{ 
+              maxWidth: '300px', 
+              height: 'auto',
+              filter: 'drop-shadow(0 0 10px rgba(230,0,0,0.3))'
+            }} 
+          />
         </div>
 
         {/* Links Navigation */}
@@ -87,7 +88,7 @@ export default function Footer() {
           color: '#fff',
           fontWeight: 'bold'
         }}>
-          Dizayn |\_/| Tasarım - by “ ❤️ `` <span style={{ color: '#e60000', fontFamily: "'UnifrakturMaguntia', cursive", fontSize: '18px' }}>MareFi</span> `` ❤️ ”
+          Dizayn |\_/| Tasarım - by “ ❤️ `` <span style={{ color: '#e60000', fontFamily: "'UnifrakturMaguntia', cursive", fontSize: '18px' }}>NBK BARIŞ</span> `` ❤️ ”
         </div>
 
       </div>
