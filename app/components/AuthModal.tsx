@@ -102,7 +102,14 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
         }, 1500);
       }
     } catch (error: any) {
-      setMessage({ type: 'error', text: error.message || 'Erişim Engellendi!' });
+      let msg = error.message;
+      if (msg === 'Invalid login credentials') msg = 'E-posta veya şifre hatalı! Erişim reddedildi.';
+      if (msg === 'User already registered') msg = 'Bu e-posta adresi zaten kayıtlı!';
+      if (msg === 'Signup confirmed' || msg === 'Email not confirmed') msg = 'Lütfen önce e-postanızı doğrulayın!';
+      if (msg === 'Token has expired') msg = 'Doğrulama kodunun süresi dolmuş!';
+      if (msg === 'Invalid hex byte for token') msg = 'Geçersiz doğrulama kodu!';
+      
+      setMessage({ type: 'error', text: msg || 'Erişim Engellendi!' });
     } finally {
       setLoading(false);
     }
