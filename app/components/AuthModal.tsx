@@ -19,6 +19,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
   const [canResend, setCanResend] = useState(false);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState({ type: '', text: '' });
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
 
   useEffect(() => {
     let interval: any;
@@ -55,6 +56,12 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
     return () => { document.body.style.overflow = 'unset'; };
   }, [isOpen]);
 
+  useEffect(() => {
+    (window as any).onTurnstileSuccess = (token: string) => {
+      setTurnstileToken(token);
+    };
+  }, []);
+
   if (!isOpen) return null;
 
   const resendOtp = async () => {
@@ -88,6 +95,10 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
 
   const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!isLogin && step === 'form' && !turnstileToken) {
+      setMessage({ type: 'error', text: 'Lütfen insan olduğunuzu doğrulayın!' });
+      return;
+    }
     setLoading(true);
     setMessage({ type: '', text: '' });
 
@@ -317,6 +328,17 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
                   }}
                 />
               </div>
+
+              {!isLogin && (
+                <div style={{ marginBottom: '20px', display: 'flex', justifyContent: 'center' }}>
+                  <div 
+                    className="cf-turnstile" 
+                    data-sitekey="0x4AAAAAADEeXvHTwYJ1TIX9"
+                    data-callback="onTurnstileSuccess"
+                    data-theme="dark"
+                  ></div>
+                </div>
+              )}
             </>
           ) : (
             <div style={{ marginBottom: '30px' }}>
