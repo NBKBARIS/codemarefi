@@ -8,7 +8,7 @@ export const metadata: Metadata = {
   description: "Türkiye'nin en kaliteli Discord bot kodları, güncel yazılım haberleri ve modern web teknolojileri rehberi. CodeMareFi ile geleceğin kodlarını keşfedin.",
   keywords: "discord bot kodları, discord bot komutları, yazılım geliştirme, javascript kod paylaşım, teknoloji haberleri, codemarefi",
   icons: {
-    icon: '/favicon.png',
+    icon: '/favicon.svg',
   },
   openGraph: {
     title: "CodeMareFi - Yazılım & Discord Bot Dünyası",

@@ -1,0 +1,16 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <g transform="translate(0, 20)">
+    <!-- Vertical Column -->
+    <path d="M140 100L220 140V420L140 380V100Z" fill="#FF2D20" />
+    <path d="M220 140L300 100V380L220 420V140Z" fill="#E6291C" />
+    <path d="M140 100L220 60L300 100L220 140L140 100Z" fill="#FF4D40" />
+    
+    <!-- Base Part -->
+    <path d="M220 420L440 310V380L220 490V420Z" fill="#FF2D20" />
+    <path d="M220 420L300 380L520 270L440 310L220 420Z" fill="#FF4D40" />
+    <path d="M440 310L520 270V340L440 380V310Z" fill="#E6291C" />
+  </g>
+  
+  <!-- White highlight lines for that sleek look -->
+  <path d="M220 140V420M140 100L220 140L300 100M220 420L440 310L520 270M440 310V380" stroke="white" stroke-width="4" stroke-linejoin="round" opacity="0.3"/>
+</svg>
