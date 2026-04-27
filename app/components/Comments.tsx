@@ -100,40 +100,18 @@ const CommentNode = ({
               </Link>
 
               {isAdminAuthor && (
-                <span className="tooltip-container" style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', cursor: 'default', position: 'relative' }}>
-                  <span style={{ background: '#e60000', color: 'white', fontSize: '10px', padding: '1px 4px', borderRadius: '2px', fontWeight: 'bold' }}>Yönetici</span>
-                  <img 
-                    src="https://cdn3.emoji.gg/emojis/201224-admin.png" 
-                    alt="Admin" 
-                    style={{ width: '16px', height: '16px', objectFit: 'contain' }} 
-                    onError={(e) => {
-                      e.currentTarget.style.display = 'none';
-                    }}
-                  />
-                  <span className="tooltip-text">Yönetici</span>
+                <span style={{ background: '#e60000', color: 'white', fontSize: '10px', padding: '2px 5px', borderRadius: '3px', fontWeight: 'bold', marginLeft: '2px' }}>
+                  Yönetici
                 </span>
               )}
               {isModAuthor && (
-                <span className="tooltip-container" style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', cursor: 'default', position: 'relative' }}>
-                  <span style={{ background: '#2ea44f', color: 'white', fontSize: '10px', padding: '1px 4px', borderRadius: '2px', fontWeight: 'bold' }}>Moderatör</span>
-                  <i className="fa-solid fa-shield-halved" style={{ color: '#2ea44f', fontSize: '12px' }}></i>
-                  <span className="tooltip-text">Moderatör</span>
+                <span style={{ background: '#2ea44f', color: 'white', fontSize: '10px', padding: '2px 5px', borderRadius: '3px', fontWeight: 'bold', marginLeft: '2px' }}>
+                  Moderatör
                 </span>
               )}
               {isMemberAuthor && (
-                <span className="tooltip-container" style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', cursor: 'default', position: 'relative' }}>
-                  <img 
-                    src="https://cdn3.emoji.gg/emojis/249130-member.png" 
-                    alt="Üye" 
-                    style={{ width: '16px', height: '16px', objectFit: 'contain' }} 
-                    onError={(e) => {
-                      e.currentTarget.style.display = 'none';
-                      const next = e.currentTarget.nextElementSibling as HTMLElement;
-                      if (next) next.style.display = 'inline-block';
-                    }}
-                  />
-                  <i className="fa-solid fa-circle-check" style={{ color: '#00d2ff', fontSize: '12px', display: 'none' }}></i>
-                  <span className="tooltip-text">Üye</span>
+                <span style={{ background: '#007bff', color: 'white', fontSize: '10px', padding: '2px 5px', borderRadius: '3px', fontWeight: 'bold', marginLeft: '2px' }}>
+                  Üye
                 </span>
               )}
 
