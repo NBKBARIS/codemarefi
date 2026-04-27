@@ -177,78 +177,86 @@ export default function HomePage() {
             </div>
           </div>
 
-          {/* TABBED ICERIK: Buyuk sol + 4 yatay kart sag */}
+          {/* PREMIUM FEATURED SECTION: 1 Buyuk Sol + 2x2 Grid Sag */}
           {posts.length > 0 && (
-            <div style={{ display: 'grid', gridTemplateColumns: '60% 40%', marginBottom: '30px', gap: '15px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: '1.4fr 1fr', gap: '15px', marginBottom: '30px', height: '500px' }}>
               
-              {/* SOL: Büyük Kart */}
+              {/* SOL: Buyuk Hero Kart */}
               {posts[0] && (
                 <Link
                   href={posts[0].url}
                   style={{
+                    position: 'relative',
                     display: 'flex',
                     flexDirection: 'column',
-                    background: '#1a1a1a',
+                    background: '#000',
                     textDecoration: 'none',
                     overflow: 'hidden',
-                    borderRadius: '2px',
-                    transition: 'transform 0.2s',
+                    borderRadius: '4px',
+                    transition: 'transform 0.3s ease',
+                    height: '100%'
                   }}
-                  onMouseEnter={e => e.currentTarget.style.transform = 'translateY(-2px)'}
-                  onMouseLeave={e => e.currentTarget.style.transform = 'translateY(0)'}
+                  onMouseEnter={e => e.currentTarget.style.transform = 'scale(1.01)'}
+                  onMouseLeave={e => e.currentTarget.style.transform = 'scale(1)'}
                 >
-                  <div style={{ width: '100%', position: 'relative', background: '#000' }}>
-                    {posts[0].thumbnail && (
-                      <img src={posts[0].thumbnail} alt="" style={{ width: '100%', display: 'block' }} />
-                    )}
-                  </div>
-                  <div style={{ padding: '20px', flex: 1, display: 'flex', flexDirection: 'column' }}>
-                    <div style={{ color: '#fff', fontSize: '18px', fontWeight: 700, lineHeight: 1.3, marginBottom: '10px' }}>
+                  {posts[0].thumbnail && (
+                    <img src={posts[0].thumbnail} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', opacity: 0.7 }} />
+                  )}
+                  {/* Overlay */}
+                  <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, padding: '30px', background: 'linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.6) 50%, transparent 100%)' }}>
+                    <div style={{ background: '#e60000', color: '#fff', fontSize: '10px', fontWeight: 800, padding: '4px 8px', borderRadius: '2px', display: 'inline-block', marginBottom: '12px', textTransform: 'uppercase' }}>
+                      {posts[0].categories[0] || 'GÜNCEL'}
+                    </div>
+                    <h2 style={{ color: '#fff', fontSize: '24px', fontWeight: 800, lineHeight: 1.2, marginBottom: '12px', textShadow: '0 2px 4px rgba(0,0,0,0.5)' }}>
                       {posts[0].title}
+                    </h2>
+                    <div style={{ color: '#ccc', fontSize: '13px', lineHeight: 1.5, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden', marginBottom: '15px' }}>
+                      {posts[0].summary}
                     </div>
-                    <div style={{ color: '#888', fontSize: '12px', display: 'flex', gap: '15px', marginBottom: '12px' }}>
-                      <span><i className="fa-regular fa-clock" style={{ marginRight: '5px' }}></i>{fmtDate(posts[0].published)}</span>
-                      <span><i className="fa-solid fa-user" style={{ marginRight: '5px', color: '#e60000' }}></i>{posts[0].author}</span>
-                    </div>
-                    <div style={{ color: '#aaa', fontSize: '13px', lineHeight: 1.5, display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
-                      {posts[0].summary || 'Bu yazının detayı için tıklayın. Codemarefi üzerinde yayınlanan en güncel içerikleri takip edebilirsiniz...'}
+                    <div style={{ color: '#eee', fontSize: '11px', display: 'flex', gap: '15px', alignItems: 'center' }}>
+                      <span><i className="fa-solid fa-user" style={{ color: '#e60000', marginRight: '6px' }}></i>{posts[0].author}</span>
+                      <span><i className="fa-regular fa-clock" style={{ marginRight: '6px' }}></i>{fmtDate(posts[0].published)}</span>
                     </div>
                   </div>
                 </Link>
               )}
 
-              {/* SAĞ: 4 Yatay Kart Alt Alta */}
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                {posts.slice(1, 5).map(p => (
+              {/* SAG: 2x2 Grid */}
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gridTemplateRows: '1fr 1fr', gap: '10px' }}>
+                {posts.slice(1, 5).map((p, idx) => (
                   <Link
                     key={p.id}
                     href={p.url}
                     style={{
-                      display: 'flex',
-                      height: 'calc((100% - 30px) / 4)',
-                      background: '#1a1a1a',
+                      position: 'relative',
+                      background: '#000',
                       textDecoration: 'none',
-                      borderRadius: '2px',
+                      borderRadius: '4px',
                       overflow: 'hidden',
-                      transition: 'background 0.2s',
+                      transition: 'transform 0.3s ease',
+                      height: '100%'
                     }}
-                    onMouseEnter={e => e.currentTarget.style.background = '#222'}
-                    onMouseLeave={e => e.currentTarget.style.background = '#1a1a1a'}
+                    onMouseEnter={e => e.currentTarget.style.transform = 'scale(1.03)'}
+                    onMouseLeave={e => e.currentTarget.style.transform = 'scale(1)'}
                   >
-                    {/* Sol Resim */}
-                    <div style={{ width: '140px', flexShrink: 0, position: 'relative', background: '#000' }}>
-                      {p.thumbnail && (
-                        <img src={p.thumbnail} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                      )}
+                    {p.thumbnail && (
+                      <img src={p.thumbnail} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', opacity: 0.6 }} />
+                    )}
+                    {/* Overlay */}
+                    <div style={{ position: 'absolute', top: '10px', left: '10px' }}>
+                      <div style={{ 
+                        background: idx % 2 === 0 ? '#2ea44f' : '#f68b1e', 
+                        color: '#fff', fontSize: '9px', fontWeight: 800, padding: '3px 6px', borderRadius: '2px', textTransform: 'uppercase' 
+                      }}>
+                        {p.categories[0] || 'KATEGORİ'}
+                      </div>
                     </div>
-                    {/* Sağ Metin */}
-                    <div style={{ padding: '12px 15px', display: 'flex', flexDirection: 'column', justifyContent: 'center', flex: 1 }}>
-                      <div style={{ color: '#fff', fontSize: '14px', fontWeight: 600, lineHeight: 1.3, marginBottom: '8px', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+                    <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, padding: '15px', background: 'linear-gradient(to top, rgba(0,0,0,0.9) 0%, transparent 100%)' }}>
+                      <div style={{ color: '#fff', fontSize: '13px', fontWeight: 700, lineHeight: 1.3, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
                         {p.title}
                       </div>
-                      <div style={{ color: '#888', fontSize: '11px', display: 'flex', gap: '10px' }}>
-                        <span><i className="fa-regular fa-clock" style={{ marginRight: '4px' }}></i>{fmtDate(p.published)}</span>
-                        <span><i className="fa-solid fa-user" style={{ marginRight: '4px', color: '#e60000' }}></i>{p.author}</span>
+                      <div style={{ color: '#bbb', fontSize: '10px', marginTop: '8px', display: 'flex', justifyContent: 'space-between' }}>
+                        <span>{fmtDate(p.published)}</span>
                       </div>
                     </div>
                   </Link>
