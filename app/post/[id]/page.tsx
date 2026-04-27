@@ -2,6 +2,7 @@ import { fetchPostById, formatDate } from '../../lib/blogger';
 import { localPosts } from '../../lib/localPosts';
 import Sidebar from '../../components/Sidebar';
 import Comments from '../../components/Comments';
+import ShareButtons from '../../components/ShareButtons';
 
 export async function generateStaticParams() {
   return localPosts.map((post) => ({
@@ -75,13 +76,8 @@ export default async function PostPage(props: { params: Promise<{ id: string }> 
            ))}
         </div>
 
-        {/* Social Share Buttons (Static Visuals) */}
-        <div style={{ marginTop: '20px', paddingTop: '15px', borderTop: '1px solid #222', display: 'flex', gap: '10px' }}>
-           <button style={{ flex: 1, background: '#3b5998', color: '#fff', border: 'none', padding: '10px', fontWeight: 'bold', cursor: 'pointer' }}><i className="fa-brands fa-facebook-f"></i> Paylaş</button>
-           <button style={{ flex: 1, background: '#1da1f2', color: '#fff', border: 'none', padding: '10px', fontWeight: 'bold', cursor: 'pointer' }}><i className="fa-brands fa-twitter"></i> Tweetle</button>
-           <button style={{ flex: 1, background: '#cb2027', color: '#fff', border: 'none', padding: '10px', fontWeight: 'bold', cursor: 'pointer' }}><i className="fa-brands fa-pinterest-p"></i> Pinle</button>
-           <button style={{ flex: 1, background: '#25d366', color: '#fff', border: 'none', padding: '10px', fontWeight: 'bold', cursor: 'pointer' }}><i className="fa-brands fa-whatsapp"></i> Gönder</button>
-        </div>
+        {/* Social Share Buttons */}
+        <ShareButtons post={post} />
 
         {/* Comments Section */}
         <Comments postId={postId} />
