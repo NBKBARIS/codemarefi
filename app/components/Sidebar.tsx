@@ -7,39 +7,12 @@ import { CATEGORIES } from '../lib/blogger';
 export default function Sidebar() {
   const [time, setTime] = useState<Date | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
-  const router = useRouter();
 
   useEffect(() => {
     setTime(new Date());
     const timer = setInterval(() => setTime(new Date()), 1000);
     return () => clearInterval(timer);
   }, []);
-
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    console.log('Sidebar: Arama başlatıldı. Query:', searchQuery);
-    const q = searchQuery.trim();
-    if (q) {
-      const url = `/arama?q=${encodeURIComponent(q)}`;
-      console.log('Sidebar: Yönlendirme hedefi:', url);
-      try {
-        router.push(url);
-        console.log('Sidebar: router.push çağrıldı.');
-        // Fallback for some cases where router might not trigger immediately
-        setTimeout(() => {
-          if (window.location.pathname !== '/arama') {
-             console.warn('Sidebar: router.push başarısız olmuş olabilir, window.location kullanılıyor.');
-             window.location.href = url;
-          }
-        }, 1000);
-      } catch (error) {
-        console.error('Sidebar: router.push hatası:', error);
-        window.location.href = url;
-      }
-    } else {
-      console.log('Sidebar: Boş arama, işlem yapılmadı.');
-    }
-  };
 
   const formatTime = (d: Date) => {
     const days = ['Pazar', 'Pazartesi', 'Salı', 'Çarşamba', 'Perşembe', 'Cuma', 'Cumartesi'];
@@ -75,38 +48,16 @@ export default function Sidebar() {
           <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#e60000', display: 'inline-block' }}></span>
         </h3>
         
-        {/* Beyaz Arama Kutusu */}
-        <form onSubmit={handleSearch} style={{ background: '#fff', padding: '12px 15px', display: 'flex', alignItems: 'center', gap: '10px', borderRadius: '2px', marginBottom: '20px' }}>
+        {/* Beyaz Arama Kutusu (Bulletproof Native Form) */}
+        <form action="/arama" method="GET" style={{ background: '#fff', padding: '12px 15px', display: 'flex', alignItems: 'center', gap: '10px', borderRadius: '2px', marginBottom: '20px' }}>
           <button type="submit" style={{ background: 'none', border: 'none', padding: 0, cursor: 'pointer', display: 'flex', alignItems: 'center', outline: 'none' }}>
-            <i className="fa-solid fa-magnifying-glass" style={{ color: '#888', fontSize: '16px', transition: 'color 0.2s' }} onMouseEnter={e => e.currentTarget.style.color = '#e60000'} onMouseLeave={e => e.currentTarget.style.color = '#888'}></i>
+            <i className="fa-solid fa-magnifying-glass" style={{ color: '#888', fontSize: '16px' }}></i>
           </button>
           <input 
+            name="q"
             type="text" 
             placeholder="Ara..." 
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter') {
-                e.preventDefault();
-                console.log('Sidebar: Enter basıldı. Query:', searchQuery);
-                const q = searchQuery.trim();
-                if (q) {
-                  const url = `/arama?q=${encodeURIComponent(q)}`;
-                  console.log('Sidebar: Yönlendirme hedefi (Enter):', url);
-                  try {
-                    router.push(url);
-                    setTimeout(() => {
-                      if (window.location.pathname !== '/arama') {
-                         console.warn('Sidebar: router.push başarısız (Enter), window.location kullanılıyor.');
-                         window.location.href = url;
-                      }
-                    }, 1000);
-                  } catch (err) {
-                    window.location.href = url;
-                  }
-                }
-              }
-            }}
+            defaultValue={searchQuery}
             style={{ border: 'none', outline: 'none', background: 'transparent', color: '#333', width: '100%', fontSize: '14px', fontWeight: 'bold' }} 
           />
         </form>

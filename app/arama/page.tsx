@@ -7,9 +7,16 @@ import Sidebar from '../components/Sidebar';
 
 function SearchContent() {
   const searchParams = useSearchParams();
-  const query = searchParams.get('q') || '';
+  const [query, setQuery] = useState('');
   const [posts, setPosts] = useState<BlogPost[]>([]);
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    // Get query from searchParams OR window.location.search as fallback
+    const q = searchParams.get('q') || 
+              (typeof window !== 'undefined' ? new URLSearchParams(window.location.search).get('q') : '') || '';
+    setQuery(q);
+  }, [searchParams]);
 
   useEffect(() => {
     console.log('SearchContent: useEffect tetiklendi, query:', query);
