@@ -31,22 +31,22 @@ export default function KategoriPage() {
 
   function getCatIcon(cat: string) {
     const icons: { [key: string]: string } = {
-      'Discord-bot-kodları': 'https://emoji.gg/assets/emoji/8468-discord-robot.gif',
-      'Discord-bot-konuları': 'https://emoji.gg/assets/emoji/9129-blurple-chat.gif',
-      'Discord-Konuları': 'https://emoji.gg/assets/emoji/3894-gamepad.gif',
-      'Hazır': 'https://emoji.gg/assets/emoji/8743-neon-lightning.gif',
-      'Genel': 'https://emoji.gg/assets/emoji/3547-book.gif',
-      'JavaScript': 'https://emoji.gg/assets/emoji/9454-javascript.png',
-      'Blogger': 'https://emoji.gg/assets/emoji/7808-edit.gif',
-      'CSS': 'https://emoji.gg/assets/emoji/8316-css3.png',
-      'Html': 'https://emoji.gg/assets/emoji/9519-html5.png',
-      'Python': 'https://emoji.gg/assets/emoji/7888-python.png',
-      'Tavsiye': 'https://emoji.gg/assets/emoji/2208-verify-red.gif',
-      'Popüler': 'https://emoji.gg/assets/emoji/4473-fire.gif',
+      'Discord-bot-kodları': 'https://cdn3.emoji.gg/emojis/8468-discord-robot.gif',
+      'Discord-bot-konuları': 'https://cdn3.emoji.gg/emojis/9129-blurple-chat.gif',
+      'Discord-Konuları': 'https://cdn3.emoji.gg/emojis/3894-gamepad.gif',
+      'Hazır': 'https://cdn3.emoji.gg/emojis/8743-neon-lightning.gif',
+      'Genel': 'https://cdn3.emoji.gg/emojis/3547-book.gif',
+      'JavaScript': 'https://cdn3.emoji.gg/emojis/9454-javascript.png',
+      'Blogger': 'https://cdn3.emoji.gg/emojis/7808-edit.gif',
+      'CSS': 'https://cdn3.emoji.gg/emojis/8316-css3.png',
+      'Html': 'https://cdn3.emoji.gg/emojis/9519-html5.png',
+      'Python': 'https://cdn3.emoji.gg/emojis/7888-python.png',
+      'Tavsiye': 'https://cdn3.emoji.gg/emojis/2208-verify-red.gif',
+      'Popüler': 'https://cdn3.emoji.gg/emojis/4473-fire.gif',
     };
 
     const match = Object.keys(icons).find(k => cat.includes(k));
-    return match ? icons[match] : 'https://emoji.gg/assets/emoji/1234-folder.gif';
+    return match ? icons[match] : 'https://cdn3.emoji.gg/emojis/1234-folder.gif';
   }
 
   return (
@@ -59,7 +59,15 @@ export default function KategoriPage() {
         alignItems: 'center',
         gap: '1.5rem'
       }}>
-        <img src={getCatIcon(category)} alt="" style={{ width: '64px', height: '64px', objectFit: 'contain' }} />
+        <img 
+          src={getCatIcon(category)} 
+          alt="" 
+          style={{ width: '64px', height: '64px', objectFit: 'contain' }} 
+          onError={(e) => {
+            (e.currentTarget as HTMLImageElement).src = 'https://emoji.gg/assets/emoji/1234-folder.gif';
+            (e.currentTarget as HTMLImageElement).onerror = null;
+          }}
+        />
         <div>
           <div style={{ color: 'var(--text-muted)', fontSize: '0.85rem', marginBottom: '0.25rem' }}>Kategori</div>
           <h1 style={{ fontSize: '1.6rem', fontWeight: 700 }}>{category.replace(/-/g, ' ')}</h1>
