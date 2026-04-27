@@ -76,7 +76,7 @@ const CommentNode = ({
           <img 
             src={comment.avatar_url || 'https://api.dicebear.com/7.x/avataaars/svg?seed=Felix'} 
             alt={comment.author_name} 
-            style={{ width: '42px', height: '42px', borderRadius: '50%', objectFit: 'cover', border: `2px solid ${isAdminAuthor ? '#e60000' : (isModAuthor ? '#2ea44f' : (isMemberAuthor ? '#00d2ff' : '#444'))}` }} 
+            style={{ width: '42px', height: '42px', borderRadius: '50%', objectFit: 'cover', border: `2px solid ${isAdminAuthor ? '#e60000' : (isModAuthor ? '#2ea44f' : (isMemberAuthor ? '#666' : '#333'))}` }} 
           />
         </Link>
         </div>
@@ -88,13 +88,13 @@ const CommentNode = ({
                 style={{ 
                   fontWeight: 'bold', 
                   fontSize: '14px', 
-                  color: isAdminAuthor ? '#e60000' : (isModAuthor ? '#2ea44f' : (isMemberAuthor ? '#00d2ff' : '#ddd')), 
+                  color: isAdminAuthor ? '#e60000' : (isModAuthor ? '#2ea44f' : (isMemberAuthor ? '#f1f1f1' : '#aaa')), 
                   cursor: comment.user_id ? 'pointer' : 'default',
                   textDecoration: 'none',
                   transition: 'color 0.2s'
                 }}
                 onMouseEnter={(e) => comment.user_id && (e.currentTarget.style.color = '#fff')}
-                onMouseLeave={(e) => comment.user_id && (e.currentTarget.style.color = isAdminAuthor ? '#e60000' : (isModAuthor ? '#2ea44f' : (isMemberAuthor ? '#00d2ff' : '#ddd')))}
+                onMouseLeave={(e) => comment.user_id && (e.currentTarget.style.color = isAdminAuthor ? '#e60000' : (isModAuthor ? '#2ea44f' : (isMemberAuthor ? '#f1f1f1' : '#aaa')))}
               >
                 {comment.author_name}
               </Link>
