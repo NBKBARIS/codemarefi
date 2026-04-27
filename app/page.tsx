@@ -68,20 +68,22 @@ export default function HomePage() {
     <>
       {/* SON YAZILAR - ust yatay thumbnail serit */}
       {posts.length > 0 && (
-        <div style={{ background: '#111', borderBottom: '1px solid #222' }}>
-          <div style={{ maxWidth: '1300px', margin: '0 auto', display: 'flex', overflow: 'hidden' }}>
+        <div style={{ background: '#111', borderBottom: '1px solid #222' }} className="top-thumbnail-strip">
+          <div style={{ maxWidth: '1300px', margin: '0 auto', display: 'flex', overflowX: 'auto', scrollbarWidth: 'none' }}>
             {posts.slice(0, 5).map((p) => (
               <Link
                 key={p.id}
                 href={p.url}
+                className="strip-item"
                 style={{
-                  flex: '1 1 0',
+                  flex: '1 1 200px',
                   display: 'flex',
                   flexDirection: 'column',
                   textDecoration: 'none',
                   borderRight: '1px solid #1a1a1a',
                   overflow: 'hidden',
                   position: 'relative',
+                  minWidth: '180px'
                 }}
               >
                 {/* thumbnail */}
@@ -189,11 +191,11 @@ export default function HomePage() {
 
           {/* PREMIUM FEATURED SECTION: 1 Buyuk Slider Sol + 2x2 Grid Sag */}
           {posts.length > 0 && (
-            <div style={{ display: 'grid', gridTemplateColumns: '1.4fr 1fr', gap: '15px', marginBottom: '30px', height: '500px' }}>
+            <div className="featured-grid" style={{ marginBottom: '30px' }}>
               
               {/* SOL: Buyuk Hero Slider Kart */}
               {posts[heroIdx] && (
-                <div style={{ position: 'relative', height: '100%', overflow: 'hidden', borderRadius: '4px' }}>
+                <div className="featured-main" style={{ position: 'relative', overflow: 'hidden', borderRadius: '4px' }}>
                   <Link
                     href={posts[heroIdx].url}
                     style={{
@@ -256,44 +258,46 @@ export default function HomePage() {
               )}
 
               {/* SAG: 2x2 Grid */}
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gridTemplateRows: '1fr 1fr', gap: '10px' }}>
+              <div className="featured-side">
                 {posts.slice(1, 5).map((p, idx) => (
-                  <Link
-                    key={p.id}
-                    href={p.url}
-                    style={{
-                      position: 'relative',
-                      background: '#000',
-                      textDecoration: 'none',
-                      borderRadius: '4px',
-                      overflow: 'hidden',
-                      transition: 'transform 0.3s ease',
-                      height: '100%'
-                    }}
-                    onMouseEnter={e => e.currentTarget.style.transform = 'scale(1.03)'}
-                    onMouseLeave={e => e.currentTarget.style.transform = 'scale(1)'}
-                  >
-                    {p.thumbnail && (
-                      <img src={p.thumbnail} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', opacity: 0.6 }} />
-                    )}
-                    {/* Overlay */}
-                    <div style={{ position: 'absolute', top: '10px', left: '10px' }}>
-                      <div style={{ 
-                        background: idx % 2 === 0 ? '#2ea44f' : '#f68b1e', 
-                        color: '#fff', fontSize: '9px', fontWeight: 800, padding: '3px 6px', borderRadius: '2px', textTransform: 'uppercase' 
-                      }}>
-                        {p.categories[0] || 'KATEGORİ'}
+                  <div key={p.id} className="featured-small">
+                    <Link
+                      href={p.url}
+                      style={{
+                        position: 'relative',
+                        display: 'block',
+                        background: '#000',
+                        textDecoration: 'none',
+                        borderRadius: '4px',
+                        overflow: 'hidden',
+                        transition: 'transform 0.3s ease',
+                        height: '100%'
+                      }}
+                      onMouseEnter={e => e.currentTarget.style.transform = 'scale(1.03)'}
+                      onMouseLeave={e => e.currentTarget.style.transform = 'scale(1)'}
+                    >
+                      {p.thumbnail && (
+                        <img src={p.thumbnail} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', opacity: 0.6 }} />
+                      )}
+                      {/* Overlay */}
+                      <div style={{ position: 'absolute', top: '10px', left: '10px' }}>
+                        <div style={{ 
+                          background: idx % 2 === 0 ? '#2ea44f' : '#f68b1e', 
+                          color: '#fff', fontSize: '9px', fontWeight: 800, padding: '3px 6px', borderRadius: '2px', textTransform: 'uppercase' 
+                        }}>
+                          {p.categories[0] || 'KATEGORİ'}
+                        </div>
                       </div>
-                    </div>
-                    <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, padding: '15px', background: 'linear-gradient(to top, rgba(0,0,0,0.9) 0%, transparent 100%)' }}>
-                      <div style={{ color: '#fff', fontSize: '13px', fontWeight: 700, lineHeight: 1.3, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
-                        {p.title}
+                      <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, padding: '15px', background: 'linear-gradient(to top, rgba(0,0,0,0.9) 0%, transparent 100%)' }}>
+                        <div style={{ color: '#fff', fontSize: '13px', fontWeight: 700, lineHeight: 1.3, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+                          {p.title}
+                        </div>
+                        <div style={{ color: '#bbb', fontSize: '10px', marginTop: '8px', display: 'flex', justifyContent: 'space-between' }}>
+                          <span>{formatDate(p.published)}</span>
+                        </div>
                       </div>
-                      <div style={{ color: '#bbb', fontSize: '10px', marginTop: '8px', display: 'flex', justifyContent: 'space-between' }}>
-                        <span>{formatDate(p.published)}</span>
-                      </div>
-                    </div>
-                  </Link>
+                    </Link>
+                  </div>
                 ))}
               </div>
             </div>

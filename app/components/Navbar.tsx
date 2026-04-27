@@ -82,9 +82,9 @@ export default function Navbar() {
   return (
     <>
       {/* ── EN ÜST BAR: sayfalar + sosyal ── */}
-      <div style={{ background: '#111', borderBottom: '1px solid #1e1e1e', padding: '5px 0' }}>
+      <div style={{ background: '#111', borderBottom: '1px solid #1e1e1e', padding: '5px 0' }} className="top-social-bar">
         <div style={{ maxWidth: '1300px', margin: '0 auto', padding: '0 15px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <div style={{ display: 'flex', gap: '0' }}>
+          <div style={{ display: 'flex', gap: '0' }} className="top-nav-links">
             {['Ana Sayfa', 'Yönetim', 'İletişim', 'Duyurular', 'Hakkımızda', 'Site Haritası'].map(l => (
               <a key={l} href="#" style={{ color: '#bbb', fontSize: '12px', padding: '3px 10px', borderRight: '1px solid #222', textDecoration: 'none', transition: 'color 0.2s' }}
                 onMouseEnter={e => (e.currentTarget.style.color = '#e60000')}
@@ -175,33 +175,26 @@ export default function Navbar() {
       </div>
 
       {/* ── HEADER: LOGO + AD ── */}
-      <div style={{ maxWidth: '1300px', margin: '0 auto', padding: '18px 15px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-        <Link href="/" style={{ textDecoration: 'none' }}>
+      <div className="site-header">
+        <Link href="/" style={{ textDecoration: 'none' }} className="site-logo">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src="/logo.png"
             alt="CodeMareFi"
-            style={{ height: '75px', width: 'auto' }}
           />
         </Link>
         {/* Reklam alanı */}
-        <div style={{ flex: 1, maxWidth: '760px', height: '90px', marginLeft: '20px' }}></div>
+        <div style={{ flex: 1, maxWidth: '760px', height: '90px', marginLeft: '20px' }} className="header-ad"></div>
       </div>
 
       {/* ── STICKY NAVBAR ── */}
-      <nav style={{
-        background: '#1a1a1a',
-        borderTop: '1px solid #222',
-        borderBottom: '2px solid #e60000',
-        position: 'sticky',
-        top: 0,
-        zIndex: 999,
-      }}>
-        <div style={{ maxWidth: '1300px', margin: '0 auto', display: 'flex', alignItems: 'stretch' }}>
+      <nav className="navbar">
+        <div className="navbar-inner">
           {navItems.map((item, i) => (
             <Link
               key={i}
               href={item.href}
+              className={`navbar-item ${item.active ? 'active' : ''}`}
               style={{
                 display: 'flex',
                 alignItems: 'center',
@@ -210,22 +203,10 @@ export default function Navbar() {
                 height: '46px',
                 fontSize: '13px',
                 fontWeight: 700,
-                color: item.active ? '#fff' : '#e60000',
-                background: item.active ? '#e60000' : 'transparent',
                 textDecoration: 'none',
                 borderRight: '1px solid #2a2a2a',
                 whiteSpace: 'nowrap',
                 transition: 'background 0.2s, color 0.2s',
-              }}
-              onMouseEnter={e => {
-                if (!item.active) {
-                  (e.currentTarget as HTMLElement).style.background = '#2a2a2a';
-                }
-              }}
-              onMouseLeave={e => {
-                if (!item.active) {
-                  (e.currentTarget as HTMLElement).style.background = 'transparent';
-                }
               }}
             >
               {item.icon && <i className={`fa-solid ${item.icon}`} style={{ fontSize: '13px' }}></i>}
