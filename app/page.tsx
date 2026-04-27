@@ -154,21 +154,6 @@ export default function HomePage() {
             <span style={{ transition: 'opacity 0.3s ease', animation: 'fadeIn 0.5s' }} key={bannerIdx}>{banners[bannerIdx].text}</span>
           </div>
 
-          {/* TABS */}
-          <div style={{ display: 'flex', borderBottom: '1px solid #333', marginBottom: '20px', overflowX: 'auto', whiteSpace: 'nowrap' }}>
-            <div style={{ padding: '12px 15px', color: '#fff', fontSize: '13px', fontWeight: 'bold', borderBottom: '2px solid #e60000', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '-1px', transition: 'color 0.2s' }}>
-              <i className="fa-solid fa-gauge-high"></i> CODEMAREFI TRENDLER
-            </div>
-            <div style={{ padding: '12px 15px', color: '#888', fontSize: '13px', fontWeight: 'bold', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', transition: 'color 0.2s' }} onMouseEnter={e => e.currentTarget.style.color='#fff'} onMouseLeave={e => e.currentTarget.style.color='#888'}>
-              <i className="fa-solid fa-thumbs-up"></i> TAVSİYEMİZ
-            </div>
-            <div style={{ padding: '12px 15px', color: '#888', fontSize: '13px', fontWeight: 'bold', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', transition: 'color 0.2s' }} onMouseEnter={e => e.currentTarget.style.color='#fff'} onMouseLeave={e => e.currentTarget.style.color='#888'}>
-              <i className="fa-solid fa-star"></i> POPÜLERLER
-            </div>
-            <div style={{ padding: '12px 15px', color: '#888', fontSize: '13px', fontWeight: 'bold', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', transition: 'color 0.2s' }} onMouseEnter={e => e.currentTarget.style.color='#fff'} onMouseLeave={e => e.currentTarget.style.color='#888'}>
-              <i className="fa-solid fa-clock"></i> SON EKLENENLER
-            </div>
-          </div>
 
           {/* PREMIUM TABS: Trends, Recommended, etc. */}
           <div style={{ display: 'flex', gap: '20px', marginBottom: '15px', borderBottom: '2px solid #222', paddingBottom: '5px' }}>
