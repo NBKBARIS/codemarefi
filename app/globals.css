@@ -24,6 +24,10 @@ a {
   cursor: url(https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiuYiG39sL-Rr0xYeps_VbYcXeTKjQpvnSKHWxPg4WU_kkO48htQNq0lNi0E3zdLW5yIttKxVGSiQcgU8SCHSpx6Fmnwj4VO2YEuasCdy2MR1qeC3LCpFlxxnrBlYnD6KBTb_oW-JW1VR4/s1600/MareFi-1.png), auto;
 }
 
+body.hide-cursor, body.hide-cursor * {
+  cursor: none !important;
+}
+
 img {
   max-width: 100%;
 }

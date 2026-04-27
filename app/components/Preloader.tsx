@@ -65,6 +65,14 @@ export default function Preloader() {
     return () => clearInterval(interval);
   }, [pathname]);
 
+  useEffect(() => {
+    if (visible) {
+      document.body.classList.add('hide-cursor');
+    } else {
+      document.body.classList.remove('hide-cursor');
+    }
+  }, [visible]);
+
   if (!visible) return null;
 
   return (
