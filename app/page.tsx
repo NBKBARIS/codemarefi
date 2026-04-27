@@ -17,6 +17,7 @@ export default function HomePage() {
   const [tickerIdx, setTickerIdx] = useState(0);
   const [tickerPaused, setTickerPaused] = useState(false);
   const [bannerIdx, setBannerIdx] = useState(0);
+  const [activeTab, setActiveTab] = useState('SON EKLENENLER');
 
   const banners = [
     { text: "TÜRKİYENİN EN BÜYÜK VE KALİTELİ DİSCORD BOT KOD PAYLAŞIM SİTESİ {CodeMareFi}", color: "#8cc63f", icon: "fa-solid fa-leaf" },
@@ -27,12 +28,17 @@ export default function HomePage() {
 
   useEffect(() => {
     setLoading(true);
-    fetchPosts(POSTS_PER_PAGE + 5, (page - 1) * POSTS_PER_PAGE + 1).then(({ posts: p, total: t }) => {
+    let catFilter = '';
+    if (activeTab === 'TAVSİYEMİZ') catFilter = 'Tavsiyemiz';
+    if (activeTab === 'POPÜLERLER') catFilter = 'Popüler';
+    if (activeTab === 'CODEMAREFI TRENDLER') catFilter = 'Discord-bot-kodları'; // Or some other major category
+
+    fetchPosts(POSTS_PER_PAGE + 5, (page - 1) * POSTS_PER_PAGE + 1, catFilter).then(({ posts: p, total: t }) => {
       setPosts(p);
       setTotal(t);
       setLoading(false);
     });
-  }, [page]);
+  }, [page, activeTab]);
 
   // Hero Slider auto-advance
   useEffect(() => {
@@ -156,20 +162,25 @@ export default function HomePage() {
 
 
           {/* PREMIUM TABS: Trends, Recommended, etc. */}
-          <div style={{ display: 'flex', gap: '20px', marginBottom: '15px', borderBottom: '2px solid #222', paddingBottom: '5px' }}>
+          <div style={{ display: 'flex', gap: '20px', marginBottom: '15px', borderBottom: '2px solid #222', paddingBottom: '5px', overflowX: 'auto', whiteSpace: 'nowrap' }} className="premium-tabs">
             {['CODEMAREFI TRENDLER', 'TAVSİYEMİZ', 'POPÜLERLER', 'SON EKLENENLER'].map((tab, i) => (
-              <div key={tab} style={{ 
-                color: i === 0 ? '#fff' : '#888', 
-                fontSize: '13px', 
-                fontWeight: 700, 
-                cursor: 'pointer',
-                paddingBottom: '8px',
-                borderBottom: i === 0 ? '2px solid #e60000' : 'none',
-                textTransform: 'uppercase',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '8px'
-              }}>
+              <div 
+                key={tab} 
+                onClick={() => { setActiveTab(tab); setPage(1); }}
+                style={{ 
+                  color: activeTab === tab ? '#fff' : '#888', 
+                  fontSize: '13px', 
+                  fontWeight: 700, 
+                  cursor: 'pointer',
+                  paddingBottom: '8px',
+                  borderBottom: activeTab === tab ? '2px solid #e60000' : 'none',
+                  textTransform: 'uppercase',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  transition: 'all 0.3s'
+                }}
+              >
                 <i className={['fa-solid fa-fire', 'fa-solid fa-thumbs-up', 'fa-solid fa-star', 'fa-solid fa-clock'][i]}></i>
                 {tab}
               </div>
@@ -292,7 +303,9 @@ export default function HomePage() {
           {/* TRENDLER BASLIGI */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '0 0 8px', marginBottom: '10px', borderBottom: '2px solid #e60000' }}>
             <i className="fa-solid fa-fire" style={{ color: '#e60000', fontSize: '15px' }}></i>
-            <span style={{ fontSize: '13px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.5px', color: '#fff' }}>EN YENİLER</span>
+            <span style={{ fontSize: '13px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.5px', color: '#fff' }}>
+              {activeTab === 'SON EKLENENLER' ? 'EN YENİLER' : activeTab}
+            </span>
           </div>
 
           {/* YAZI LISTESI */}
