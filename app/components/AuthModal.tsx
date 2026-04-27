@@ -80,7 +80,10 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
         redirectTo: window.location.origin
       }
     });
-    if (error) setMessage({ type: 'error', text: 'Sosyal giriş başarısız!' });
+    if (error) {
+      console.error('OAuth Error:', error);
+      setMessage({ type: 'error', text: `Hata: ${error.message}` });
+    }
   };
 
   const handleAuth = async (e: React.FormEvent) => {
