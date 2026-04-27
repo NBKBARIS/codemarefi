@@ -286,7 +286,7 @@ export default function HomePage() {
           {/* TRENDLER BASLIGI */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '0 0 8px', marginBottom: '10px', borderBottom: '2px solid #e60000' }}>
             <i className="fa-solid fa-fire" style={{ color: '#e60000', fontSize: '15px' }}></i>
-            <span style={{ fontSize: '13px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.5px', color: '#fff' }}>NBK BARIŞ Trendler</span>
+            <span style={{ fontSize: '13px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.5px', color: '#fff' }}>EN YENİLER</span>
           </div>
 
           {/* YAZI LISTESI */}
