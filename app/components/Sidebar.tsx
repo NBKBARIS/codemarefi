@@ -72,6 +72,22 @@ export default function Sidebar() {
           </div>
         </div>
 
+        {/* GÜNÜN SÖZÜ WIDGET */}
+        <div style={{ marginBottom: '20px' }}>
+          <h3 style={{ fontSize: '13px', color: '#aaa', borderBottom: '1px solid #333', paddingBottom: '8px', marginBottom: '15px', textTransform: 'uppercase', letterSpacing: '1px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '20px' }}>
+            CODEMAREFI ÖZEL GÜNÜN SÖZÜ
+            <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#e60000', display: 'inline-block' }}></span>
+          </h3>
+          <div style={{ background: '#1a1a1a', padding: '30px 20px', borderRadius: '4px', textAlign: 'center', border: '1px solid #222' }}>
+            <p style={{ color: '#eee', fontSize: '16px', fontWeight: '700', lineHeight: 1.6, marginBottom: '20px', fontStyle: 'italic' }}>
+              "Yerinde söz söylemesini bilen, özür dilemek zorunda kalmaz. [Fatih Sultan Mehmed]"
+            </p>
+            <p style={{ color: '#888', fontSize: '12px', fontWeight: '500' }}>
+              CodeMareFi İyi Günler, İyi Kodlamalar Diler...
+            </p>
+          </div>
+        </div>
+
         {/* Destek Metni Widget */}
         <div style={{ background: '#111', padding: '0 20px 20px', textAlign: 'center' }}>
           <div style={{ borderTop: '1px solid #333', paddingTop: '15px', marginBottom: '15px' }}>
