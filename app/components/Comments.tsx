@@ -102,7 +102,14 @@ const CommentNode = ({
               {isAdminAuthor && (
                 <span className="tooltip-container" style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', cursor: 'default', position: 'relative' }}>
                   <span style={{ background: '#e60000', color: 'white', fontSize: '10px', padding: '1px 4px', borderRadius: '2px', fontWeight: 'bold' }}>Yönetici</span>
-                  <i className="fa-solid fa-crown" style={{ color: '#ffd700', fontSize: '12px' }}></i>
+                  <img 
+                    src="https://cdn3.emoji.gg/emojis/201224-admin.png" 
+                    alt="Admin" 
+                    style={{ width: '16px', height: '16px', objectFit: 'contain' }} 
+                    onError={(e) => {
+                      e.currentTarget.style.display = 'none';
+                    }}
+                  />
                   <span className="tooltip-text">Yönetici</span>
                 </span>
               )}
