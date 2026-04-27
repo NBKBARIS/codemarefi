@@ -179,7 +179,12 @@ export default function HomePage() {
             <div style={{ padding: '12px 15px', color: '#888', fontSize: '13px', fontWeight: 'bold', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', transition: 'color 0.2s' }} onMouseEnter={e => e.currentTarget.style.color='#fff'} onMouseLeave={e => e.currentTarget.style.color='#888'}>
               <i className="fa-solid fa-star"></i> POPÜLERLER
             </div>
-            <div style={{ padding: '12px 15px', color: '#888', fontSize: '13px', fontWeight: 'bold', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', transition: 'color 0.2s' }} onMouseEnter={e => e.currentTarget.style.color='#fff'} onMouseLeave={e => e.currentTarget.style.color='#88          {/* TABBED İÇERİK: Büyük sol + 4 yatay kart sağ */}
+            <div style={{ padding: '12px 15px', color: '#888', fontSize: '13px', fontWeight: 'bold', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', transition: 'color 0.2s' }} onMouseEnter={e => e.currentTarget.style.color='#fff'} onMouseLeave={e => e.currentTarget.style.color='#888'}>
+              <i className="fa-solid fa-clock"></i> SON EKLENENLER
+            </div>
+          </div>
+
+          {/* TABBED İÇERİK: Büyük sol + 4 yatay kart sağ */}
           {posts.length > 0 && (
             <div style={{ display: 'grid', gridTemplateColumns: '60% 40%', height: '430px', marginBottom: '30px', gap: '15px' }}>
               

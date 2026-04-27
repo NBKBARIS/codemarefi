@@ -1,16 +1,26 @@
 'use client';
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { CATEGORIES } from '../lib/blogger';
 
 export default function Sidebar() {
   const [time, setTime] = useState<Date | null>(null);
+  const [searchQuery, setSearchQuery] = useState('');
+  const router = useRouter();
 
   useEffect(() => {
     setTime(new Date());
     const timer = setInterval(() => setTime(new Date()), 1000);
     return () => clearInterval(timer);
   }, []);
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      router.push(`/arama?q=${encodeURIComponent(searchQuery.trim())}`);
+    }
+  };
 
   const formatTime = (d: Date) => {
     const days = ['Pazar', 'Pazartesi', 'Salı', 'Çarşamba', 'Perşembe', 'Cuma', 'Cumartesi'];
@@ -47,14 +57,26 @@ export default function Sidebar() {
         </h3>
         
         {/* Beyaz Arama Kutusu */}
-        <div style={{ background: '#fff', padding: '12px 15px', display: 'flex', alignItems: 'center', gap: '10px', borderRadius: '2px', marginBottom: '20px' }}>
-          <i className="fa-solid fa-magnifying-glass" style={{ color: '#888', fontSize: '16px' }}></i>
+        <form onSubmit={handleSearch} style={{ background: '#fff', padding: '12px 15px', display: 'flex', alignItems: 'center', gap: '10px', borderRadius: '2px', marginBottom: '20px' }}>
+          <button type="submit" style={{ background: 'none', border: 'none', padding: 0, cursor: 'pointer', display: 'flex', alignItems: 'center', outline: 'none' }}>
+            <i className="fa-solid fa-magnifying-glass" style={{ color: '#888', fontSize: '16px', transition: 'color 0.2s' }} onMouseEnter={e => e.currentTarget.style.color = '#e60000'} onMouseLeave={e => e.currentTarget.style.color = '#888'}></i>
+          </button>
           <input 
             type="text" 
             placeholder="Ara..." 
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                e.preventDefault();
+                if (searchQuery.trim()) {
+                  router.push(`/arama?q=${encodeURIComponent(searchQuery.trim())}`);
+                }
+              }
+            }}
             style={{ border: 'none', outline: 'none', background: 'transparent', color: '#333', width: '100%', fontSize: '14px', fontWeight: 'bold' }} 
           />
-        </div>
+        </form>
 
         {/* Saat Widget */}
         <div style={{ background: '#111', padding: '20px 15px', textAlign: 'center', marginBottom: '0' }}>
