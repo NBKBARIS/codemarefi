@@ -123,6 +123,7 @@ export default function Comments({ postId }: { postId: string }) {
       setContent('');
       if (!user) setAuthorName('');
       setReplyingTo(null);
+      fetchComments(); // Canlı yayın gelene kadar biz önden güncelleyelim
     }
     setIsSubmitting(false);
   }
