@@ -288,33 +288,36 @@ export default function Comments({ postId }: { postId: string }) {
                 )}
              </div>
 
-              <div style={{ display: 'flex !important', gap: '15px', alignItems: 'center', marginTop: '5px' } as any}>
+              <div style={{ display: 'flex', gap: '15px', alignItems: 'center', marginTop: '10px', padding: '5px 0' }}>
                 {!isEditing && (
                   <>
-                    <button onClick={() => setReplyingTo(comment.id)} style={{ background: 'transparent', border: 'none', color: '#e60000', fontSize: '12px', fontWeight: 'bold', cursor: 'pointer', padding: 0 }}>
-                      Yanıtla <i className="fa-solid fa-reply"></i>
+                    <button 
+                      onClick={() => setReplyingTo(comment.id)} 
+                      style={{ background: 'transparent', border: 'none', color: '#ff4d4d', fontSize: '13px', fontWeight: 'bold', cursor: 'pointer', padding: '5px 0' }}
+                    >
+                      <i className="fa-solid fa-reply"></i> Yanıtla
                     </button>
 
-                    {/* DÜZENLE BUTONU - Kendi yorumuysa mutlaka görünecek */}
-                    {user && (String(comment.user_id) === String(user.id) || comment.author_name === authorName) && (
+                    {/* DÜZENLE - İsim tutuyorsa göster */}
+                    {(comment.author_name === authorName) && (
                       <button 
                         onClick={() => {
                           setEditingId(comment.id);
                           setEditContent(comment.content);
                         }}
-                        style={{ background: 'none', border: 'none', color: '#aaa', fontSize: '12px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '5px', padding: '0' }}
+                        style={{ background: 'none', border: 'none', color: '#ffffff', fontSize: '13px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '5px' }}
                       >
-                        Düzenle <i className="fa-solid fa-pen-to-square"></i>
+                        <i className="fa-solid fa-pen-to-square"></i> Düzenle
                       </button>
                     )}
 
-                    {/* SİL BUTONU - Kendi yorumuysa veya Adminse mutlaka görünecek */}
-                    {(isGlobalAdmin || (user && (String(comment.user_id) === String(user.id) || comment.author_name === authorName))) && (
+                    {/* SİL - İsim tutuyorsa veya Adminse göster */}
+                    {(isGlobalAdmin || comment.author_name === authorName) && (
                       <button 
                         onClick={() => handleDelete(comment.id)}
-                        style={{ background: 'none', border: 'none', color: '#666', fontSize: '12px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '5px', padding: '0' }}
+                        style={{ background: 'none', border: 'none', color: '#aaaaaa', fontSize: '13px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '5px' }}
                       >
-                        Sil <i className="fa-solid fa-trash-can"></i>
+                        <i className="fa-solid fa-trash-can"></i> Sil
                       </button>
                     )}
                   </>
