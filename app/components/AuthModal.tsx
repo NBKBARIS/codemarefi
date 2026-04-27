@@ -60,7 +60,27 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
     (window as any).onTurnstileSuccess = (token: string) => {
       setTurnstileToken(token);
     };
-  }, []);
+
+    // Modal açıldığında Turnstile'ı zorla render et
+    if (isOpen && !isLogin && step === 'form') {
+      const timer = setTimeout(() => {
+        if ((window as any).turnstile) {
+          try {
+            (window as any).turnstile.render('#turnstile-container', {
+              sitekey: '0x4AAAAAADEeXvHTwYJ1TIX9',
+              callback: (token: string) => {
+                setTurnstileToken(token);
+              },
+              theme: 'dark'
+            });
+          } catch (e) {
+            console.log('Turnstile already rendered');
+          }
+        }
+      }, 500);
+      return () => clearTimeout(timer);
+    }
+  }, [isOpen, isLogin, step]);
 
   if (!isOpen) return null;
 
@@ -330,13 +350,8 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
               </div>
 
               {!isLogin && (
-                <div style={{ marginBottom: '20px', display: 'flex', justifyContent: 'center' }}>
-                  <div 
-                    className="cf-turnstile" 
-                    data-sitekey="0x4AAAAAADEeXvHTwYJ1TIX9"
-                    data-callback="onTurnstileSuccess"
-                    data-theme="dark"
-                  ></div>
+                <div style={{ marginBottom: '20px', display: 'flex', justifyContent: 'center', minHeight: '65px' }}>
+                  <div id="turnstile-container"></div>
                 </div>
               )}
             </>
