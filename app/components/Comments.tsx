@@ -155,13 +155,14 @@ export default function Comments({ postId }: { postId: string }) {
                 </span>
 
                 {isAdmin && (
-                  <span title="Yönetici" style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', cursor: 'help' }}>
+                  <span className="tooltip-container" style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', cursor: 'default', position: 'relative' }}>
                     <span style={{ background: '#e60000', color: 'white', fontSize: '10px', padding: '1px 4px', borderRadius: '2px', fontWeight: 'bold' }}>Yönetici</span>
                     <i className="fa-solid fa-crown" style={{ color: '#ffd700', fontSize: '12px' }}></i>
+                    <span className="tooltip-text">Yönetici</span>
                   </span>
                 )}
                 {isMember && (
-                  <span title="Üye" style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', cursor: 'help' }}>
+                  <span className="tooltip-container" style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', cursor: 'default', position: 'relative' }}>
                     <img 
                       src="https://cdn3.emoji.gg/emojis/9440-verified.png" 
                       alt="Üye" 
@@ -173,6 +174,7 @@ export default function Comments({ postId }: { postId: string }) {
                       }}
                     />
                     <i className="fa-solid fa-circle-check" style={{ color: '#00d2ff', fontSize: '12px', display: 'none' }}></i>
+                    <span className="tooltip-text">Üye</span>
                   </span>
                 )}
 
