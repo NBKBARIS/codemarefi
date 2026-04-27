@@ -37,6 +37,7 @@ export default function Comments({ postId }: { postId: string }) {
   useEffect(() => {
     if (user) {
       supabase.from('profiles').select('*').eq('id', user.id).single().then(({ data }) => {
+        console.log('Current User Profile Loaded:', data);
         setProfile(data);
         if (data?.full_name) setAuthorName(data.full_name);
       });
@@ -166,6 +167,9 @@ export default function Comments({ postId }: { postId: string }) {
   };
 
   const CommentNode = ({ comment, isReply = false }: { comment: CommentType, isReply?: boolean }) => {
+    // Debug logları (F12 Console'dan bakabilirsin kanka)
+    console.log(`Checking Comment ${comment.id}: author=${comment.author_name}, currentAuthor=${authorName}`);
+    
     const isAdminAuthor = comment.role === 'admin';
     const isModAuthor = comment.role === 'mod';
     const isMemberAuthor = comment.role === 'member' || (!isAdminAuthor && !isModAuthor && comment.role !== 'guest');
