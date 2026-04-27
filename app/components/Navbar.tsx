@@ -40,17 +40,6 @@ export default function Navbar() {
   const redText = useTypewriter(RED_MSGS, 65, 28, 2800);
 
   useEffect(() => {
-    // Check for OAuth errors in the URL
-    if (typeof window !== 'undefined') {
-      const hash = window.location.hash;
-      const search = window.location.search;
-      if (hash.includes('error=')) {
-        alert('Supabase Auth Hatası (Hash): ' + decodeURIComponent(hash));
-      } else if (search.includes('error=')) {
-        alert('Supabase Auth Hatası (Search): ' + decodeURIComponent(search));
-      }
-    }
-
     supabase.auth.getSession().then(({ data: { session } }) => {
       setUser(session?.user ?? null);
     });

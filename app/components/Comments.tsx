@@ -196,38 +196,66 @@ export default function Comments({ postId }: { postId: string }) {
 
       {/* Comment Form */}
       {user ? (
-        <form onSubmit={handleSubmit} style={{ marginBottom: '30px', background: '#1a1a1a', padding: '15px', borderRadius: '4px', border: '1px solid #333' }}>
-          <h4 style={{ color: '#ddd', marginTop: 0, marginBottom: '15px', fontSize: '14px' }}>
-            {replyingTo ? 'Yanıtlama İptal Et' : 'Yorum Bırakın'}
-            {replyingTo && (
-               <button type="button" onClick={() => setReplyingTo(null)} style={{ marginLeft: '10px', background: 'transparent', border: 'none', color: '#e60000', cursor: 'pointer', fontSize: '12px' }}>
-                  İptal
-               </button>
-            )}
-          </h4>
-          <div style={{ display: 'flex', gap: '10px', marginBottom: '10px' }}>
-            <input 
-              type="text" 
-              placeholder="İsminiz..." 
-              value={authorName} 
-              onChange={(e) => setAuthorName(e.target.value)}
+        profile?.full_name ? (
+          <form onSubmit={handleSubmit} style={{ marginBottom: '30px', background: '#1a1a1a', padding: '15px', borderRadius: '4px', border: '1px solid #333' }}>
+            <h4 style={{ color: '#ddd', marginTop: 0, marginBottom: '15px', fontSize: '14px' }}>
+              {replyingTo ? 'Yanıtlama İptal Et' : 'Yorum Bırakın'}
+              {replyingTo && (
+                <button type="button" onClick={() => setReplyingTo(null)} style={{ marginLeft: '10px', background: 'transparent', border: 'none', color: '#e60000', cursor: 'pointer', fontSize: '12px' }}>
+                    İptal
+                </button>
+              )}
+            </h4>
+            <div style={{ display: 'flex', gap: '10px', marginBottom: '10px' }}>
+              <input 
+                type="text" 
+                placeholder="İsminiz..." 
+                value={authorName} 
+                onChange={(e) => setAuthorName(e.target.value)}
+                required
+                disabled={true}
+                style={{ flex: 1, padding: '10px', background: '#111', border: '1px solid #444', color: '#888', borderRadius: '3px' }}
+              />
+            </div>
+            <textarea 
+              placeholder="Yorumunuzu buraya yazın..."
+              value={content}
+              onChange={(e) => setContent(e.target.value)}
               required
-              disabled={true}
-              style={{ flex: 1, padding: '10px', background: '#111', border: '1px solid #444', color: '#888', borderRadius: '3px' }}
+              rows={4}
+              style={{ width: '100%', padding: '10px', background: '#222', border: '1px solid #444', color: '#fff', borderRadius: '3px', marginBottom: '10px' }}
             />
+            <button type="submit" disabled={isSubmitting} style={{ background: '#e60000', color: '#fff', border: 'none', padding: '10px 20px', fontWeight: 'bold', borderRadius: '3px', cursor: isSubmitting ? 'not-allowed' : 'pointer' }}>
+              {isSubmitting ? 'Gönderiliyor...' : 'Gönder'}
+            </button>
+          </form>
+        ) : (
+          <div style={{ 
+            marginBottom: '30px', 
+            background: '#1a1a1a', 
+            padding: '20px', 
+            borderRadius: '4px', 
+            border: '1px solid #e60000',
+            textAlign: 'center'
+          }}>
+            <p style={{ color: '#fff', marginBottom: '15px' }}>Yorum yapabilmek için önce bir kullanıcı adı belirlemelisiniz.</p>
+            <a 
+              href="/profil" 
+              style={{ 
+                display: 'inline-block',
+                background: '#e60000', 
+                color: '#fff', 
+                padding: '8px 20px', 
+                borderRadius: '4px', 
+                textDecoration: 'none',
+                fontWeight: 'bold',
+                fontSize: '14px'
+              }}
+            >
+              Profil Ayarlarına Git
+            </a>
           </div>
-          <textarea 
-            placeholder="Yorumunuzu buraya yazın..."
-            value={content}
-            onChange={(e) => setContent(e.target.value)}
-            required
-            rows={4}
-            style={{ width: '100%', padding: '10px', background: '#222', border: '1px solid #444', color: '#fff', borderRadius: '3px', marginBottom: '10px' }}
-          />
-          <button type="submit" disabled={isSubmitting} style={{ background: '#e60000', color: '#fff', border: 'none', padding: '10px 20px', fontWeight: 'bold', borderRadius: '3px', cursor: isSubmitting ? 'not-allowed' : 'pointer' }}>
-            {isSubmitting ? 'Gönderiliyor...' : 'Gönder'}
-          </button>
-        </form>
+        )
       ) : (
         <div style={{ 
           marginBottom: '30px', 
