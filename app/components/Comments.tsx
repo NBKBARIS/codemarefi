@@ -1,6 +1,7 @@
 'use client';
 import { useState, useEffect } from 'react';
 import { supabase, CommentType, CommentRole } from '../lib/supabase';
+import Link from 'next/link';
 
 function formatCommentDate(dateStr: string) {
   const date = new Date(dateStr);
