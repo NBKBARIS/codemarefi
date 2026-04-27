@@ -58,6 +58,8 @@ export default function HomePage() {
   const tickerPosts = posts.slice(0, 8);
   const listPosts = posts.slice(0, POSTS_PER_PAGE);
 
+  const fmtDate = (d: string) => new Date(d).toLocaleDateString('tr-TR', { day: '2-digit', month: 'short', year: 'numeric' }).replace(',', '');
+
   return (
     <>
       {/* SON YAZILAR - ust yatay thumbnail serit */}
