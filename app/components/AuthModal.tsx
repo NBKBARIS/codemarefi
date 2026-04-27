@@ -34,6 +34,15 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
   }, [step, timer]);
 
   useEffect(() => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if (session) {
+        onClose();
+      }
+    });
+    return () => subscription.unsubscribe();
+  }, [onClose]);
+
+  useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = 'hidden';
       setStep('form');
@@ -62,6 +71,16 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
       setCanResend(false);
       setMessage({ type: 'success', text: 'Yeni kod gönderildi!' });
     }
+  };
+
+  const handleOAuthLogin = async (provider: 'google' | 'discord') => {
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider,
+      options: {
+        redirectTo: window.location.origin
+      }
+    });
+    if (error) setMessage({ type: 'error', text: 'Sosyal giriş başarısız!' });
   };
 
   const handleAuth = async (e: React.FormEvent) => {
@@ -391,7 +410,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
                 <button 
                   type="button"
-                  onClick={() => supabase.auth.signInWithOAuth({ provider: 'google' })}
+                  onClick={() => handleOAuthLogin('google')}
                   style={{
                     padding: '12px',
                     background: '#111',
@@ -413,7 +432,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
                 </button>
                 <button 
                   type="button"
-                  onClick={() => supabase.auth.signInWithOAuth({ provider: 'discord' })}
+                  onClick={() => handleOAuthLogin('discord')}
                   style={{
                     padding: '12px',
                     background: '#111',
