@@ -85,7 +85,6 @@ const CommentNode = ({
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px', flexWrap: 'wrap' }}>
               <Link 
                 href={comment.user_id ? `/user/${comment.user_id}` : '#'}
-                className="tooltip-container" 
                 style={{ 
                   fontWeight: 'bold', 
                   fontSize: '14px', 
@@ -98,9 +97,6 @@ const CommentNode = ({
                 onMouseLeave={(e) => comment.user_id && (e.currentTarget.style.color = isAdminAuthor ? '#e60000' : (isModAuthor ? '#2ea44f' : (isMemberAuthor ? '#00d2ff' : '#ddd')))}
               >
                 {comment.author_name}
-                <span className="tooltip-text" style={{ width: '100px', marginLeft: '-50px' }}>
-                  {isAdminAuthor ? 'Sistem Yöneticisi' : (isModAuthor ? 'Moderatör' : (isMemberAuthor ? 'Onaylı Üye' : 'Ziyaretçi'))}
-                </span>
               </Link>
 
               {isAdminAuthor && (
