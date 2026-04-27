@@ -88,7 +88,7 @@ export default function Footer() {
           color: '#fff',
           fontWeight: 'bold'
         }}>
-          Dizayn |\_/| Tasarım - by “ ❤️ `` <span style={{ color: '#e60000', fontFamily: "'UnifrakturMaguntia', cursive", fontSize: '18px' }}>NBK BARIŞ</span> `` ❤️ ”
+          Dizayn |\_/| Tasarım - by “ <i className="fa-solid fa-heart" style={{ color: '#e60000' }}></i> `` <span style={{ color: '#e60000', fontSize: '15px', letterSpacing: '1px' }}>NBK BARIŞ</span> `` <i className="fa-solid fa-heart" style={{ color: '#e60000' }}></i> ”
         </div>
 
       </div>
