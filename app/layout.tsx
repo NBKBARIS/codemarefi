@@ -31,11 +31,14 @@ export default function RootLayout({
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
       </head>
       <body style={{ fontFamily: "'Outfit', Arial, sans-serif" }}>
+        <div id="debug-indicator" style={{ position: 'fixed', top: 0, right: 0, background: 'red', color: 'white', zIndex: 10001, padding: '2px 5px', fontSize: '10px', pointerEvents: 'none' }}>
+          CodeMareFi-Debug-V3
+        </div>
         <Preloader />
         <Navbar />
         <main>{children}</main>
         <Footer />
-        <script dangerouslySetInnerHTML={{ __html: `document.addEventListener('contextmenu', event => event.preventDefault());` }} />
+        <script dangerouslySetInnerHTML={{ __html: `document.addEventListener('contextmenu', event => event.preventDefault()); console.log('CodeMareFi Debug V3 Loaded');` }} />
       </body>
     </html>
   );
