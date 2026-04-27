@@ -129,6 +129,22 @@ export default function Comments({ postId }: { postId: string }) {
     setIsSubmitting(false);
   }
 
+  const handleDelete = async (commentId: string) => {
+    if (!confirm('Bu yorumu silmek istediğinizden emin misiniz?')) return;
+
+    const { error } = await supabase
+      .from('comments')
+      .delete()
+      .eq('id', commentId);
+
+    if (error) {
+      console.error('Error deleting comment:', error);
+      alert('Yorum silinirken bir hata oluştu.');
+    } else {
+      fetchComments();
+    }
+  };
+
   const CommentNode = ({ comment, isReply = false }: { comment: CommentType, isReply?: boolean }) => {
     const isAdmin = comment.role === 'admin';
     const isMember = comment.role === 'member';
@@ -211,9 +227,22 @@ export default function Comments({ postId }: { postId: string }) {
                 {comment.content}
              </div>
 
-             <button onClick={() => setReplyingTo(comment.id)} style={{ background: 'transparent', border: 'none', color: '#e60000', fontSize: '12px', fontWeight: 'bold', cursor: 'pointer', padding: 0 }}>
-               Yanıtla <i className="fa-solid fa-reply"></i>
-             </button>
+             <div style={{ display: 'flex', gap: '15px', alignItems: 'center' }}>
+               <button onClick={() => setReplyingTo(comment.id)} style={{ background: 'transparent', border: 'none', color: '#e60000', fontSize: '12px', fontWeight: 'bold', cursor: 'pointer', padding: 0 }}>
+                 Yanıtla <i className="fa-solid fa-reply"></i>
+               </button>
+
+               {(isAdmin || (user && comment.user_id === user.id)) && (
+                 <button 
+                   onClick={() => handleDelete(comment.id)}
+                   style={{ background: 'none', border: 'none', color: '#666', fontSize: '12px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '5px', padding: '0' }}
+                   onMouseEnter={(e) => e.currentTarget.style.color = '#e60000'}
+                   onMouseLeave={(e) => e.currentTarget.style.color = '#666'}
+                 >
+                   Sil <i className="fa-solid fa-trash-can"></i>
+                 </button>
+               )}
+             </div>
 
              {comment.replies && comment.replies.length > 0 && (
                <div style={{ marginTop: '15px', borderLeft: '2px solid #333', paddingTop: '10px' }}>
