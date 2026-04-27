@@ -92,11 +92,20 @@ export default function PublicProfilePage() {
         <h1 style={{ fontSize: '32px', marginBottom: '5px', color: '#e60000', fontWeight: '800' }}>{profile.full_name}</h1>
         <p style={{ color: '#888', fontSize: '14px', marginBottom: '30px' }}>
           <i className="fa-solid fa-calendar-days" style={{ marginRight: '8px' }}></i>
-          {profile.created_at && !isNaN(new Date(profile.created_at).getTime()) ? (
-            new Date(profile.created_at).toLocaleDateString('tr-TR', { day: 'numeric', month: 'long', year: 'numeric' })
-          ) : (
-            'Yeni'
-          )} tarihinde katıldı
+          {(() => {
+            let dateStr = profile.created_at;
+            if (!dateStr || isNaN(new Date(dateStr).getTime())) {
+              if (comments.length > 0) {
+                // Yorumlar en yeniden eskiye sıralı, en sonuncu en eskidir
+                dateStr = comments[comments.length - 1].created_at;
+              }
+            }
+            
+            if (dateStr && !isNaN(new Date(dateStr).getTime())) {
+              return `${new Date(dateStr).toLocaleDateString('tr-TR', { day: 'numeric', month: 'long', year: 'numeric' })} tarihinde katıldı`;
+            }
+            return 'Yeni katıldı';
+          })()}
         </p>
 
         {/* Stats Grid */}
