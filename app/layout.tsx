@@ -14,7 +14,7 @@ export const metadata: Metadata = {
     title: "CodeMareFi - Yazılım & Discord Bot Dünyası",
     description: "Türkiye'nin en büyük ve modern Discord Bot Kod Paylaşım Platformu",
     type: "website",
-    url: "https://codemarefi-site.vercel.app",
+    url: "https://codemarefi.com",
     images: ['/favicon.png'],
   },
 };
