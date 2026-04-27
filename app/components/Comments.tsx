@@ -292,10 +292,6 @@ export default function Comments({ postId }: { postId: string }) {
     setLoading(false);
   }
 
-  }
-
-  async function handleSubmit(e: React.FormEvent) {
-
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!content.trim() || !authorName.trim()) return;
