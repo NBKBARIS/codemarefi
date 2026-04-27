@@ -30,17 +30,23 @@ export default function KategoriPage() {
   const totalPages = Math.ceil(total / POSTS_PER_PAGE);
 
   function getCatIcon(cat: string) {
-    if (cat.includes('Discord-bot-kodları')) return '🤖';
-    if (cat.includes('Discord-bot-konuları')) return '💬';
-    if (cat.includes('Discord-Konuları')) return '🎮';
-    if (cat.includes('Hazır')) return '⚡';
-    if (cat.includes('Genel')) return '📚';
-    if (cat.includes('JavaScript')) return '🟨';
-    if (cat.includes('Blogger')) return '✏️';
-    if (cat.includes('CSS')) return '🎨';
-    if (cat.includes('Html')) return '🌐';
-    if (cat.includes('Python')) return '🐍';
-    return '📁';
+    const icons: { [key: string]: string } = {
+      'Discord-bot-kodları': 'https://emoji.gg/assets/emoji/8468-discord-robot.gif',
+      'Discord-bot-konuları': 'https://emoji.gg/assets/emoji/9129-blurple-chat.gif',
+      'Discord-Konuları': 'https://emoji.gg/assets/emoji/3894-gamepad.gif',
+      'Hazır': 'https://emoji.gg/assets/emoji/8743-neon-lightning.gif',
+      'Genel': 'https://emoji.gg/assets/emoji/3547-book.gif',
+      'JavaScript': 'https://emoji.gg/assets/emoji/9454-javascript.png',
+      'Blogger': 'https://emoji.gg/assets/emoji/7808-edit.gif',
+      'CSS': 'https://emoji.gg/assets/emoji/8316-css3.png',
+      'Html': 'https://emoji.gg/assets/emoji/9519-html5.png',
+      'Python': 'https://emoji.gg/assets/emoji/7888-python.png',
+      'Tavsiye': 'https://emoji.gg/assets/emoji/2208-verify-red.gif',
+      'Popüler': 'https://emoji.gg/assets/emoji/4473-fire.gif',
+    };
+
+    const match = Object.keys(icons).find(k => cat.includes(k));
+    return match ? icons[match] : 'https://emoji.gg/assets/emoji/1234-folder.gif';
   }
 
   return (
@@ -48,12 +54,12 @@ export default function KategoriPage() {
       <div style={{
         background: 'var(--bg-secondary)',
         borderBottom: '1px solid var(--border)',
-        padding: '2rem',
+        padding: '2.5rem 2rem',
         display: 'flex',
         alignItems: 'center',
-        gap: '0.75rem'
+        gap: '1.5rem'
       }}>
-        <span style={{ fontSize: '2rem' }}>{getCatIcon(category)}</span>
+        <img src={getCatIcon(category)} alt="" style={{ width: '64px', height: '64px', objectFit: 'contain' }} />
         <div>
           <div style={{ color: 'var(--text-muted)', fontSize: '0.85rem', marginBottom: '0.25rem' }}>Kategori</div>
           <h1 style={{ fontSize: '1.6rem', fontWeight: 700 }}>{category.replace(/-/g, ' ')}</h1>
