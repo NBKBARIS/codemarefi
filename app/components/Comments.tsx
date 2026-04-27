@@ -129,6 +129,9 @@ export default function Comments({ postId }: { postId: string }) {
     setIsSubmitting(false);
   }
 
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editContent, setEditContent] = useState('');
+
   const handleDelete = async (commentId: string) => {
     if (!confirm('Bu yorumu silmek istediğinizden emin misiniz?')) return;
 
@@ -145,9 +148,28 @@ export default function Comments({ postId }: { postId: string }) {
     }
   };
 
-  const CommentNode = ({ comment, isReply = false }: { comment: CommentType, isReply?: bo    const isAdmin = comment.role === 'admin';
+  const handleUpdate = async (commentId: string) => {
+    if (!editContent.trim()) return;
+
+    const { error } = await supabase
+      .from('comments')
+      .update({ content: editContent.trim() })
+      .eq('id', commentId);
+
+    if (error) {
+      console.error('Error updating comment:', error);
+      alert('Yorum güncellenirken bir hata oluştu.');
+    } else {
+      setEditingId(null);
+      fetchComments();
+    }
+  };
+
+  const CommentNode = ({ comment, isReply = false }: { comment: CommentType, isReply?: boolean }) => {
+    const isAdmin = comment.role === 'admin';
     const isMod = comment.role === 'mod';
     const isMember = comment.role === 'member' || (!isAdmin && !isMod && comment.role !== 'guest');
+    const isEditing = editingId === comment.id;
 
     return (
       <div style={{ marginBottom: '15px', marginLeft: isReply ? '45px' : '0' }}>
@@ -233,23 +255,65 @@ n>
              </div>
 
              <div style={{ color: '#bbb', fontSize: '14px', lineHeight: '1.5', marginBottom: '8px', wordBreak: 'break-word' }}>
-                {comment.content}
+                {isEditing ? (
+                  <div style={{ marginTop: '10px' }}>
+                    <textarea 
+                      value={editContent}
+                      onChange={(e) => setEditContent(e.target.value)}
+                      style={{ width: '100%', padding: '10px', background: '#222', border: '1px solid #444', color: '#fff', borderRadius: '4px', marginBottom: '8px' }}
+                    />
+                    <div style={{ display: 'flex', gap: '10px' }}>
+                      <button 
+                        onClick={() => handleUpdate(comment.id)}
+                        style={{ background: '#2ea44f', color: '#fff', border: 'none', padding: '5px 15px', borderRadius: '4px', fontSize: '12px', cursor: 'pointer' }}
+                      >
+                        Kaydet
+                      </button>
+                      <button 
+                        onClick={() => setEditingId(null)}
+                        style={{ background: '#444', color: '#fff', border: 'none', padding: '5px 15px', borderRadius: '4px', fontSize: '12px', cursor: 'pointer' }}
+                      >
+                        Vazgeç
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  comment.content
+                )}
              </div>
 
              <div style={{ display: 'flex', gap: '15px', alignItems: 'center' }}>
-               <button onClick={() => setReplyingTo(comment.id)} style={{ background: 'transparent', border: 'none', color: '#e60000', fontSize: '12px', fontWeight: 'bold', cursor: 'pointer', padding: 0 }}>
-                 Yanıtla <i className="fa-solid fa-reply"></i>
-               </button>
+               {!isEditing && (
+                 <>
+                   <button onClick={() => setReplyingTo(comment.id)} style={{ background: 'transparent', border: 'none', color: '#e60000', fontSize: '12px', fontWeight: 'bold', cursor: 'pointer', padding: 0 }}>
+                     Yanıtla <i className="fa-solid fa-reply"></i>
+                   </button>
 
-               {(isAdmin || (user && comment.user_id === user.id)) && (
-                 <button 
-                   onClick={() => handleDelete(comment.id)}
-                   style={{ background: 'none', border: 'none', color: '#666', fontSize: '12px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '5px', padding: '0' }}
-                   onMouseEnter={(e) => e.currentTarget.style.color = '#e60000'}
-                   onMouseLeave={(e) => e.currentTarget.style.color = '#666'}
-                 >
-                   Sil <i className="fa-solid fa-trash-can"></i>
-                 </button>
+                   {user && comment.user_id === user.id && (
+                     <button 
+                       onClick={() => {
+                         setEditingId(comment.id);
+                         setEditContent(comment.content);
+                       }}
+                       style={{ background: 'none', border: 'none', color: '#888', fontSize: '12px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '5px', padding: '0' }}
+                       onMouseEnter={(e) => e.currentTarget.style.color = '#fff'}
+                       onMouseLeave={(e) => e.currentTarget.style.color = '#888'}
+                     >
+                       Düzenle <i className="fa-solid fa-pen-to-square"></i>
+                     </button>
+                   )}
+
+                   {(isAdmin || (user && comment.user_id === user.id)) && (
+                     <button 
+                       onClick={() => handleDelete(comment.id)}
+                       style={{ background: 'none', border: 'none', color: '#666', fontSize: '12px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '5px', padding: '0' }}
+                       onMouseEnter={(e) => e.currentTarget.style.color = '#e60000'}
+                       onMouseLeave={(e) => e.currentTarget.style.color = '#666'}
+                     >
+                       Sil <i className="fa-solid fa-trash-can"></i>
+                     </button>
+                   )}
+                 </>
                )}
              </div>
 
