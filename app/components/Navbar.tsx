@@ -11,9 +11,9 @@ const GREEN_MSGS = [
   'Yorum Yaparak Ve Paylaşarak Bize Destek Olabilirsiniz {CodeMareFi}',
 ];
 const RED_MSGS = [
+  'Ücretli BOT yazıyorum diyenlere inanmayın Aynı botu ve kodları CodeMareFi de ücretsiz bulabilirsiniz {MareFi}',
   'DİSCORD BOT KODLARI VE 900 YE YAKIN DİSCORD BOT KOMUTLARI YAKINDA PAYLAŞILACAKTIR TAKİPTE KALIN {MareFi}',
   'CodeMareFi Sitemizde Bulunan Herhangi Bir Konularda Aldığınız Hatayı Yorumlarda Belirtiniz {MareFi}',
-  'Yeni İçerikler ve Güncellemeler İçin Discord Sunucumuza Katılın {MareFi}',
 ];
 
 function useTypewriter(msgs: string[], charDelay = 60, deleteDelay = 30, pause = 2800) {
