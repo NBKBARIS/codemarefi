@@ -25,6 +25,7 @@ const TABS = [
 export default function HomePage() {
   const router = useRouter();
   const [posts, setPosts]               = useState<BlogPost[]>([]);
+  const [heroPosts, setHeroPosts]       = useState<BlogPost[]>([]);
   const [total, setTotal]               = useState(0);
   const [loading, setLoading]           = useState(true);
   const [page, setPage]                 = useState(1);
@@ -35,19 +36,25 @@ export default function HomePage() {
   const [activeTab, setActiveTab]       = useState('SON EKLENENLER');
   const [allPosts, setAllPosts]         = useState<BlogPost[]>([]); // for shuffle
 
-  // Fetch posts
+  // Fetch posts — liste için sayfalama
   useEffect(() => {
     setLoading(true);
     const tab = TABS.find(t => t.label === activeTab);
-    // Her sayfada POSTS_PER_PAGE + 5 çek (hero için ekstra 5)
-    // startIndex: her sayfa POSTS_PER_PAGE kadar ilerler
     const startIndex = (page - 1) * POSTS_PER_PAGE + 1;
-    fetchPosts(POSTS_PER_PAGE + 5, startIndex, tab?.cat || '').then(({ posts: p, total: t }) => {
+    fetchPosts(POSTS_PER_PAGE, startIndex, tab?.cat || '').then(({ posts: p, total: t }) => {
       setPosts(p);
       setTotal(t);
       setLoading(false);
     });
   }, [page, activeTab]);
+
+  // Hero için sadece 1 kez ilk 5 postu çek (sayfa/tab değişince güncelle)
+  useEffect(() => {
+    const tab = TABS.find(t => t.label === activeTab);
+    fetchPosts(5, 1, tab?.cat || '').then(({ posts: p }) => {
+      setHeroPosts(p);
+    });
+  }, [activeTab]);
 
   // Fetch all posts once for shuffle
   useEffect(() => {
@@ -91,10 +98,7 @@ export default function HomePage() {
 
   const totalPages  = Math.ceil(total / POSTS_PER_PAGE);
   const tickerPosts = posts.slice(0, 8);
-  // Hero grid sadece 1. sayfada, ilk 5 post
-  const heroPosts   = page === 1 ? posts.slice(0, 5) : [];
-  // Liste: 1. sayfada hero'dan sonraki 8, diğer sayfalarda ilk 8
-  const listPosts   = page === 1 ? posts.slice(5, 5 + POSTS_PER_PAGE) : posts.slice(0, POSTS_PER_PAGE);
+  const listPosts   = posts.slice(0, POSTS_PER_PAGE);
 
   return (
     <>
@@ -244,8 +248,8 @@ export default function HomePage() {
             ))}
           </div>
 
-          {/* Hero Featured Grid */}
-          {heroPosts.length > 0 && (
+          {/* Hero Featured Grid — sadece 1. sayfada */}
+          {page === 1 && heroPosts.length > 0 && (
             <div className="featured-grid" style={{ marginBottom: '30px' }}>
 
               {/* Sol: Büyük Hero Slider */}
