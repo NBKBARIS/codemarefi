@@ -39,6 +39,7 @@ export const metadata: Metadata = {
 import Preloader from "./components/Preloader";
 import SecurityProvider from "./components/SecurityProvider";
 import MobileBlocker from "./components/MobileBlocker";
+import WriteButton from "./components/WriteButton";
 
 export default function RootLayout({
   children,
@@ -61,6 +62,7 @@ export default function RootLayout({
         <MobileBlocker />
         <SecurityProvider />
         <Preloader />
+        <WriteButton />
         <Navbar />
         <main>{children}</main>
         <Footer />
