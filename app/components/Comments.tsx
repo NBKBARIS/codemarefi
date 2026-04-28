@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import { supabase, CommentType, CommentRole } from '../lib/supabase';
 import { hasBadWords } from '../lib/badWords';
 import { sendNotification } from '../lib/notifications';
+import CommentEditor from './CommentEditor';
 import Link from 'next/link';
 
 // Top 3 yorum yapan kullanıcıları çek (global cache)
@@ -478,15 +479,13 @@ export default function Comments({ postId }: { postId: string }) {
                 style={{ flex: 1, padding: '10px', background: '#111', border: '1px solid #444', color: '#888', borderRadius: '3px' }}
               />
             </div>
-            <textarea 
-              placeholder="Yorumunuzu buraya yazın..."
+            <CommentEditor
               value={content}
-              onChange={(e) => setContent(e.target.value)}
-              required
-              rows={4}
-              style={{ width: '100%', padding: '10px', background: '#222', border: '1px solid #444', color: '#fff', borderRadius: '3px', marginBottom: '10px' }}
+              onChange={setContent}
+              placeholder="Yorumunuzu yazın... Araç çubuğuyla biçimlendirebilirsiniz."
+              disabled={isSubmitting}
             />
-            <button type="submit" disabled={isSubmitting} style={{ background: '#e60000', color: '#fff', border: 'none', padding: '10px 20px', fontWeight: 'bold', borderRadius: '3px', cursor: isSubmitting ? 'not-allowed' : 'pointer' }}>
+            <button type="submit" disabled={isSubmitting} style={{ background: '#e60000', color: '#fff', border: 'none', padding: '10px 20px', fontWeight: 'bold', borderRadius: '3px', cursor: isSubmitting ? 'not-allowed' : 'pointer', marginTop: '10px' }}>
               {isSubmitting ? 'Gönderiliyor...' : 'Gönder'}
             </button>
           </form>
