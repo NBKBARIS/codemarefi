@@ -29,29 +29,40 @@ export default function PublicProfilePage() {
     async function fetchUserData() {
       if (!id) return;
 
-      // URL'den gelen ismi decode et (örn: "NBK%20BARI%C5%9E" -> "NBK BARIŞ")
-      const nameParam = decodeURIComponent(Array.isArray(id) ? id[0] : id);
+      const param = decodeURIComponent(Array.isArray(id) ? id[0] : id);
 
-      // full_name'e göre ara (UUID değil isim)
-      const { data: profileData } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('full_name', nameParam)
-        .single();
+      // Önce UUID olarak dene, sonra full_name olarak
+      const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(param);
+
+      let profileData: any = null;
+
+      if (isUUID) {
+        const { data } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', param)
+          .single();
+        profileData = data;
+      } else {
+        const { data } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('full_name', param)
+          .single();
+        profileData = data;
+      }
 
       if (profileData) {
         setProfile(profileData);
 
-        // Kullanıcının yorumlarını çek (UUID ile)
         const { data: commentData } = await supabase
           .from('comments')
-          .select('*')
+          .select('id, content, created_at, post_id')
           .eq('user_id', profileData.id)
-          .order('created_at', { ascending: false });
+          .order('created_at', { ascending: false })
+          .limit(20);
 
-        if (commentData) {
-          setComments(commentData);
-        }
+        if (commentData) setComments(commentData);
       }
 
       setLoading(false);
