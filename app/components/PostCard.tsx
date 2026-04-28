@@ -1,8 +1,6 @@
 'use client';
-import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { BlogPost, formatDate } from '../lib/blogger';
-import { supabase } from '../lib/supabase';
 
 interface PostCardProps {
   post: BlogPost;
@@ -24,16 +22,7 @@ function getCatClass(cat: string): string {
 }
 
 export default function PostCard({ post }: PostCardProps) {
-  const [commentCount, setCommentCount] = useState<number | null>(null);
   const excerpt = stripHtml(post.content).slice(0, 160) + '...';
-
-  useEffect(() => {
-    supabase
-      .from('comments')
-      .select('*', { count: 'exact', head: true })
-      .eq('post_id', post.id)
-      .then(({ count }) => setCommentCount(count ?? 0));
-  }, [post.id]);
 
   return (
     <Link href={post.url} className="post-card">
@@ -86,7 +75,7 @@ export default function PostCard({ post }: PostCardProps) {
             </span>
             <span style={{ color: '#555', display: 'flex', alignItems: 'center', gap: '4px' }}>
               <i className="fa-regular fa-comment" style={{ fontSize: '10px' }}></i>
-              {commentCount !== null ? commentCount : <i className="fa-solid fa-spinner fa-spin" style={{ fontSize: '9px' }}></i>}
+              {post.commentCount ?? 0}
             </span>
           </div>
           <span className="read-more">

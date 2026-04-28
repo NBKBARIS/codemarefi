@@ -61,12 +61,10 @@ export default function NotificationBell({ userId }: { userId: string }) {
   }, []);
 
   async function loadData() {
-    const [notifs, count] = await Promise.all([
-      getNotifications(userId),
-      getUnreadCount(userId),
-    ]);
+    // Tek sorguda hem bildirimleri hem okunmamış sayısını al
+    const notifs = await getNotifications(userId);
     setNotifications(notifs);
-    setUnread(count);
+    setUnread(notifs.filter(n => !n.is_read).length);
   }
 
   async function handleOpen() {

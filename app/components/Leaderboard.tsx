@@ -189,33 +189,18 @@ export default function Leaderboard() {
       if (!userId) return;
       const raw = localStorage.getItem(ACTIVITY_KEY);
       const map: Record<string, number> = raw ? JSON.parse(raw) : {};
-      map[userId] = (map[userId] || 0) + 30;
+      map[userId] = (map[userId] || 0) + 300; // +5 dakika
       localStorage.setItem(ACTIVITY_KEY, JSON.stringify(map));
-    }, 30000); // her 30 saniyede +30sn ekle
+    }, 5 * 60 * 1000); // her 5 dakikada bir kaydet
 
     return () => clearInterval(tick);
   }, []);
 
-  // ── İlk yükleme + 30sn'de bir otomatik yenile + realtime ──
+  // ── İlk yükleme + 5 dakikada bir otomatik yenile (istek tasarrufu) ──
   useEffect(() => {
     fetchLeaders();
-    const refreshInterval = setInterval(fetchLeaders, 30000);
-
-    // Realtime: yeni yorum veya post gelince anında güncelle
-    const channel = supabase
-      .channel('leaderboard-realtime')
-      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'comments' }, () => {
-        fetchLeaders();
-      })
-      .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'user_posts' }, () => {
-        fetchLeaders();
-      })
-      .subscribe();
-
-    return () => {
-      clearInterval(refreshInterval);
-      supabase.removeChannel(channel);
-    };
+    const refreshInterval = setInterval(fetchLeaders, 5 * 60 * 1000); // 5 dakika
+    return () => clearInterval(refreshInterval);
   }, [fetchLeaders]);
 
   // ── Sekmeler arası otomatik geçiş (her 4sn) — kullanıcı tıklamazsa ──
@@ -391,7 +376,7 @@ export default function Leaderboard() {
       {/* Alt bilgi */}
       <div style={{ padding: '6px 12px', borderTop: '1px solid #1a1a1a', fontSize: '10px', color: '#444', textAlign: 'center', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}>
         <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#2ea44f', display: 'inline-block', animation: 'pulse-green 1.5s infinite' }}></span>
-        Her 30sn güncellenir · Aktiflik her Pazartesi sıfırlanır
+        Her 5dk güncellenir · Aktiflik her Pazartesi sıfırlanır
       </div>
 
       <style>{`
