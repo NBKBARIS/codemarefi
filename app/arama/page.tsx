@@ -49,9 +49,10 @@ function SearchContent() {
           ) : (
             <>
               {posts.length === 0 ? (
-                <div style={{ textAlign: 'center', padding: '4rem', color: 'var(--text-muted)' }}>
-                  <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>🔍</div>
-                  <p>&quot;{query}&quot; için sonuç bulunamadı.</p>
+                <div style={{ textAlign: 'center', padding: '60px 20px', color: '#555' }}>
+                  <i className="fa-solid fa-magnifying-glass" style={{ fontSize: '40px', marginBottom: '15px', display: 'block', color: '#333' }}></i>
+                  <p style={{ fontSize: '16px', marginBottom: '8px', color: '#666' }}>&quot;{query}&quot; için sonuç bulunamadı.</p>
+                  <p style={{ fontSize: '13px', color: '#444' }}>Farklı anahtar kelimeler deneyin.</p>
                 </div>
               ) : (
                 <>

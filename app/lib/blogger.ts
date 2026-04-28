@@ -111,16 +111,45 @@ export async function fetchPosts(maxResults = 10, startIndex = 1, label?: string
 
 
 export async function searchPosts(query: string): Promise<BlogPost[]> {
-  await new Promise(r => setTimeout(r, 100));
-  const q = query.toLowerCase();
-  
-  const filtered = localPosts.filter(p => 
-    p.title.toLowerCase().includes(q) || 
-    p.content.toLowerCase().includes(q)
-  );
+  const q = query.toLowerCase().trim();
+  if (!q) return [];
 
-  const mappedPosts = filtered.map(p => ({ ...p, url: `/post/${p.id}` }));
-  return mappedPosts as BlogPost[];
+  // localPosts'ta ara
+  const localResults = localPosts
+    .filter(p =>
+      p.title.toLowerCase().includes(q) ||
+      p.content.toLowerCase().includes(q) ||
+      p.categories.some(c => c.toLowerCase().includes(q))
+    )
+    .map(p => ({ ...p, url: `/post/${p.id}` })) as BlogPost[];
+
+  // Supabase user_posts'ta ara (onaylı)
+  const { data: userResults } = await supabase
+    .from('user_posts')
+    .select('*, profiles(full_name, avatar_url)')
+    .eq('is_approved', true)
+    .or(`title.ilike.%${q}%,content.ilike.%${q}%`)
+    .limit(20);
+
+  const mappedUserPosts: BlogPost[] = (userResults || []).map(p => ({
+    id: p.id,
+    title: p.title,
+    content: p.content,
+    published: p.created_at,
+    updated: p.created_at,
+    categories: p.categories,
+    url: `/post/${p.id}`,
+    thumbnail: p.thumbnail_url,
+    author: p.profiles?.full_name || 'Üye',
+    authorId: p.author_id,
+    commentCount: 0,
+    slug: p.id,
+  }));
+
+  // Birleştir, tarihe göre sırala
+  return [...localResults, ...mappedUserPosts].sort(
+    (a, b) => new Date(b.published).getTime() - new Date(a.published).getTime()
+  );
 }
 
 export async function fetchPostById(id: string): Promise<BlogPost | null> {

@@ -196,11 +196,26 @@ export default function Leaderboard() {
     return () => clearInterval(tick);
   }, []);
 
-  // ── İlk yükleme + 30sn'de bir otomatik yenile ──
+  // ── İlk yükleme + 30sn'de bir otomatik yenile + realtime ──
   useEffect(() => {
     fetchLeaders();
     const refreshInterval = setInterval(fetchLeaders, 30000);
-    return () => clearInterval(refreshInterval);
+
+    // Realtime: yeni yorum veya post gelince anında güncelle
+    const channel = supabase
+      .channel('leaderboard-realtime')
+      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'comments' }, () => {
+        fetchLeaders();
+      })
+      .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'user_posts' }, () => {
+        fetchLeaders();
+      })
+      .subscribe();
+
+    return () => {
+      clearInterval(refreshInterval);
+      supabase.removeChannel(channel);
+    };
   }, [fetchLeaders]);
 
   // ── Sekmeler arası otomatik geçiş (her 4sn) — kullanıcı tıklamazsa ──
