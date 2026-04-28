@@ -125,12 +125,13 @@ export default function YonetimPage() {
                 : 'Bu sayfa sadece yönetici ve moderatörlerin erişimine açıktır. Mevcut hesabınızın bu işlem için yetkisi bulunmuyor.'}
             </p>
             <div style={{ background: '#0a0a0a', border: '1px solid #1a1a1a', borderLeft: '4px solid #e60000', borderRadius: '4px', padding: '14px 18px', marginBottom: '30px', textAlign: 'left', fontFamily: 'monospace', fontSize: '12px', color: '#555' }}>
-            <span style={{ color: '#e60000', fontWeight: 700 }}>ERİŞİM KISITLANDI</span> — Hata {accessDenied === 'no-session' ? '401' : '403'}<br />
-            <span style={{ color: '#333' }}>{'// ' + (accessDenied === 'no-session' ? 'Yönetici kimlik doğrulaması gerekli' : 'Sadece yetkili personel erişimi')}</span>
-          </div>
+              <span style={{ color: '#e60000', fontWeight: 700 }}>ERİŞİM KISITLANDI</span> — Hata {accessDenied === 'no-session' ? '401' : '403'}<br />
+              <span style={{ color: '#333' }}>{'// ' + (accessDenied === 'no-session' ? 'Yönetici kimlik doğrulaması gerekli' : 'Sadece yetkili personel erişimi')}</span>
+            </div>
             <button onClick={() => router.push('/')} style={{ background: '#e60000', color: '#fff', border: 'none', padding: '13px 32px', borderRadius: '4px', fontWeight: 700, cursor: 'pointer', fontSize: '13px', letterSpacing: '1px', textTransform: 'uppercase', transition: 'background 0.2s' }} onMouseEnter={e => e.currentTarget.style.background = '#b00000'} onMouseLeave={e => e.currentTarget.style.background = '#e60000'}>
               <i className="fa-solid fa-house" style={{ marginRight: '8px' }}></i>Ana Sayfaya Dön
             </button>
+          </div>
         </div>
       </main>
     );

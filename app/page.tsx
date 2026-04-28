@@ -1,7 +1,7 @@
 'use client';
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
-import { fetchPosts, formatDate } from './lib/blogger';
+import { fetchPosts, formatDate, BlogPost } from './lib/blogger';
 import PostCard from './components/PostCard';
 import Sidebar from './components/Sidebar';
 
@@ -9,7 +9,7 @@ const POSTS_PER_PAGE = 8;
 const CAT_COLORS = ['#5865f2', '#ff5722', '#2ea44f', '#0070f3', '#e91e63', '#9c27b0', '#00bcd4', '#e67e22'];
 
 export default function HomePage() {
-  const [posts, setPosts] = useState<{ id: string; title: string; url: string; published: string; thumbnail?: string; author: string; categories: string[]; summary: string }[]>([]);
+  const [posts, setPosts] = useState<BlogPost[]>([]);
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
@@ -227,7 +227,7 @@ export default function HomePage() {
                         {posts[heroIdx].title}
                       </h2>
                       <div style={{ color: '#ccc', fontSize: '13px', lineHeight: 1.5, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden', marginBottom: '15px' }}>
-                        {posts[heroIdx].summary}
+                        {posts[heroIdx].content?.replace(/<[^>]+>/g, '').slice(0, 160)}...
                       </div>
                       <div style={{ color: '#eee', fontSize: '11px', display: 'flex', gap: '15px', alignItems: 'center' }}>
                         <span><i className="fa-solid fa-user" style={{ color: '#e60000', marginRight: '6px' }}></i>{posts[heroIdx].author}</span>

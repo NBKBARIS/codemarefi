@@ -6,6 +6,7 @@ export interface UserPost {
   content: string;
   thumbnail_url: string;
   author_id: string;
+  user_id?: string;
   is_approved: boolean;
   categories: string[];
   created_at: string;

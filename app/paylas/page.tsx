@@ -156,6 +156,7 @@ export default function PaylasPage() {
             </button>
           </div>
         </div>
+        </div>
       </main>
     );
   }
