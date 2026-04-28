@@ -40,12 +40,10 @@ export default function HomePage() {
   useEffect(() => {
     setLoading(true);
     const tab = TABS.find(t => t.label === activeTab);
-    // 1. sayfada hero 5 post gösteriyor, liste 6'dan başlasın
-    // 2. sayfada: 6 + 8 = 14'ten başlasın (hero 5 + sayfa1 8 = 13, sonraki 14)
-    const heroOffset = 5; // Hero'da gösterilen post sayısı
-    const startIndex = page === 1 
-      ? heroOffset + 1  // 1. sayfa: 6'dan başla
-      : heroOffset + ((page - 1) * POSTS_PER_PAGE) + 1; // 2+ sayfa: hero + önceki sayfalar
+    // 1. sayfada hero gösteriliyor, liste yine de en baştan başlasın
+    // böylece gönderiler eksik görünmez.
+    const startIndex = ((page - 1) * POSTS_PER_PAGE) + 1; 
+    
     
     fetchPosts(POSTS_PER_PAGE, startIndex, tab?.cat || '').then(({ posts: p, total: t }) => {
       setPosts(p);
@@ -245,7 +243,7 @@ export default function HomePage() {
 
               {/* Sağ: 2x2 Grid */}
               <div className="featured-side">
-                {heroPosts.slice(1, 5).map((p, idx) => (
+                {heroPosts.filter((_, i) => i !== heroIdx).slice(0, 4).map((p, idx) => (
                   <div key={p.id} className="featured-small" onClick={() => router.push(p.url)} style={{ cursor: 'pointer' }}>
                     {p.thumbnail && (
                       <img src={p.thumbnail} alt="" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }} />

@@ -1,10 +1,11 @@
-﻿'use client';
+'use client';
 import { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
 import { getPendingPosts, approvePost, deletePost, UserPost } from '../lib/userPosts';
 import { writeLog, LOG_LABELS, ActivityLog, LogAction } from '../lib/activityLog';
 import { sendNotification } from '../lib/notifications';
 import { enhanceSeo } from '../lib/seoEnhancer';
+import { localPosts } from '../app/lib/localPosts';
 import { useRouter } from 'next/navigation';
 
 type Tab = 'posts' | 'users' | 'comments' | 'logs';
@@ -245,6 +246,35 @@ export default function YonetimPage() {
             >
               <i className="fa-solid fa-wand-magic-sparkles"></i>
               Tüm Postları SEO Düzelt
+            </button>
+            <button
+              onClick={async () => {
+                if (!confirm('Yerel dosyada bulunan 5 orijinal gönderi veritabanınıza (sizin adınıza) geri yüklenecektir. Onaylıyor musunuz?')) return;
+                try {
+                  let restored = 0;
+                  for (const p of localPosts) {
+                    const { data: check } = await supabase.from('user_posts').select('id').ilike('title', p.title).single();
+                    if (!check) {
+                      await supabase.from('user_posts').insert({
+                        title: p.title,
+                        content: p.content,
+                        thumbnail_url: p.thumbnail,
+                        author_id: user?.id,
+                        categories: p.categories,
+                        is_approved: true,
+                        created_at: p.published
+                      });
+                      restored++;
+                    }
+                  }
+                  alert(`${restored} gönderi başarıyla veritabanına kurtarıldı!`);
+                  fetchPosts();
+                } catch (e: any) { alert('Hata: ' + e.message); }
+              }}
+              style={{ background: '#1a1a1a', color: '#00a8cc', border: '1px solid #00a8cc', padding: '8px 14px', borderRadius: '4px', cursor: 'pointer', fontSize: '12px', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '6px' }}
+            >
+              <i className="fa-solid fa-life-ring"></i>
+              Silinenleri Kurtar
             </button>
             <div style={{ background: '#111', padding: '8px 18px', borderRadius: '50px', border: '1px solid #1e1e1e', fontSize: '13px' }}>
               <i className="fa-solid fa-circle" style={{ color: '#2ea44f', fontSize: '8px', marginRight: '6px' }}></i>
