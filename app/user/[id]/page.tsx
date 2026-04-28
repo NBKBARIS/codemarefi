@@ -23,7 +23,9 @@ export default function PublicProfilePage() {
   const { id } = useParams();
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [comments, setComments] = useState<UserComment[]>([]);
+  const [postCount, setPostCount] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
 
   useEffect(() => {
     async function fetchUserData() {
@@ -37,32 +39,42 @@ export default function PublicProfilePage() {
       let profileData: any = null;
 
       if (isUUID) {
-        const { data } = await supabase
+        const { data, error } = await supabase
           .from('profiles')
           .select('*')
           .eq('id', param)
           .single();
-        profileData = data;
+        if (!error) profileData = data;
       } else {
-        const { data } = await supabase
+        const { data, error } = await supabase
           .from('profiles')
           .select('*')
           .eq('full_name', param)
           .single();
-        profileData = data;
+        if (!error) profileData = data;
       }
 
       if (profileData) {
         setProfile(profileData);
 
+        // Yorumlar
         const { data: commentData } = await supabase
           .from('comments')
           .select('id, content, created_at, post_id')
           .eq('user_id', profileData.id)
           .order('created_at', { ascending: false })
           .limit(20);
-
         if (commentData) setComments(commentData);
+
+        // Onaylı gönderi sayısı
+        const { count } = await supabase
+          .from('user_posts')
+          .select('*', { count: 'exact', head: true })
+          .eq('author_id', profileData.id)
+          .eq('is_approved', true);
+        setPostCount(count ?? 0);
+      } else {
+        setError(true);
       }
 
       setLoading(false);
@@ -79,7 +91,7 @@ export default function PublicProfilePage() {
     );
   }
 
-  if (!profile) {
+  if (!profile || error) {
     return (
       <div style={{ minHeight: '80vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', color: '#fff', gap: '20px' }}>
         <i className="fa-solid fa-user-slash fa-4x" style={{ color: '#e60000' }}></i>
@@ -143,10 +155,20 @@ export default function PublicProfilePage() {
         </p>
 
         {/* Stats Grid */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '20px', marginBottom: '40px' }}>
-          <div style={{ background: '#111', padding: '20px', borderRadius: '12px', border: '1px solid #222' }}>
-            <div style={{ fontSize: '24px', fontWeight: 'bold', color: '#e60000' }}>{comments.length}</div>
-            <div style={{ fontSize: '12px', color: '#888', textTransform: 'uppercase', letterSpacing: '1px' }}>Toplam Yorum</div>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px', marginBottom: '40px' }}>
+          <div style={{ background: '#111', padding: '20px', borderRadius: '12px', border: '1px solid #222', textAlign: 'center' }}>
+            <div style={{ fontSize: '28px', fontWeight: 900, color: '#e60000' }}>{postCount}</div>
+            <div style={{ fontSize: '11px', color: '#888', textTransform: 'uppercase', letterSpacing: '1px', marginTop: '4px' }}>
+              <i className="fa-solid fa-pen-nib" style={{ marginRight: '5px', color: '#e60000' }}></i>
+              Gönderi
+            </div>
+          </div>
+          <div style={{ background: '#111', padding: '20px', borderRadius: '12px', border: '1px solid #222', textAlign: 'center' }}>
+            <div style={{ fontSize: '28px', fontWeight: 900, color: '#007bff' }}>{comments.length}</div>
+            <div style={{ fontSize: '11px', color: '#888', textTransform: 'uppercase', letterSpacing: '1px', marginTop: '4px' }}>
+              <i className="fa-solid fa-comment" style={{ marginRight: '5px', color: '#007bff' }}></i>
+              Yorum
+            </div>
           </div>
         </div>
 
