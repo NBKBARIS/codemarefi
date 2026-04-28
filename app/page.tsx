@@ -39,10 +39,10 @@ export default function HomePage() {
   useEffect(() => {
     setLoading(true);
     const tab = TABS.find(t => t.label === activeTab);
-    // 1. sayfada hero için 5 ekstra post çek (hero + liste = 5 + 8 = 13)
-    const fetchCount = page === 1 ? POSTS_PER_PAGE + 5 : POSTS_PER_PAGE;
-    const startIndex = page === 1 ? 1 : (page - 1) * POSTS_PER_PAGE + 1 + 5; // 1. sayfada 13 çektik, 2. sayfada 14'ten başla
-    fetchPosts(fetchCount, startIndex, tab?.cat || '').then(({ posts: p, total: t }) => {
+    // Her sayfada POSTS_PER_PAGE + 5 çek (hero için ekstra 5)
+    // startIndex: her sayfa POSTS_PER_PAGE kadar ilerler
+    const startIndex = (page - 1) * POSTS_PER_PAGE + 1;
+    fetchPosts(POSTS_PER_PAGE + 5, startIndex, tab?.cat || '').then(({ posts: p, total: t }) => {
       setPosts(p);
       setTotal(t);
       setLoading(false);
@@ -91,9 +91,9 @@ export default function HomePage() {
 
   const totalPages  = Math.ceil(total / POSTS_PER_PAGE);
   const tickerPosts = posts.slice(0, 8);
-  // Hero grid sadece 1. sayfada ve ilk 5 post — listPosts'tan bağımsız
+  // Hero grid sadece 1. sayfada, ilk 5 post
   const heroPosts   = page === 1 ? posts.slice(0, 5) : [];
-  // Liste postları: 1. sayfada hero'dan sonraki postlar, diğer sayfalarda tümü
+  // Liste: 1. sayfada hero'dan sonraki 8, diğer sayfalarda ilk 8
   const listPosts   = page === 1 ? posts.slice(5, 5 + POSTS_PER_PAGE) : posts.slice(0, POSTS_PER_PAGE);
 
   return (

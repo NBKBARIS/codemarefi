@@ -17,7 +17,6 @@ const FORMATS = [
   { label: 'A̲',   cmd: 'underline',     title: 'Altı Çizili',   icon: null },
   { label: '~~',  cmd: 'strikeThrough', title: 'Üstü Çizili',   icon: null },
 ];
-
 const COLORS = [
   { color: '#e60000', title: 'Kırmızı' },
   { color: '#2ea44f', title: 'Yeşil' },
@@ -76,6 +75,24 @@ export default function CommentEditor({ value, onChange, placeholder, disabled, 
     range.deleteContents();
     range.insertNode(code);
     sel.collapseToEnd();
+    handleInput();
+  }
+
+  // Geri al (undo)
+  function execUndo() {
+    if (disabled) return;
+    editorRef.current?.focus();
+    document.execCommand('undo', false);
+    handleInput();
+  }
+
+  // Formatı temizle — seçili metinden tüm formatlamayı kaldır
+  function execClearFormat() {
+    if (disabled) return;
+    editorRef.current?.focus();
+    document.execCommand('removeFormat', false);
+    // Rengi de sıfırla
+    document.execCommand('foreColor', false, '#cccccc');
     handleInput();
   }
 
@@ -140,6 +157,27 @@ export default function CommentEditor({ value, onChange, placeholder, disabled, 
             </div>
           )}
         </div>
+
+        {/* Ayırıcı */}
+        <div style={{ width: '1px', height: '20px', background: '#2a2a2a', margin: '0 2px' }}></div>
+
+        {/* Geri Al */}
+        <button type="button" title="Geri Al (Ctrl+Z)" onClick={execUndo} disabled={disabled}
+          style={{ background: 'none', border: '1px solid #2a2a2a', borderRadius: '4px', color: '#888', padding: '3px 7px', fontSize: '11px', cursor: 'pointer', minWidth: '28px', transition: 'all 0.15s' }}
+          onMouseEnter={e => { e.currentTarget.style.background = '#222'; e.currentTarget.style.color = '#fff'; e.currentTarget.style.borderColor = '#888'; }}
+          onMouseLeave={e => { e.currentTarget.style.background = 'none'; e.currentTarget.style.color = '#888'; e.currentTarget.style.borderColor = '#2a2a2a'; }}
+        >
+          <i className="fa-solid fa-rotate-left" style={{ fontSize: '10px' }}></i>
+        </button>
+
+        {/* Formatı Temizle */}
+        <button type="button" title="Formatı Temizle (Seçili metni sıfırla)" onClick={execClearFormat} disabled={disabled}
+          style={{ background: 'none', border: '1px solid #2a2a2a', borderRadius: '4px', color: '#888', padding: '3px 7px', fontSize: '11px', cursor: 'pointer', minWidth: '28px', transition: 'all 0.15s' }}
+          onMouseEnter={e => { e.currentTarget.style.background = '#222'; e.currentTarget.style.color = '#e60000'; e.currentTarget.style.borderColor = '#e60000'; }}
+          onMouseLeave={e => { e.currentTarget.style.background = 'none'; e.currentTarget.style.color = '#888'; e.currentTarget.style.borderColor = '#2a2a2a'; }}
+        >
+          <i className="fa-solid fa-text-slash" style={{ fontSize: '10px' }}></i>
+        </button>
       </div>
 
       {/* Contenteditable alan */}
@@ -172,12 +210,18 @@ export default function CommentEditor({ value, onChange, placeholder, disabled, 
       </div>
 
       {/* Alt bilgi */}
-      <div style={{ padding: '4px 10px', borderTop: '1px solid #1a1a1a', fontSize: '10px', color: '#444', display: 'flex', gap: '10px' }}>
+      <div style={{ padding: '4px 10px', borderTop: '1px solid #1a1a1a', fontSize: '10px', color: '#444', display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
         <span><strong style={{ color: '#555' }}>K</strong> kalın</span>
         <span><em style={{ color: '#555' }}>İ</em> italik</span>
         <span style={{ color: '#555' }}>&lt;/&gt; kod</span>
         <span style={{ color: '#555' }}>😀 emoji</span>
-        <span style={{ color: '#555', marginLeft: 'auto' }}>Metni seçip butona bas</span>
+        <span style={{ color: '#555' }}>
+          <i className="fa-solid fa-rotate-left" style={{ marginRight: '3px' }}></i>geri al
+        </span>
+        <span style={{ color: '#555' }}>
+          <i className="fa-solid fa-text-slash" style={{ marginRight: '3px' }}></i>format temizle
+        </span>
+        <span style={{ color: '#444', marginLeft: 'auto' }}>Metni seçip butona bas</span>
       </div>
 
       <style>{`
