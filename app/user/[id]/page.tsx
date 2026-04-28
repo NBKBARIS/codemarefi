@@ -155,22 +155,59 @@ export default function PublicProfilePage() {
         </p>
 
         {/* Stats Grid */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px', marginBottom: '40px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px', marginBottom: '30px' }}>
           <div style={{ background: '#111', padding: '20px', borderRadius: '12px', border: '1px solid #222', textAlign: 'center' }}>
             <div style={{ fontSize: '28px', fontWeight: 900, color: '#e60000' }}>{postCount}</div>
             <div style={{ fontSize: '11px', color: '#888', textTransform: 'uppercase', letterSpacing: '1px', marginTop: '4px' }}>
-              <i className="fa-solid fa-pen-nib" style={{ marginRight: '5px', color: '#e60000' }}></i>
-              Gönderi
+              <i className="fa-solid fa-pen-nib" style={{ marginRight: '5px', color: '#e60000' }}></i>Gönderi
             </div>
           </div>
           <div style={{ background: '#111', padding: '20px', borderRadius: '12px', border: '1px solid #222', textAlign: 'center' }}>
             <div style={{ fontSize: '28px', fontWeight: 900, color: '#007bff' }}>{comments.length}</div>
             <div style={{ fontSize: '11px', color: '#888', textTransform: 'uppercase', letterSpacing: '1px', marginTop: '4px' }}>
-              <i className="fa-solid fa-comment" style={{ marginRight: '5px', color: '#007bff' }}></i>
-              Yorum
+              <i className="fa-solid fa-comment" style={{ marginRight: '5px', color: '#007bff' }}></i>Yorum
             </div>
           </div>
         </div>
+
+        {/* Sosyal Medya Linkleri */}
+        {profile.social_links && Object.keys(profile.social_links).some(k => profile.social_links[k]) && (() => {
+          const SOCIAL_META: Record<string, { icon: string; color: string; label: string }> = {
+            github:    { icon: 'fa-github',    color: '#fff',     label: 'GitHub' },
+            twitter:   { icon: 'fa-twitter',   color: '#1da1f2',  label: 'Twitter' },
+            youtube:   { icon: 'fa-youtube',   color: '#ff0000',  label: 'YouTube' },
+            discord:   { icon: 'fa-discord',   color: '#5865f2',  label: 'Discord' },
+            instagram: { icon: 'fa-instagram', color: '#e1306c',  label: 'Instagram' },
+            website:   { icon: 'fa-globe',     color: '#2ea44f',  label: 'Website' },
+          };
+          return (
+            <div style={{ marginBottom: '30px' }}>
+              <div style={{ display: 'flex', gap: '10px', justifyContent: 'center', flexWrap: 'wrap' }}>
+                {Object.entries(profile.social_links).map(([key, val]) => {
+                  if (!val) return null;
+                  const meta = SOCIAL_META[key];
+                  if (!meta) return null;
+                  const href = key === 'discord' ? undefined : String(val);
+                  return href ? (
+                    <a key={key} href={href} target="_blank" rel="noreferrer"
+                      style={{ display: 'flex', alignItems: 'center', gap: '7px', background: '#111', border: `1px solid ${meta.color}44`, borderRadius: '50px', padding: '7px 16px', color: meta.color, fontSize: '12px', fontWeight: 700, textDecoration: 'none', transition: 'all 0.2s' }}
+                      onMouseEnter={e => { e.currentTarget.style.background = meta.color + '22'; e.currentTarget.style.borderColor = meta.color; }}
+                      onMouseLeave={e => { e.currentTarget.style.background = '#111'; e.currentTarget.style.borderColor = meta.color + '44'; }}
+                    >
+                      <i className={`fa-brands ${meta.icon}`}></i>
+                      {meta.label}
+                    </a>
+                  ) : (
+                    <div key={key} style={{ display: 'flex', alignItems: 'center', gap: '7px', background: '#111', border: `1px solid ${meta.color}44`, borderRadius: '50px', padding: '7px 16px', color: meta.color, fontSize: '12px', fontWeight: 700 }}>
+                      <i className={`fa-brands ${meta.icon}`}></i>
+                      {String(val)}
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          );
+        })()}
 
         {/* Recent Activity */}
         <div style={{ textAlign: 'left' }}>
