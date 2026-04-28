@@ -57,6 +57,16 @@ export async function approvePost(id: string) {
   if (error) throw error;
 }
 
+export async function updatePost(id: string, updates: { title: string; content: string; categories: string[] }) {
+  // Düzenleme yapılınca tekrar onay beklesin
+  const { error } = await supabase
+    .from('user_posts')
+    .update({ ...updates, is_approved: false })
+    .eq('id', id);
+
+  if (error) throw error;
+}
+
 export async function deletePost(id: string) {
   // Önce yazarı bul
   const { data: post } = await supabase

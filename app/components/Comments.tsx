@@ -354,10 +354,8 @@ export default function Comments({ postId }: { postId: string }) {
     if (user) {
       role = profile?.role || 'member';
       finalAvatar = profile?.avatar_url;
-    } else if (authorName.trim().toLowerCase() === 'nbk barış' || authorName.trim().toLowerCase() === 'admin') {
-      role = 'admin';
-      finalAvatar = 'https://ui-avatars.com/api/?name=NBK&background=5865F2&color=fff&size=48';
     }
+    // NOT: İsim bazlı admin ataması kaldırıldı — güvenlik açığı
 
     const newComment = {
       post_id: postId,
