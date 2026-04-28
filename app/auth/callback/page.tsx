@@ -7,20 +7,20 @@ export default function AuthCallbackPage() {
   const router = useRouter();
 
   useEffect(() => {
-    // URL'deki hash fragment'tan session'ı al (implicit flow)
+    supabase.auth.onAuthStateChange((event, session) => {
+      if (event === 'PASSWORD_RECOVERY') {
+        // Şifre sıfırlama linkinden gelindi — reset sayfasına yönlendir
+        router.replace('/auth/reset-password');
+      } else if (session) {
+        // Normal OAuth girişi — ana sayfaya
+        router.replace('/');
+      }
+    });
+
+    // Fallback: hash'ten session exchange dene
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (session) {
         router.replace('/');
-      } else {
-        // Hash'ten session exchange dene
-        supabase.auth.exchangeCodeForSession(window.location.search).then(({ error }) => {
-          if (error) {
-            console.error('Auth callback error:', error);
-          }
-          router.replace('/');
-        }).catch(() => {
-          router.replace('/');
-        });
       }
     });
   }, [router]);
@@ -36,7 +36,7 @@ export default function AuthCallbackPage() {
       color: '#fff',
     }}>
       <i className="fa-solid fa-spinner fa-spin fa-3x" style={{ color: '#e60000' }}></i>
-      <p style={{ color: '#888', fontSize: '14px' }}>Giriş yapılıyor, lütfen bekleyin...</p>
+      <p style={{ color: '#888', fontSize: '14px' }}>Yönlendiriliyor, lütfen bekleyin...</p>
     </div>
   );
 }

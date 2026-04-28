@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { hasBadWords, hasUsernameViolation } from '../lib/badWords';
 import { supabase } from '../lib/supabase';
+
 interface AuthModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -10,7 +11,7 @@ interface AuthModalProps {
 
 export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
   const [isLogin, setIsLogin] = useState(true);
-  const [step, setStep] = useState<'form' | 'verify'>('form');
+  const [step, setStep] = useState<'form' | 'verify' | 'forgot' | 'forgot-sent'>('form');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [fullName, setFullName] = useState('');
@@ -55,7 +56,6 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
     }
     return () => { document.body.style.overflow = 'unset'; };
   }, [isOpen]);
-
   useEffect(() => {
     (window as any).onTurnstileSuccess = (token: string) => {
       setTurnstileToken(token);
@@ -114,6 +114,35 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
     });
     if (error) {
       setMessage({ type: 'error', text: `Hata: ${error.message}` });
+    }
+  };
+
+  const handleForgotPassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email.trim()) {
+      setMessage({ type: 'error', text: 'Lütfen e-posta adresinizi girin!' });
+      return;
+    }
+    setLoading(true);
+    setMessage({ type: '', text: '' });
+
+    try {
+      const origin = typeof window !== 'undefined'
+        ? window.location.origin.replace('http://', 'https://')
+        : 'https://www.codemarefi.com';
+
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${origin}/auth/callback`,
+      });
+
+      if (error) throw error;
+
+      setStep('forgot-sent');
+      setMessage({ type: 'success', text: 'Şifre sıfırlama linki e-postanıza gönderildi!' });
+    } catch (error: any) {
+      setMessage({ type: 'error', text: error.message || 'Bir hata oluştu!' });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -302,9 +331,66 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
           letterSpacing: '3px',
           textShadow: '2px 2px #e60000'
         }}>
-          {step === 'verify' ? 'DOĞRULAMA' : (isLogin ? 'ERİŞİM ONAYLANDI' : 'KİMLİK OLUŞTUR')}
+          {step === 'verify' ? 'DOĞRULAMA' : step === 'forgot' ? 'ŞİFRE SIFIRLA' : step === 'forgot-sent' ? 'KONTROL ET' : (isLogin ? 'ERİŞİM ONAYLANDI' : 'KİMLİK OLUŞTUR')}
         </h2>
 
+        {/* ── ŞİFRE SIFIRLA FORMU ── */}
+        {step === 'forgot' && (
+          <form onSubmit={handleForgotPassword}>
+            <div style={{ textAlign: 'center', marginBottom: '25px' }}>
+              <i className="fa-solid fa-key" style={{ fontSize: '40px', color: '#e60000', marginBottom: '10px', display: 'block' }}></i>
+              <p style={{ color: '#888', fontSize: '13px', lineHeight: 1.6 }}>
+                Kayıtlı e-posta adresinizi girin. Şifre sıfırlama linki göndereceğiz.
+              </p>
+            </div>
+            <div style={{ marginBottom: '25px' }}>
+              <label style={{ display: 'block', color: '#e60000', marginBottom: '8px', fontSize: '12px', fontWeight: 'bold', letterSpacing: '1px' }}>[ E-POSTA ]</label>
+              <input
+                type="email"
+                value={email}
+                onChange={e => setEmail(e.target.value)}
+                required
+                placeholder="kayitli@email.com"
+                style={{ width: '100%', padding: '12px 15px', background: '#111', border: '1px solid #333', borderLeft: '4px solid #e60000', color: '#fff', outline: 'none', fontFamily: 'monospace' }}
+              />
+            </div>
+            {message.text && (
+              <div style={{ padding: '12px', marginBottom: '20px', fontSize: '13px', textAlign: 'center', backgroundColor: message.type === 'error' ? 'rgba(230,0,0,0.1)' : 'rgba(46,164,79,0.1)', color: message.type === 'error' ? '#e60000' : '#2ea44f', border: `1px solid ${message.type === 'error' ? '#e60000' : '#2ea44f'}`, fontFamily: 'monospace' }}>
+                {message.text}
+              </div>
+            )}
+            <button type="submit" disabled={loading} style={{ width: '100%', padding: '14px', background: '#e60000', color: '#fff', border: 'none', fontWeight: 900, fontSize: '14px', cursor: loading ? 'not-allowed' : 'pointer', letterSpacing: '2px', textTransform: 'uppercase' }}>
+              {loading ? 'GÖNDERİLİYOR...' : 'SIFIRLAMA LİNKİ GÖNDER'}
+            </button>
+            <button type="button" onClick={() => { setStep('form'); setMessage({ type: '', text: '' }); }} style={{ width: '100%', marginTop: '12px', background: 'transparent', border: 'none', color: '#666', fontSize: '12px', cursor: 'pointer', textDecoration: 'underline' }}>
+              Giriş ekranına dön
+            </button>
+          </form>
+        )}
+
+        {/* ── SIFIRLAMA LİNKİ GÖNDERİLDİ ── */}
+        {step === 'forgot-sent' && (
+          <div style={{ textAlign: 'center' }}>
+            <div style={{ width: '80px', height: '80px', borderRadius: '50%', background: 'rgba(46,164,79,0.1)', border: '2px solid #2ea44f', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px', fontSize: '32px', color: '#2ea44f' }}>
+              <i className="fa-solid fa-envelope-circle-check"></i>
+            </div>
+            <h3 style={{ color: '#2ea44f', marginBottom: '12px', fontSize: '16px', fontWeight: 900, letterSpacing: '1px' }}>LİNK GÖNDERİLDİ</h3>
+            <p style={{ color: '#888', fontSize: '13px', lineHeight: 1.7, marginBottom: '25px' }}>
+              <strong style={{ color: '#fff' }}>{email}</strong> adresine şifre sıfırlama linki gönderildi.<br />
+              E-postanızı kontrol edin ve linke tıklayın.
+            </p>
+            <div style={{ background: '#111', border: '1px solid #1e1e1e', borderRadius: '6px', padding: '12px', marginBottom: '20px', fontSize: '12px', color: '#666' }}>
+              <i className="fa-solid fa-circle-info" style={{ color: '#e60000', marginRight: '6px' }}></i>
+              Spam/Gereksiz klasörünü de kontrol etmeyi unutmayın.
+            </div>
+            <button onClick={() => { setStep('form'); setMessage({ type: '', text: '' }); }} style={{ background: '#e60000', color: '#fff', border: 'none', padding: '12px 30px', borderRadius: '4px', fontWeight: 700, cursor: 'pointer', fontSize: '13px' }}>
+              Giriş Ekranına Dön
+            </button>
+          </div>
+        )}
+
+        {/* ── NORMAL FORM ── */}
+        {(step === 'form' || step === 'verify') && (
         <form onSubmit={handleAuth}>
           {step === 'form' ? (
             <>
@@ -517,6 +603,20 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
                   <i className="fa-brands fa-discord"></i> Discord
                 </button>
               </div>
+
+              {/* Şifremi Unuttum */}
+              <div style={{ textAlign: 'center', marginTop: '15px' }}>
+                <button
+                  type="button"
+                  onClick={() => { setStep('forgot'); setMessage({ type: '', text: '' }); }}
+                  style={{ background: 'none', border: 'none', color: '#555', fontSize: '12px', cursor: 'pointer', textDecoration: 'underline', transition: 'color 0.2s' }}
+                  onMouseEnter={e => (e.currentTarget.style.color = '#e60000')}
+                  onMouseLeave={e => (e.currentTarget.style.color = '#555')}
+                >
+                  <i className="fa-solid fa-key" style={{ marginRight: '5px' }}></i>
+                  Şifremi Unuttum
+                </button>
+              </div>
             </>
           )}
           
@@ -539,6 +639,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
             </button>
           )}
         </form>
+        )} {/* step === 'form' || step === 'verify' kapanışı */}
 
         {step === 'form' && (
           <p style={{ textAlign: 'center', marginTop: '25px', color: '#888', fontSize: '13px', fontFamily: 'monospace' }}>
