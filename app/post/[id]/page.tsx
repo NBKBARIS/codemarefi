@@ -4,6 +4,7 @@ import { localPosts } from '../../lib/localPosts';
 import Sidebar from '../../components/Sidebar';
 import Comments from '../../components/Comments';
 import ShareButtons from '../../components/ShareButtons';
+import PostDeleteButton from '../../components/PostDeleteButton';
 
 export async function generateStaticParams() {
   return localPosts.map((post) => ({ id: post.id }));
@@ -83,6 +84,13 @@ export default async function PostPage(props: { params: Promise<{ id: string }> 
                 <i className="fa-solid fa-folder-open" style={{ color: '#e60000', fontSize: '11px' }}></i>
                 {post.categories.join(', ')}
               </span>
+              {/* Silme butonu — sadece yazar veya admin/mod görür */}
+              <div style={{ marginLeft: 'auto' }}>
+                <PostDeleteButton
+                  postId={params.id}
+                  authorId={(post as any).authorId}
+                />
+              </div>
             </div>
 
             {/* İçerik */}
