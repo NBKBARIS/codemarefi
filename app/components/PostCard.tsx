@@ -1,10 +1,15 @@
 'use client';
+import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { BlogPost, formatDate } from '../lib/blogger';
+import { supabase } from '../lib/supabase';
 
 interface PostCardProps {
   post: BlogPost;
 }
+
+// Basit in-memory comment count cache
+const commentCountCache = new Map<string, number>();
 
 function stripHtml(html: string): string {
   return html.replace(/<[^>]*>/g, '').replace(/&[a-z#0-9]+;/gi, ' ').replace(/\s+/g, ' ').trim();
@@ -22,7 +27,38 @@ function getCatClass(cat: string): string {
 }
 
 export default function PostCard({ post }: PostCardProps) {
+  const [commentCount, setCommentCount] = useState<number | null>(
+    commentCountCache.has(post.id) ? commentCountCache.get(post.id)! : null
+  );
+  const fetchedRef = useRef(false);
   const excerpt = stripHtml(post.content).slice(0, 160) + '...';
+
+  useEffect(() => {
+    // Cache'de varsa tekrar çekme
+    if (commentCountCache.has(post.id)) {
+      setCommentCount(commentCountCache.get(post.id)!);
+      return;
+    }
+    if (fetchedRef.current) return;
+    fetchedRef.current = true;
+
+    // Rastgele gecikme ile eş zamanlı istek yığılmasını önle
+    const delay = Math.random() * 800;
+    const timer = setTimeout(() => {
+      supabase
+        .from('comments')
+        .select('id', { count: 'exact', head: true })
+        .eq('post_id', post.id)
+        .eq('is_approved', true)
+        .then(({ count }) => {
+          const c = count ?? 0;
+          commentCountCache.set(post.id, c);
+          setCommentCount(c);
+        });
+    }, delay);
+
+    return () => clearTimeout(timer);
+  }, [post.id]);
 
   return (
     <Link href={post.url} className="post-card">
@@ -39,7 +75,6 @@ export default function PostCard({ post }: PostCardProps) {
 
       {/* Body */}
       <div className="post-card-body">
-        {/* Kategori rozetleri */}
         <div className="post-card-cats">
           {post.categories.slice(0, 2).map(cat => (
             <span key={cat} className={`cat-badge ${getCatClass(cat)}`}>
@@ -48,16 +83,11 @@ export default function PostCard({ post }: PostCardProps) {
           ))}
         </div>
 
-        {/* Başlık */}
         <h2 className="post-card-title">{post.title}</h2>
-
-        {/* Özet */}
         <p className="post-card-excerpt">{excerpt}</p>
 
-        {/* Alt bilgi */}
         <div className="post-card-footer">
           <div className="post-card-meta-left">
-            {/* Author — UUID varsa UUID ile, yoksa isim ile profil linki */}
             <Link
               href={`/user/${encodeURIComponent(post.authorId || post.author)}`}
               className="post-card-author"
@@ -75,7 +105,7 @@ export default function PostCard({ post }: PostCardProps) {
             </span>
             <span style={{ color: '#555', display: 'flex', alignItems: 'center', gap: '4px' }}>
               <i className="fa-regular fa-comment" style={{ fontSize: '10px' }}></i>
-              {post.commentCount ?? 0}
+              {commentCount !== null ? commentCount : '-'}
             </span>
           </div>
           <span className="read-more">
