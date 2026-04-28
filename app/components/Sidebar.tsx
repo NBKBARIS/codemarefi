@@ -44,7 +44,7 @@ export default function Sidebar() {
         </h3>
         
         {/* Beyaz Arama Kutusu (Bulletproof Native Form) */}
-        <form action="/arama" method="GET" style={{ background: '#fff', padding: '12px 15px', display: 'flex', alignItems: 'center', gap: '10px', borderRadius: '2px', marginBottom: '20px' }}>
+        <form action="/arama" method="GET" style={{ background: '#fff', padding: '12px 15px', display: 'flex', alignItems: 'center', gap: '10px', borderRadius: '2px', marginBottom: '0' }}>
           <button type="submit" style={{ background: 'none', border: 'none', padding: 0, cursor: 'pointer', display: 'flex', alignItems: 'center', outline: 'none' }}>
             <i className="fa-solid fa-magnifying-glass" style={{ color: '#888', fontSize: '16px' }}></i>
           </button>
@@ -56,6 +56,11 @@ export default function Sidebar() {
             style={{ border: 'none', outline: 'none', background: 'transparent', color: '#333', width: '100%', fontSize: '14px', fontWeight: 'bold' }} 
           />
         </form>
+
+        {/* SKOR TABLOSU — arama kutusunun hemen altında */}
+        <div style={{ marginBottom: '20px' }}>
+          <Leaderboard />
+        </div>
 
         {/* Saat Widget */}
         <div style={{ background: '#111', padding: '20px 15px', textAlign: 'center', marginBottom: '0' }}>
@@ -141,9 +146,6 @@ export default function Sidebar() {
         </div>
       </div>
 
-
-      {/* LEADERBOARD */}
-      <Leaderboard />
 
       {/* SOSYAL MEDYA */}
       <div className="sidebar-widget">

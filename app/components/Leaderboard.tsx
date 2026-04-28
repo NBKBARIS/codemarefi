@@ -1,5 +1,5 @@
 'use client';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { supabase } from '../lib/supabase';
 import Link from 'next/link';
 
@@ -11,7 +11,6 @@ type LeaderEntry = {
   count: number;
 };
 
-// Rozet bilgileri — 1. 2. 3. sıra
 const RANK_STYLES = [
   { icon: 'fa-medal', color: '#FFD700', bg: 'rgba(255,215,0,0.08)', border: '#FFD700', label: '1.', glow: '0 0 10px rgba(255,215,0,0.4)' },
   { icon: 'fa-medal', color: '#C0C0C0', bg: 'rgba(192,192,192,0.08)', border: '#C0C0C0', label: '2.', glow: '0 0 10px rgba(192,192,192,0.3)' },
@@ -25,22 +24,39 @@ const ROLE_BADGE: Record<string, { label: string; color: string }> = {
   member: { label: 'Üye', color: '#007bff' },
 };
 
-type Tab = 'posts' | 'comments';
+type Tab = 'posts' | 'comments' | 'activity';
+
+const TABS: { key: Tab; icon: string; label: string }[] = [
+  { key: 'posts',    icon: 'fa-pen-nib',  label: 'Paylaşım' },
+  { key: 'comments', icon: 'fa-comments', label: 'Yorum'    },
+  { key: 'activity', icon: 'fa-fire',     label: 'Aktiflik' },
+];
+
+// Aktiflik: localStorage'da her kullanıcı için süre tutulur (saniye cinsinden)
+const ACTIVITY_KEY = 'cmf_activity'; // { [user_id]: seconds }
+
+function formatDuration(seconds: number): string {
+  if (seconds < 60) return `${seconds}sn`;
+  if (seconds < 3600) return `${Math.floor(seconds / 60)}dk ${seconds % 60}sn`;
+  const h = Math.floor(seconds / 3600);
+  const m = Math.floor((seconds % 3600) / 60);
+  return `${h}sa ${m}dk`;
+}
 
 export default function Leaderboard() {
   const [tab, setTab] = useState<Tab>('posts');
-  const [postLeaders, setPostLeaders] = useState<LeaderEntry[]>([]);
+  const [postLeaders,    setPostLeaders]    = useState<LeaderEntry[]>([]);
   const [commentLeaders, setCommentLeaders] = useState<LeaderEntry[]>([]);
+  const [activityLeaders, setActivityLeaders] = useState<{ user_id: string; full_name: string; avatar_url: string | null; role: string; seconds: number }[]>([]);
   const [loading, setLoading] = useState(true);
+  const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
+  const autoTabRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const manualTabRef = useRef(false); // kullanıcı manuel sekme seçtiyse otomatik geçişi durdur
 
-  useEffect(() => {
-    fetchLeaders();
-  }, []);
-
-  async function fetchLeaders() {
-    setLoading(true);
+  // ── Veri çekme ──────────────────────────────────────────────
+  const fetchLeaders = useCallback(async () => {
     try {
-      // --- En çok onaylı gönderi paylaşanlar ---
+      // Paylaşım
       const { data: postData } = await supabase
         .from('user_posts')
         .select('author_id, profiles(full_name, avatar_url, role)')
@@ -61,11 +77,10 @@ export default function Leaderboard() {
           }
           counts[row.author_id].count++;
         });
-        const sorted = Object.values(counts).sort((a, b) => b.count - a.count).slice(0, 10);
-        setPostLeaders(sorted);
+        setPostLeaders(Object.values(counts).sort((a, b) => b.count - a.count).slice(0, 10));
       }
 
-      // --- En çok yorum yapanlar ---
+      // Yorum
       const { data: commentData } = await supabase
         .from('comments')
         .select('user_id, profiles(full_name, avatar_url, role)')
@@ -86,37 +101,203 @@ export default function Leaderboard() {
           }
           counts[row.user_id].count++;
         });
-        const sorted = Object.values(counts).sort((a, b) => b.count - a.count).slice(0, 10);
-        setCommentLeaders(sorted);
+        setCommentLeaders(Object.values(counts).sort((a, b) => b.count - a.count).slice(0, 10));
       }
+
+      // Aktiflik — localStorage'dan oku, profil bilgilerini Supabase'den çek
+      const raw = localStorage.getItem(ACTIVITY_KEY);
+      if (raw) {
+        const actMap: Record<string, number> = JSON.parse(raw);
+        const ids = Object.keys(actMap);
+        if (ids.length > 0) {
+          const { data: profiles } = await supabase
+            .from('profiles')
+            .select('id, full_name, avatar_url, role')
+            .in('id', ids);
+
+          if (profiles) {
+            const list = profiles.map((p: any) => ({
+              user_id: p.id,
+              full_name: p.full_name || 'Anonim',
+              avatar_url: p.avatar_url,
+              role: p.role || 'member',
+              seconds: actMap[p.id] || 0,
+            })).sort((a, b) => b.seconds - a.seconds).slice(0, 10);
+            setActivityLeaders(list);
+          }
+        }
+      }
+
+      setLastUpdated(new Date());
     } catch (err) {
       console.error('Leaderboard fetch error:', err);
     } finally {
       setLoading(false);
     }
+  }, []);
+
+  // ── Aktiflik takibi: giriş yapmış kullanıcının süresini artır ──
+  useEffect(() => {
+    let userId: string | null = null;
+
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      userId = session?.user?.id ?? null;
+    });
+
+    const tick = setInterval(() => {
+      if (!userId) return;
+      const raw = localStorage.getItem(ACTIVITY_KEY);
+      const map: Record<string, number> = raw ? JSON.parse(raw) : {};
+      map[userId] = (map[userId] || 0) + 30;
+      localStorage.setItem(ACTIVITY_KEY, JSON.stringify(map));
+    }, 30000); // her 30 saniyede +30sn ekle
+
+    return () => clearInterval(tick);
+  }, []);
+
+  // ── İlk yükleme + 30sn'de bir otomatik yenile ──
+  useEffect(() => {
+    fetchLeaders();
+    const refreshInterval = setInterval(fetchLeaders, 30000);
+    return () => clearInterval(refreshInterval);
+  }, [fetchLeaders]);
+
+  // ── Sekmeler arası otomatik geçiş (her 4sn) — kullanıcı tıklamazsa ──
+  useEffect(() => {
+    autoTabRef.current = setInterval(() => {
+      if (manualTabRef.current) return;
+      setTab(prev => {
+        const idx = TABS.findIndex(t => t.key === prev);
+        return TABS[(idx + 1) % TABS.length].key;
+      });
+    }, 4000);
+    return () => { if (autoTabRef.current) clearInterval(autoTabRef.current); };
+  }, []);
+
+  function handleTabClick(key: Tab) {
+    manualTabRef.current = true;
+    setTab(key);
+    // 15sn sonra otomatik geçişi tekrar aç
+    setTimeout(() => { manualTabRef.current = false; }, 15000);
   }
 
-  const leaders = tab === 'posts' ? postLeaders : commentLeaders;
-  const emptyMsg = tab === 'posts' ? 'Henüz onaylı gönderi yok.' : 'Henüz yorum yapılmamış.';
-  const countLabel = tab === 'posts' ? 'gönderi' : 'yorum';
+  // ── Render yardımcıları ──────────────────────────────────────
+  function renderList(
+    entries: { user_id: string; full_name: string; avatar_url: string | null; role: string; count?: number; seconds?: number }[],
+    valueKey: 'count' | 'seconds',
+    unitLabel: string,
+  ) {
+    if (loading) return (
+      <div style={{ textAlign: 'center', padding: '20px' }}>
+        <i className="fa-solid fa-spinner fa-spin" style={{ color: '#e60000' }}></i>
+      </div>
+    );
+    if (entries.length === 0) return (
+      <div style={{ textAlign: 'center', padding: '20px', color: '#555', fontSize: '12px' }}>
+        Henüz veri yok.
+      </div>
+    );
+
+    return entries.map((entry, i) => {
+      const rank = RANK_STYLES[i];
+      const roleBadge = ROLE_BADGE[entry.role] || ROLE_BADGE['member'];
+      const isTop3 = i < 3;
+      const value = valueKey === 'seconds' ? formatDuration(entry.seconds ?? 0) : String(entry.count ?? 0);
+
+      return (
+        <Link
+          key={entry.user_id}
+          href={`/user/${entry.user_id}`}
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '10px',
+            padding: '8px 12px',
+            background: isTop3 ? rank.bg : 'transparent',
+            borderLeft: isTop3 ? `3px solid ${rank.border}` : '3px solid transparent',
+            textDecoration: 'none',
+            transition: 'background 0.2s',
+            marginBottom: '2px',
+          }}
+          onMouseEnter={e => (e.currentTarget.style.background = isTop3 ? rank.bg : '#1a1a1a')}
+          onMouseLeave={e => (e.currentTarget.style.background = isTop3 ? rank.bg : 'transparent')}
+        >
+          {/* Madalya / sıra */}
+          <div style={{ width: '28px', textAlign: 'center', flexShrink: 0 }}>
+            {isTop3 ? (
+              <i className={`fa-solid ${rank.icon}`} style={{ fontSize: '20px', color: rank.color, filter: `drop-shadow(${rank.glow})` }}></i>
+            ) : (
+              <span style={{ fontSize: '12px', color: '#555', fontWeight: 700 }}>{i + 1}.</span>
+            )}
+          </div>
+
+          {/* Avatar */}
+          <img
+            src={entry.avatar_url || `https://api.dicebear.com/7.x/avataaars/svg?seed=${entry.full_name}`}
+            alt={entry.full_name}
+            style={{ width: '32px', height: '32px', borderRadius: '50%', objectFit: 'cover', border: `2px solid ${isTop3 ? rank.color : '#333'}`, flexShrink: 0 }}
+          />
+
+          {/* İsim + Rol */}
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <div style={{ fontSize: '12px', fontWeight: 700, color: isTop3 ? rank.color : '#ccc', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+              {entry.full_name}
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '4px', marginTop: '2px', flexWrap: 'wrap' }}>
+              <span style={{ background: roleBadge.color, color: '#fff', fontSize: '9px', padding: '1px 5px', borderRadius: '3px', fontWeight: 700 }}>
+                {roleBadge.label}
+              </span>
+              {isTop3 && (
+                <span style={{ background: rank.color, color: '#000', fontSize: '9px', padding: '1px 5px', borderRadius: '3px', fontWeight: 900, display: 'inline-flex', alignItems: 'center', gap: '3px' }}>
+                  <i className={`fa-solid ${rank.icon}`} style={{ fontSize: '9px' }}></i>
+                  {rank.label} SIRA
+                </span>
+              )}
+            </div>
+          </div>
+
+          {/* Değer */}
+          <div style={{ fontSize: '13px', fontWeight: 900, color: isTop3 ? rank.color : '#555', flexShrink: 0, textAlign: 'right' }}>
+            {value}
+            <div style={{ fontSize: '9px', color: '#555', fontWeight: 400 }}>{unitLabel}</div>
+          </div>
+        </Link>
+      );
+    });
+  }
+
+  const activeEntries =
+    tab === 'posts'    ? postLeaders :
+    tab === 'comments' ? commentLeaders :
+    activityLeaders;
+
+  const unitLabel =
+    tab === 'posts'    ? 'gönderi' :
+    tab === 'comments' ? 'yorum' :
+    'aktiflik';
 
   return (
     <div className="sidebar-widget" style={{ overflow: 'hidden' }}>
       {/* Başlık */}
-      <div className="widget-header" style={{ background: 'linear-gradient(90deg, #1a0000, #111)', borderBottom: '2px solid #e60000' }}>
-        <i className="fa-solid fa-trophy" style={{ color: '#FFD700' }}></i>
-        <span style={{ letterSpacing: '1px' }}>LIDERBOARD</span>
+      <div className="widget-header" style={{ background: 'linear-gradient(90deg, #1a0000, #111)', borderBottom: '2px solid #e60000', justifyContent: 'space-between' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <i className="fa-solid fa-trophy" style={{ color: '#FFD700' }}></i>
+          <span style={{ letterSpacing: '1px' }}>SKOR TABLOSU</span>
+        </div>
+        {lastUpdated && (
+          <span style={{ fontSize: '9px', color: '#555', fontWeight: 400 }}>
+            <i className="fa-solid fa-rotate" style={{ marginRight: '3px', color: '#2ea44f' }}></i>
+            {lastUpdated.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
+          </span>
+        )}
       </div>
 
       {/* Sekmeler */}
       <div style={{ display: 'flex', borderBottom: '1px solid #222' }}>
-        {([
-          { key: 'posts', icon: 'fa-pen-nib', label: 'Paylaşım' },
-          { key: 'comments', icon: 'fa-comments', label: 'Yorum' },
-        ] as { key: Tab; icon: string; label: string }[]).map(t => (
+        {TABS.map(t => (
           <button
             key={t.key}
-            onClick={() => setTab(t.key)}
+            onClick={() => handleTabClick(t.key)}
             style={{
               flex: 1,
               background: tab === t.key ? '#1a0000' : 'transparent',
@@ -124,7 +305,7 @@ export default function Leaderboard() {
               borderBottom: tab === t.key ? '2px solid #e60000' : '2px solid transparent',
               color: tab === t.key ? '#fff' : '#666',
               padding: '9px 0',
-              fontSize: '11px',
+              fontSize: '10px',
               fontWeight: 700,
               cursor: 'pointer',
               textTransform: 'uppercase',
@@ -133,7 +314,7 @@ export default function Leaderboard() {
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              gap: '5px',
+              gap: '4px',
             }}
           >
             <i className={`fa-solid ${t.icon}`}></i>
@@ -143,136 +324,26 @@ export default function Leaderboard() {
       </div>
 
       {/* Liste */}
-      <div style={{ padding: '10px 0' }}>
-        {loading ? (
-          <div style={{ textAlign: 'center', padding: '20px', color: '#555' }}>
-            <i className="fa-solid fa-spinner fa-spin" style={{ color: '#e60000' }}></i>
-          </div>
-        ) : leaders.length === 0 ? (
-          <div style={{ textAlign: 'center', padding: '20px', color: '#555', fontSize: '12px' }}>{emptyMsg}</div>
-        ) : (
-          leaders.map((entry, i) => {
-            const rank = RANK_STYLES[i];
-            const roleBadge = ROLE_BADGE[entry.role] || ROLE_BADGE['member'];
-            const isTop3 = i < 3;
-
-            return (
-              <Link
-                key={entry.user_id}
-                href={`/user/${entry.user_id}`}
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '10px',
-                  padding: '8px 12px',
-                  background: isTop3 ? rank.bg : 'transparent',
-                  borderLeft: isTop3 ? `3px solid ${rank.border}` : '3px solid transparent',
-                  textDecoration: 'none',
-                  transition: 'background 0.2s',
-                  marginBottom: '2px',
-                }}
-                onMouseEnter={e => (e.currentTarget.style.background = isTop3 ? rank.bg : '#1a1a1a')}
-                onMouseLeave={e => (e.currentTarget.style.background = isTop3 ? rank.bg : 'transparent')}
-              >
-                {/* Sıra numarası / madalya */}
-                <div style={{
-                  width: '28px',
-                  textAlign: 'center',
-                  flexShrink: 0,
-                }}>
-                  {isTop3 ? (
-                    <i
-                      className={`fa-solid ${rank.icon}`}
-                      style={{
-                        fontSize: '20px',
-                        color: rank.color,
-                        filter: `drop-shadow(${rank.glow})`,
-                      }}
-                    ></i>
-                  ) : (
-                    <span style={{ fontSize: '12px', color: '#555', fontWeight: 700 }}>{i + 1}.</span>
-                  )}
-                </div>
-
-                {/* Avatar */}
-                <div style={{ position: 'relative', flexShrink: 0 }}>
-                  <img
-                    src={entry.avatar_url || `https://api.dicebear.com/7.x/avataaars/svg?seed=${entry.full_name}`}
-                    alt={entry.full_name}
-                    style={{
-                      width: '32px',
-                      height: '32px',
-                      borderRadius: '50%',
-                      objectFit: 'cover',
-                      border: `2px solid ${isTop3 ? rank.color : '#333'}`,
-                    }}
-                  />
-                </div>
-
-                {/* İsim + Rol */}
-                <div style={{ flex: 1, minWidth: 0 }}>
-                  <div style={{
-                    fontSize: '12px',
-                    fontWeight: 700,
-                    color: isTop3 ? rank.color : '#ccc',
-                    whiteSpace: 'nowrap',
-                    overflow: 'hidden',
-                    textOverflow: 'ellipsis',
-                  }}>
-                    {entry.full_name}
-                  </div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '4px', marginTop: '2px' }}>
-                    <span style={{
-                      background: roleBadge.color,
-                      color: '#fff',
-                      fontSize: '9px',
-                      padding: '1px 5px',
-                      borderRadius: '3px',
-                      fontWeight: 700,
-                    }}>
-                      {roleBadge.label}
-                    </span>
-                    {isTop3 && (
-                      <span style={{
-                        background: rank.color,
-                        color: '#000',
-                        fontSize: '9px',
-                        padding: '1px 5px',
-                        borderRadius: '3px',
-                        fontWeight: 900,
-                        display: 'inline-flex',
-                        alignItems: 'center',
-                        gap: '3px',
-                      }}>
-                        <i className={`fa-solid ${rank.icon}`} style={{ fontSize: '9px' }}></i>
-                        {rank.label} SIRA
-                      </span>
-                    )}
-                  </div>
-                </div>
-
-                {/* Sayı */}
-                <div style={{
-                  fontSize: '13px',
-                  fontWeight: 900,
-                  color: isTop3 ? rank.color : '#555',
-                  flexShrink: 0,
-                  textAlign: 'right',
-                }}>
-                  {entry.count}
-                  <div style={{ fontSize: '9px', color: '#555', fontWeight: 400 }}>{countLabel}</div>
-                </div>
-              </Link>
-            );
-          })
+      <div style={{ padding: '10px 0', minHeight: '80px' }}>
+        {renderList(
+          activeEntries as any,
+          tab === 'activity' ? 'seconds' : 'count',
+          unitLabel,
         )}
       </div>
 
-      {/* Alt not */}
-      <div style={{ padding: '8px 12px', borderTop: '1px solid #1a1a1a', fontSize: '10px', color: '#444', textAlign: 'center' }}>
-        <i className="fa-solid fa-rotate" style={{ marginRight: '4px' }}></i>
-        Her sayfa yüklenişinde güncellenir
+      {/* Alt bilgi */}
+      <div style={{ padding: '6px 12px', borderTop: '1px solid #1a1a1a', fontSize: '10px', color: '#444', textAlign: 'center', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}>
+        <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#2ea44f', display: 'inline-block', animation: 'pulse-green 1.5s infinite' }}></span>
+        Her 30 saniyede otomatik güncellenir
       </div>
+
+      <style>{`
+        @keyframes pulse-green {
+          0%, 100% { opacity: 1; transform: scale(1); }
+          50% { opacity: 0.4; transform: scale(0.8); }
+        }
+      `}</style>
     </div>
   );
 }
