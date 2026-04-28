@@ -15,6 +15,7 @@ export default function YonetimPage() {
   const [actionLoading, setActionLoading] = useState<string | null>(null);
   const [accessDenied, setAccessDenied] = useState<'no-session' | 'no-permission' | null>(null);
 
+
   useEffect(() => {
     async function checkAuth() {
       const { data: { session } } = await supabase.auth.getSession();
@@ -84,11 +85,10 @@ export default function YonetimPage() {
 
   if (loading) return (
     <div style={{ background: '#050505', minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-      <i className="fa-solid fa-spinner fa-spin" style={{ color: '#e60000', fontSize: '32px' }}></i>
+      <i className="fa-solid fa-spinner fa-spin" style={{ color: '#e60000', fontSize: '36px' }}></i>
     </div>
   );
 
-  // Erişim engeli - site temasına uygun uyarı
   if (accessDenied) {
     return (
       <main style={{ background: '#050505', minHeight: '100vh', color: '#fff' }}>
