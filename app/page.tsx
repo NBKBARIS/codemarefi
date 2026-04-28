@@ -40,9 +40,13 @@ export default function HomePage() {
   useEffect(() => {
     setLoading(true);
     const tab = TABS.find(t => t.label === activeTab);
-    // 1. sayfada hero'dan sonra başla (6. post), diğer sayfalarda normal devam et
-    const offset = page === 1 ? 5 : 0;
-    const startIndex = (page - 1) * POSTS_PER_PAGE + 1 + offset;
+    // 1. sayfada hero 5 post gösteriyor, liste 6'dan başlasın
+    // 2. sayfada: 6 + 8 = 14'ten başlasın (hero 5 + sayfa1 8 = 13, sonraki 14)
+    const heroOffset = 5; // Hero'da gösterilen post sayısı
+    const startIndex = page === 1 
+      ? heroOffset + 1  // 1. sayfa: 6'dan başla
+      : heroOffset + ((page - 1) * POSTS_PER_PAGE) + 1; // 2+ sayfa: hero + önceki sayfalar
+    
     fetchPosts(POSTS_PER_PAGE, startIndex, tab?.cat || '').then(({ posts: p, total: t }) => {
       setPosts(p);
       setTotal(t);
