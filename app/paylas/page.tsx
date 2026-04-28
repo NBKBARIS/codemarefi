@@ -32,6 +32,14 @@ export default function PaylasPage() {
     });
   }, []);
 
+  if (!user && !accessDenied) {
+    return (
+      <main style={{ background: '#050505', minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <i className="fa-solid fa-spinner fa-spin fa-3x" style={{ color: '#e60000' }}></i>
+      </main>
+    );
+  }
+
   if (accessDenied) {
     return (
       <main style={{ background: '#050505', minHeight: '100vh', color: '#fff' }}>
@@ -71,7 +79,9 @@ export default function PaylasPage() {
 
   if (user && showRules) {
     return (
-      <main style={{ background: '#050505', minHeight: '100vh', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }}>
+      <main style={{ background: '#050505', minHeight: '100vh', color: '#fff' }}>
+        <Navbar />
+        <div style={{ minHeight: '80vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }}>
         <div style={{ 
           maxWidth: '560px', 
           width: '100%',
