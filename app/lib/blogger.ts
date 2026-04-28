@@ -111,9 +111,10 @@ async function getMergedPosts(): Promise<BlogPost[]> {
 
   const bloggerPosts: BlogPost[] = localPosts.map(p => ({ ...p, url: `/post/${p.id}` })) as BlogPost[];
   const localIds = new Set(localPosts.map(p => p.id));
+  const localTitles = new Set(localPosts.map(p => p.title.trim().toLowerCase()));
 
-  // Supabase'den gelen postlarda localPosts ile aynı ID varsa atla (duplicate önleme)
-  const filteredUserPosts = mappedUserPosts.filter(p => !localIds.has(p.id));
+  // Supabase'den gelen postlarda localPosts ile aynı ID veya aynı başlık varsa atla (duplicate önleme)
+  const filteredUserPosts = mappedUserPosts.filter(p => !localIds.has(p.id) && !localTitles.has(p.title.trim().toLowerCase()));
 
   const merged = [...bloggerPosts, ...filteredUserPosts].sort((a, b) =>
     new Date(b.published).getTime() - new Date(a.published).getTime()
@@ -182,8 +183,14 @@ export async function searchPosts(query: string): Promise<BlogPost[]> {
     slug: p.id,
   }));
 
+  // Supabase sonuçlarından localResults içinde olanları (ID veya başlık eşleşmesi) filtrele
+  const localIds = new Set(localResults.map(p => p.id));
+  const localTitles = new Set(localResults.map(p => p.title.trim().toLowerCase()));
+
+  const filteredUserPosts = mappedUserPosts.filter(p => !localIds.has(p.id) && !localTitles.has(p.title.trim().toLowerCase()));
+
   // Birleştir, tarihe göre sırala
-  return [...localResults, ...mappedUserPosts].sort(
+  return [...localResults, ...filteredUserPosts].sort(
     (a, b) => new Date(b.published).getTime() - new Date(a.published).getTime()
   );
 }

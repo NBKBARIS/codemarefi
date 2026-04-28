@@ -136,7 +136,7 @@ export default async function PostPage(props: { params: Promise<{ id: string }> 
             {/* İçerik */}
             <div
               className="post-body"
-              dangerouslySetInnerHTML={{ __html: post.content }}
+              dangerouslySetInnerHTML={{ __html: post.content.replace(/\\n/g, '\n') }}
               style={{ color: '#ccc', lineHeight: 1.85, fontSize: '15px', overflowWrap: 'break-word' }}
             />
 
@@ -179,8 +179,27 @@ export default async function PostPage(props: { params: Promise<{ id: string }> 
         .post-body img { max-width: 100%; height: auto; border-radius: 6px; margin: 16px 0; display: block; }
         .post-body a { color: #e60000; text-decoration: none; border-bottom: 1px solid rgba(230,0,0,0.3); transition: border-color 0.2s; }
         .post-body a:hover { border-bottom-color: #e60000; }
-        .post-body pre, .post-body code { background: #0d0d0d; padding: 14px 16px; border-radius: 6px; border: 1px solid #2a2a2a; overflow-x: auto; color: #56b6c2; font-family: 'Courier New', monospace; font-size: 13px; display: block; line-height: 1.6; }
-        .post-body :not(pre) > code { display: inline; padding: 2px 6px; border-radius: 3px; font-size: 13px; }
+        .post-body pre, .post-body code { 
+          background: #0d0d0d; 
+          padding: 14px 16px; 
+          border-radius: 6px; 
+          border: 1px solid #2a2a2a; 
+          overflow-x: auto; 
+          color: #abb2bf; 
+          font-family: 'Consolas', 'Monaco', 'Courier New', monospace; 
+          font-size: 13px; 
+          display: block; 
+          line-height: 1.6;
+          white-space: pre-wrap;
+          word-wrap: break-word;
+        }
+        .post-body :not(pre) > code { 
+          display: inline; 
+          padding: 2px 6px; 
+          border-radius: 3px; 
+          font-size: 13px;
+          white-space: normal;
+        }
         .post-body blockquote { border-left: 4px solid #e60000; margin: 20px 0; padding: 12px 20px; background: rgba(230,0,0,0.05); color: #aaa; font-style: italic; border-radius: 0 4px 4px 0; }
         .post-body h2, .post-body h3, .post-body h4 { color: #fff; margin-top: 28px; margin-bottom: 12px; }
         .post-body ul, .post-body ol { margin-left: 24px; margin-bottom: 16px; color: #ccc; }
