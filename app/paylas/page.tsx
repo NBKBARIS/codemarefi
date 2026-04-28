@@ -193,7 +193,7 @@ export default function PaylasPage() {
       return;
     }
     if (hasBadWords(title) || hasBadWords(content)) {
-      setMessage({ type: 'error', text: '⚠️ İçeriğinizde uygunsuz kelimeler tespit edildi. Lütfen topluluk kurallarına uygun bir dil kullanın.' });
+      setMessage({ type: 'error', text: 'İçeriğinizde uygunsuz kelimeler tespit edildi. Lütfen topluluk kurallarına uygun bir dil kullanın.' });
       return;
     }
 

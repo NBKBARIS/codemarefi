@@ -93,12 +93,12 @@ export default function Navbar() {
   }, []);
 
   const navItems = [
-    { label: 'Home', icon: 'fa-house', href: '/', active: true },
-    { label: '+ En Yeniler', href: '/kategori/En-Yeniler' },
-    { label: '★ MEGA Menü', href: '/arama' },
-    { label: '♥ Öne Çıkan Yazılar', href: '/kategori/Öne-Çıkanlar' },
-    { label: '✎ Web Tasarım', href: '/kategori/Web-Tasarım' },
-    { label: '</> Discord Bot Konuları', href: '/kategori/Discord-bot-konuları' },
+    { label: 'Home',                    icon: 'fa-house',   href: '/',                              active: true },
+    { label: 'En Yeniler',              icon: 'fa-plus',    href: '/kategori/En-Yeniler' },
+    { label: 'MEGA Menü',               icon: 'fa-star',    href: '/arama' },
+    { label: 'Öne Çıkan Yazılar',       icon: 'fa-heart',   href: '/kategori/Öne-Çıkanlar' },
+    { label: 'Web Tasarım',             icon: 'fa-pen-nib', href: '/kategori/Web-Tasarım' },
+    { label: 'Discord Bot Konuları',    icon: 'fa-code',    href: '/kategori/Discord-bot-konuları' },
   ];
 
   return (

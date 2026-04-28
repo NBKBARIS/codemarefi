@@ -156,48 +156,34 @@ export default function Sidebar() {
         <div className="widget-body">
           <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
             {[
-              { icon: 'fa-facebook-f', label: 'Facebook', color: '#3b5998', url: 'https://www.facebook.com/CodeMareFi' },
-              { icon: 'fa-twitter', label: 'Twitter', color: '#1da1f2', url: 'https://twitter.com/mare_fi' },
-              { icon: 'fa-youtube', label: 'YouTube — Çok Yakında', color: '#333', url: null },
-              { icon: 'fa-discord', label: 'Discord — Çok Yakında', color: '#333', url: null },
-              { icon: 'fa-instagram', label: 'Instagram — Çok Yakında', color: '#333', url: null },
+              { icon: 'fa-facebook-f',  label: 'Facebook',            color: '#3b5998', url: null },
+              { icon: 'fa-twitter',     label: 'Twitter',             color: '#1da1f2', url: null },
+              { icon: 'fa-youtube',     label: 'YouTube',             color: '#ff0000', url: null },
+              { icon: 'fa-discord',     label: 'Discord',             color: '#7289da', url: null },
+              { icon: 'fa-instagram',   label: 'Instagram',           color: '#e1306c', url: null },
             ].map(s => (
-              s.url ? (
-              <a key={s.label} href={s.url} target="_blank" rel="noreferrer" style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '10px',
-                background: s.color,
-                color: '#fff',
-                padding: '8px 12px',
-                fontSize: '12px',
-                fontWeight: 'bold',
-                transition: 'opacity 0.2s',
-                textDecoration: 'none',
-              }}
-                onMouseEnter={e => (e.currentTarget.style.opacity = '0.85')}
-                onMouseLeave={e => (e.currentTarget.style.opacity = '1')}
-              >
-                <i className={`fa-brands ${s.icon}`}></i>
-                {s.label}
-              </a>
-              ) : (
               <div key={s.label} style={{
                 display: 'flex',
                 alignItems: 'center',
+                justifyContent: 'space-between',
                 gap: '10px',
                 background: '#1a1a1a',
                 color: '#555',
                 padding: '8px 12px',
                 fontSize: '12px',
                 fontWeight: 'bold',
-                border: '1px dashed #333',
-                cursor: 'default',
+                border: '1px dashed #2a2a2a',
+                borderRadius: '2px',
               }}>
-                <i className={`fa-brands ${s.icon}`}></i>
-                {s.label}
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                  <i className={`fa-brands ${s.icon}`} style={{ color: '#444' }}></i>
+                  {s.label}
+                </div>
+                <span style={{ fontSize: '10px', color: '#444', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                  <i className="fa-solid fa-clock" style={{ fontSize: '9px' }}></i>
+                  Çok Yakında
+                </span>
               </div>
-              )
             ))}
           </div>
         </div>
