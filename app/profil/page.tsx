@@ -12,7 +12,6 @@ const SOCIAL_FIELDS = [
   { key: 'instagram', icon: 'fa-instagram', label: 'Instagram', placeholder: 'https://instagram.com/kullanici', color: '#e1306c' },
   { key: 'website',   icon: 'fa-globe',     label: 'Website',   placeholder: 'https://siteadresi.com', color: '#2ea44f' },
 ];
-
 export default function ProfilePage() {
   const [user, setUser] = useState<any>(null);
   const [profile, setProfile] = useState<any>(null);
@@ -20,6 +19,7 @@ export default function ProfilePage() {
   const [updating, setUpdating] = useState(false);
   const [fullName, setFullName] = useState('');
   const [socialLinks, setSocialLinks] = useState<Record<string, string>>({});
+  const [socialVisible, setSocialVisible] = useState<Record<string, boolean>>({});
   const [message, setMessage] = useState({ type: '', text: '' });
   const router = useRouter();
 
@@ -37,7 +37,21 @@ export default function ProfilePage() {
       if (data) {
         setProfile(data);
         setFullName(data.full_name || '');
-        setSocialLinks(data.social_links || {});
+        // social_links: { github: { url, visible } } veya eski format { github: "url" }
+        const raw = data.social_links || {};
+        const urls: Record<string, string> = {};
+        const vis: Record<string, boolean> = {};
+        for (const key of Object.keys(raw)) {
+          if (typeof raw[key] === 'object' && raw[key] !== null) {
+            urls[key] = raw[key].url || '';
+            vis[key] = raw[key].visible !== false;
+          } else {
+            urls[key] = raw[key] || '';
+            vis[key] = true;
+          }
+        }
+        setSocialLinks(urls);
+        setSocialVisible(vis);
       }
     } finally {
       setLoading(false);
@@ -53,7 +67,10 @@ export default function ProfilePage() {
       const { error } = await supabase.from('profiles').upsert({
         id: user.id,
         full_name: fullName.trim(),
-        social_links: socialLinks,
+        social_links: Object.fromEntries(
+          SOCIAL_FIELDS.map(f => [f.key, { url: socialLinks[f.key] || '', visible: socialVisible[f.key] !== false }])
+            .filter(([, v]: any) => v.url)
+        ),
         updated_at: new Date().toISOString(),
       });
       if (error) throw error;
@@ -165,17 +182,30 @@ export default function ProfilePage() {
             </label>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
               {SOCIAL_FIELDS.map(field => (
-                <div key={field.key} style={{ position: 'relative' }}>
-                  <i className={`fa-brands ${field.icon}`} style={{ position: 'absolute', left: '14px', top: '50%', transform: 'translateY(-50%)', color: field.color, fontSize: '14px' }}></i>
-                  <input
-                    type="text"
-                    value={socialLinks[field.key] || ''}
-                    onChange={e => setSocialLinks(prev => ({ ...prev, [field.key]: e.target.value }))}
-                    placeholder={field.placeholder}
-                    style={{ width: '100%', padding: '10px 12px 10px 40px', borderRadius: '6px', background: 'rgba(0,0,0,0.3)', border: '1px solid #1e1e1e', color: '#ccc', outline: 'none', fontSize: '12px', fontFamily: 'monospace', transition: 'border-color 0.2s' }}
-                    onFocus={e => (e.currentTarget.style.borderColor = field.color)}
-                    onBlur={e => (e.currentTarget.style.borderColor = '#1e1e1e')}
-                  />
+                <div key={field.key} style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                  <div style={{ position: 'relative', flex: 1 }}>
+                    <i className={`fa-brands ${field.icon}`} style={{ position: 'absolute', left: '14px', top: '50%', transform: 'translateY(-50%)', color: socialLinks[field.key] ? field.color : '#444', fontSize: '14px' }}></i>
+                    <input
+                      type="text"
+                      value={socialLinks[field.key] || ''}
+                      onChange={e => setSocialLinks(prev => ({ ...prev, [field.key]: e.target.value }))}
+                      placeholder={field.placeholder}
+                      style={{ width: '100%', padding: '10px 12px 10px 40px', borderRadius: '6px', background: 'rgba(0,0,0,0.3)', border: `1px solid ${socialLinks[field.key] ? field.color + '55' : '#1e1e1e'}`, color: '#ccc', outline: 'none', fontSize: '12px', fontFamily: 'monospace', transition: 'border-color 0.2s', opacity: socialVisible[field.key] === false ? 0.4 : 1 }}
+                      onFocus={e => (e.currentTarget.style.borderColor = field.color)}
+                      onBlur={e => (e.currentTarget.style.borderColor = socialLinks[field.key] ? field.color + '55' : '#1e1e1e')}
+                    />
+                  </div>
+                  {/* Gizle/Göster toggle */}
+                  <button
+                    type="button"
+                    onClick={() => setSocialVisible(prev => ({ ...prev, [field.key]: prev[field.key] === false ? true : false }))}
+                    title={socialVisible[field.key] === false ? 'Gizli — tıkla göster' : 'Görünür — tıkla gizle'}
+                    style={{ background: 'none', border: `1px solid ${socialVisible[field.key] === false ? '#333' : '#444'}`, borderRadius: '6px', padding: '8px 10px', cursor: 'pointer', color: socialVisible[field.key] === false ? '#444' : '#888', fontSize: '12px', flexShrink: 0, transition: 'all 0.2s' }}
+                    onMouseEnter={e => (e.currentTarget.style.borderColor = field.color)}
+                    onMouseLeave={e => (e.currentTarget.style.borderColor = socialVisible[field.key] === false ? '#333' : '#444')}
+                  >
+                    <i className={`fa-solid ${socialVisible[field.key] === false ? 'fa-eye-slash' : 'fa-eye'}`}></i>
+                  </button>
                 </div>
               ))}
             </div>

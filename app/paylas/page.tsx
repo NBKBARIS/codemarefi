@@ -197,6 +197,23 @@ export default function PaylasPage() {
       return;
     }
 
+    // SEO zorunlu kontroller
+    const plainContent = content.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+    const wordCount = plainContent.split(/\s+/).filter(Boolean).length;
+
+    if (title.trim().length < 20) {
+      setMessage({ type: 'error', text: 'Başlık en az 20 karakter olmalıdır. Daha açıklayıcı bir başlık yazın.' });
+      return;
+    }
+    if (title.trim().length > 70) {
+      setMessage({ type: 'error', text: 'Başlık en fazla 70 karakter olabilir. Kısaltın.' });
+      return;
+    }
+    if (wordCount < 100) {
+      setMessage({ type: 'error', text: `İçerik çok kısa! En az 100 kelime gerekli. Şu an: ${wordCount} kelime. Daha detaylı bir içerik yazın.` });
+      return;
+    }
+
     setLoading(true);
     setMessage({ type: 'info', text: 'Yazınız gönderiliyor, lütfen bekleyin...' });
 
@@ -310,14 +327,19 @@ export default function PaylasPage() {
             </div>
 
             <div>
-              <label style={{ display: 'block', fontSize: '13px', color: '#888', marginBottom: '8px' }}>Yazı Başlığı</label>
+              <label style={{ display: 'block', fontSize: '13px', color: '#888', marginBottom: '8px' }}>
+                Yazı Başlığı
+                <span style={{ float: 'right', fontSize: '11px', color: title.length < 20 ? '#e60000' : title.length > 70 ? '#e60000' : '#2ea44f' }}>
+                  {title.length}/70 karakter {title.length < 20 ? '(min 20)' : title.length > 70 ? '(max 70)' : '✓'}
+                </span>
+              </label>
               <input 
                 type="text" 
                 required
                 value={title}
                 onChange={e => setTitle(e.target.value)}
-                placeholder="Örn: Discord Bot Yapımı 2026"
-                style={{ width: '100%', background: '#0a0a0a', border: '1px solid #333', padding: '12px', color: '#fff', borderRadius: '4px', outline: 'none' }}
+                placeholder="Örn: Discord Bot Yapımı 2026 - Adım Adım Rehber"
+                style={{ width: '100%', background: '#0a0a0a', border: `1px solid ${title.length >= 20 && title.length <= 70 ? '#2ea44f' : title.length > 0 ? '#e60000' : '#333'}`, padding: '12px', color: '#fff', borderRadius: '4px', outline: 'none' }}
               />
             </div>
 
@@ -357,15 +379,29 @@ export default function PaylasPage() {
             </div>
 
             <div>
-              <label style={{ display: 'block', fontSize: '13px', color: '#888', marginBottom: '8px' }}>İçerik (HTML Kullanabilirsiniz)</label>
+              <label style={{ display: 'block', fontSize: '13px', color: '#888', marginBottom: '8px' }}>
+                İçerik (HTML Kullanabilirsiniz)
+                {(() => {
+                  const wc = content.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim().split(/\s+/).filter(Boolean).length;
+                  return (
+                    <span style={{ float: 'right', fontSize: '11px', color: wc >= 100 ? '#2ea44f' : '#e60000' }}>
+                      {wc} kelime {wc < 100 ? `(min 100 — ${100 - wc} eksik)` : '✓ SEO uyumlu'}
+                    </span>
+                  );
+                })()}
+              </label>
               <textarea 
                 required
                 rows={10}
                 value={content}
                 onChange={e => setContent(e.target.value)}
-                placeholder="Yazınızı buraya yazın..."
+                placeholder="Yazınızı buraya yazın... (En az 100 kelime olmalıdır)"
                 style={{ width: '100%', background: '#0a0a0a', border: '1px solid #333', padding: '12px', color: '#fff', borderRadius: '4px', outline: 'none', resize: 'vertical' }}
               />
+              <div style={{ marginTop: '6px', padding: '8px 12px', background: '#0a0a0a', border: '1px solid #1a1a1a', borderRadius: '4px', fontSize: '11px', color: '#555' }}>
+                <i className="fa-solid fa-circle-info" style={{ color: '#e60000', marginRight: '5px' }}></i>
+                SEO için: Min 100 kelime, başlık 20-70 karakter, konuyla ilgili detaylı içerik yazın.
+              </div>
             </div>
 
             <button 

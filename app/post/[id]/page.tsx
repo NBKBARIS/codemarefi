@@ -6,6 +6,7 @@ import Sidebar from '../../components/Sidebar';
 import Comments from '../../components/Comments';
 import ShareButtons from '../../components/ShareButtons';
 import PostDeleteButton from '../../components/PostDeleteButton';
+import AuthorBadge from '../../components/AuthorBadge';
 
 export async function generateStaticParams() {
   return localPosts.map((post) => ({ id: post.id }));
@@ -115,14 +116,10 @@ export default async function PostPage(props: { params: Promise<{ id: string }> 
 
             {/* Meta */}
             <div style={{ display: 'flex', alignItems: 'center', gap: '18px', color: '#666', fontSize: '12px', marginBottom: '24px', paddingBottom: '20px', borderBottom: '1px solid #1e1e1e', flexWrap: 'wrap' }}>
-              <Link
-                href={`/user/${encodeURIComponent((post as any).authorId || post.author)}`}
-                className="author-link"
-                style={{ display: 'flex', alignItems: 'center', gap: '6px', textDecoration: 'none', color: '#888' }}
-              >
-                <i className="fa-solid fa-user" style={{ color: '#e60000', fontSize: '11px' }}></i>
-                <span style={{ fontWeight: 600 }}>{post.author}</span>
-              </Link>
+              <AuthorBadge
+                authorName={post.author}
+                authorId={(post as any).authorId}
+              />
               <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                 <i className="fa-regular fa-clock" style={{ color: '#e60000', fontSize: '11px' }}></i>
                 {formatDate(post.published)}
@@ -131,12 +128,8 @@ export default async function PostPage(props: { params: Promise<{ id: string }> 
                 <i className="fa-solid fa-folder-open" style={{ color: '#e60000', fontSize: '11px' }}></i>
                 {post.categories.join(', ')}
               </span>
-              {/* Silme butonu — sadece yazar veya admin/mod görür */}
               <div style={{ marginLeft: 'auto' }}>
-                <PostDeleteButton
-                  postId={params.id}
-                  authorId={(post as any).authorId}
-                />
+                <PostDeleteButton postId={params.id} authorId={(post as any).authorId} />
               </div>
             </div>
 

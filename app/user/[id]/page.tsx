@@ -187,7 +187,11 @@ export default function PublicProfilePage() {
                   if (!val) return null;
                   const meta = SOCIAL_META[key];
                   if (!meta) return null;
-                  const href = key === 'discord' ? undefined : String(val);
+                  // Yeni format: { url, visible } veya eski format: string
+                  const url = typeof val === 'object' ? (val as any).url : String(val);
+                  const visible = typeof val === 'object' ? (val as any).visible !== false : true;
+                  if (!url || !visible) return null;
+                  const href = key === 'discord' ? undefined : url;
                   return href ? (
                     <a key={key} href={href} target="_blank" rel="noreferrer"
                       style={{ display: 'flex', alignItems: 'center', gap: '7px', background: '#111', border: `1px solid ${meta.color}44`, borderRadius: '50px', padding: '7px 16px', color: meta.color, fontSize: '12px', fontWeight: 700, textDecoration: 'none', transition: 'all 0.2s' }}
@@ -200,7 +204,7 @@ export default function PublicProfilePage() {
                   ) : (
                     <div key={key} style={{ display: 'flex', alignItems: 'center', gap: '7px', background: '#111', border: `1px solid ${meta.color}44`, borderRadius: '50px', padding: '7px 16px', color: meta.color, fontSize: '12px', fontWeight: 700 }}>
                       <i className={`fa-brands ${meta.icon}`}></i>
-                      {String(val)}
+                      {url}
                     </div>
                   );
                 })}
