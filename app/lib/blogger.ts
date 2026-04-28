@@ -89,11 +89,9 @@ let mergedPostsCache: { data: BlogPost[]; ts: number } | null = null;
 async function getMergedPosts(): Promise<BlogPost[]> {
   // Cache geçerliyse direkt dön
   if (mergedPostsCache && Date.now() - mergedPostsCache.ts < POST_CACHE_TTL) {
-    console.log('📦 Cache\'den döndürülüyor:', mergedPostsCache.data.length, 'post');
     return mergedPostsCache.data;
   }
 
-  console.log('🔄 Yeni veri çekiliyor...');
   const approved = await getApprovedPosts();
   
   const mappedUserPosts: BlogPost[] = approved.map(p => ({
@@ -106,7 +104,7 @@ async function getMergedPosts(): Promise<BlogPost[]> {
     url: `/post/${p.id}`,
     thumbnail: p.thumbnail_url,
     author: p.profiles?.full_name || 'Üye',
-    authorId: p.author_id, // UUID — profil linki için
+    authorId: p.author_id,
     commentCount: 0,
     slug: p.id
   }));
@@ -115,23 +113,12 @@ async function getMergedPosts(): Promise<BlogPost[]> {
   const localIds = new Set(localPosts.map(p => p.id));
   const localTitles = new Set(localPosts.map(p => p.title.trim().toLowerCase()));
 
-  // Supabase'den gelen postlarda localPosts ile aynı ID veya aynı başlık varsa atla (duplicate önleme)
   const filteredUserPosts = mappedUserPosts.filter(p => !localIds.has(p.id) && !localTitles.has(p.title.trim().toLowerCase()));
 
   const merged = [...bloggerPosts, ...filteredUserPosts].sort((a, b) =>
     new Date(b.published).getTime() - new Date(a.published).getTime()
   );
 
-  // Debug: Console'a bilgi yazdır
-  console.log('📊 Post İstatistikleri:', {
-    'Local Posts': bloggerPosts.length,
-    'Supabase Onaylı': approved.length,
-    'Filtrelenmiş Supabase': filteredUserPosts.length,
-    'Toplam Merged': merged.length,
-    'İlk 10 Post Başlıkları': merged.slice(0, 10).map(p => p.title)
-  });
-
-  // Cache'e kaydet
   mergedPostsCache = { data: merged, ts: Date.now() };
   return merged;
 }
