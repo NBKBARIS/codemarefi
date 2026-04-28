@@ -69,7 +69,29 @@ import { localPosts, LocalPost } from './localPosts';
 import { supabase } from './supabase';
 import { getApprovedPosts, UserPost } from './userPosts';
 
+// ── İstemci tarafı in-memory cache ───────────────────────────
+const postCache = new Map<string, { data: any; ts: number }>();
+const POST_CACHE_TTL = 5 * 60 * 1000; // 5 dakika
+
+function getCache<T>(key: string): T | null {
+  const entry = postCache.get(key);
+  if (!entry) return null;
+  if (Date.now() - entry.ts > POST_CACHE_TTL) { postCache.delete(key); return null; }
+  return entry.data as T;
+}
+function setPostCache(key: string, data: any) {
+  postCache.set(key, { data, ts: Date.now() });
+}
+
+// Tüm merged postları cache'le
+let mergedPostsCache: { data: BlogPost[]; ts: number } | null = null;
+
 async function getMergedPosts(): Promise<BlogPost[]> {
+  // Cache geçerliyse direkt dön
+  if (mergedPostsCache && Date.now() - mergedPostsCache.ts < POST_CACHE_TTL) {
+    return mergedPostsCache.data;
+  }
+
   const approved = await getApprovedPosts();
   
   const mappedUserPosts: BlogPost[] = approved.map(p => ({
@@ -89,11 +111,21 @@ async function getMergedPosts(): Promise<BlogPost[]> {
 
   const bloggerPosts: BlogPost[] = localPosts.map(p => ({ ...p, url: `/post/${p.id}` })) as BlogPost[];
   
-  return [...bloggerPosts, ...mappedUserPosts].sort((a, b) => 
+  const merged = [...bloggerPosts, ...mappedUserPosts].sort((a, b) => 
     new Date(b.published).getTime() - new Date(a.published).getTime()
   );
+
+  // Cache'e kaydet
+  mergedPostsCache = { data: merged, ts: Date.now() };
+  return merged;
 }
 
+
+// Cache'i dışarıdan temizlemek için
+export function invalidatePostCache() {
+  mergedPostsCache = null;
+  postCache.clear();
+}
 
 export async function fetchPosts(maxResults = 10, startIndex = 1, label?: string): Promise<{ posts: BlogPost[]; total: number }> {
   let allPosts = await getMergedPosts();
@@ -153,9 +185,17 @@ export async function searchPosts(query: string): Promise<BlogPost[]> {
 }
 
 export async function fetchPostById(id: string): Promise<BlogPost | null> {
+  // Cache'de var mı?
+  const cached = getCache<BlogPost>(`post:${id}`);
+  if (cached) return cached;
+
   // Önce localPosts'ta ara
   const local = localPosts.find(p => p.id === id);
-  if (local) return ({ ...local, url: `/post/${local.id}` } as BlogPost);
+  if (local) {
+    const result = { ...local, url: `/post/${local.id}` } as BlogPost;
+    setPostCache(`post:${id}`, result);
+    return result;
+  }
 
   // Yoksa Supabase'de ara
   const { data: userPost } = await supabase
@@ -165,7 +205,7 @@ export async function fetchPostById(id: string): Promise<BlogPost | null> {
     .single();
 
   if (userPost) {
-    return {
+    const result: BlogPost = {
       id: userPost.id,
       title: userPost.title,
       content: userPost.content,
@@ -179,6 +219,8 @@ export async function fetchPostById(id: string): Promise<BlogPost | null> {
       commentCount: 0,
       slug: userPost.id
     };
+    setPostCache(`post:${id}`, result);
+    return result;
   }
 
   return null;

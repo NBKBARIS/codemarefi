@@ -1,5 +1,13 @@
 import { supabase } from './supabase';
 
+// Lazy import — circular dependency önlemek için
+async function clearBloggerCache() {
+  try {
+    const { invalidatePostCache } = await import('./blogger');
+    invalidatePostCache();
+  } catch { /* sessizce geç */ }
+}
+
 export interface UserPost {
   id: string;
   title: string;
@@ -55,6 +63,7 @@ export async function approvePost(id: string) {
     .eq('id', id);
 
   if (error) throw error;
+  await clearBloggerCache();
 }
 
 export async function updatePost(id: string, updates: { title: string; content: string; categories: string[] }) {
@@ -81,6 +90,9 @@ export async function deletePost(id: string) {
     .eq('id', id);
 
   if (error) throw error;
+
+  // Silme sonrası cache temizle
+  await clearBloggerCache();
 
   // Silme sonrası yazarın onaylı gönderi sayısını kontrol et
   // Eğer 0 kaldıysa YAZAR -> ÜYE'ye düşür
