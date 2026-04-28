@@ -23,9 +23,9 @@ async function getTopCommenters(): Promise<string[]> {
 }
 
 const TOP3_BADGES = [
-  { medal: '🥇', label: '1. SIRA', color: '#FFD700', bg: '#3a2e00' },
-  { medal: '🥈', label: '2. SIRA', color: '#C0C0C0', bg: '#2a2a2a' },
-  { medal: '🥉', label: '3. SIRA', color: '#CD7F32', bg: '#2a1a00' },
+  { icon: 'fa-medal', label: '1. SIRA', color: '#FFD700', bg: 'rgba(255,215,0,0.12)', glow: '0 0 8px rgba(255,215,0,0.5)' },
+  { icon: 'fa-medal', label: '2. SIRA', color: '#C0C0C0', bg: 'rgba(192,192,192,0.10)', glow: '0 0 8px rgba(192,192,192,0.4)' },
+  { icon: 'fa-medal', label: '3. SIRA', color: '#CD7F32', bg: 'rgba(205,127,50,0.10)', glow: '0 0 8px rgba(205,127,50,0.4)' },
 ];
 
 function formatCommentDate(dateStr: string) {
@@ -163,8 +163,13 @@ const CommentNode = ({
                   border: `1px solid ${topBadge.color}`,
                   marginLeft: '2px',
                   letterSpacing: '0.3px',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '4px',
+                  boxShadow: topBadge.glow,
                 }}>
-                  {topBadge.medal} {topBadge.label}
+                  <i className={`fa-solid ${topBadge.icon}`} style={{ fontSize: '11px', filter: `drop-shadow(${topBadge.glow})` }}></i>
+                  {topBadge.label}
                 </span>
               )}
 

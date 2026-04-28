@@ -13,9 +13,9 @@ type LeaderEntry = {
 
 // Rozet bilgileri — 1. 2. 3. sıra
 const RANK_STYLES = [
-  { medal: '🥇', color: '#FFD700', bg: 'rgba(255,215,0,0.08)', border: '#FFD700', label: '1.' },
-  { medal: '🥈', color: '#C0C0C0', bg: 'rgba(192,192,192,0.08)', border: '#C0C0C0', label: '2.' },
-  { medal: '🥉', color: '#CD7F32', bg: 'rgba(205,127,50,0.08)', border: '#CD7F32', label: '3.' },
+  { icon: 'fa-medal', color: '#FFD700', bg: 'rgba(255,215,0,0.08)', border: '#FFD700', label: '1.', glow: '0 0 10px rgba(255,215,0,0.4)' },
+  { icon: 'fa-medal', color: '#C0C0C0', bg: 'rgba(192,192,192,0.08)', border: '#C0C0C0', label: '2.', glow: '0 0 10px rgba(192,192,192,0.3)' },
+  { icon: 'fa-medal', color: '#CD7F32', bg: 'rgba(205,127,50,0.08)', border: '#CD7F32', label: '3.', glow: '0 0 10px rgba(205,127,50,0.3)' },
 ];
 
 const ROLE_BADGE: Record<string, { label: string; color: string }> = {
@@ -176,14 +176,22 @@ export default function Leaderboard() {
               >
                 {/* Sıra numarası / madalya */}
                 <div style={{
-                  width: '22px',
+                  width: '28px',
                   textAlign: 'center',
-                  fontSize: isTop3 ? '16px' : '12px',
-                  color: isTop3 ? rank.color : '#555',
-                  fontWeight: 700,
                   flexShrink: 0,
                 }}>
-                  {isTop3 ? rank.medal : `${i + 1}.`}
+                  {isTop3 ? (
+                    <i
+                      className={`fa-solid ${rank.icon}`}
+                      style={{
+                        fontSize: '20px',
+                        color: rank.color,
+                        filter: `drop-shadow(${rank.glow})`,
+                      }}
+                    ></i>
+                  ) : (
+                    <span style={{ fontSize: '12px', color: '#555', fontWeight: 700 }}>{i + 1}.</span>
+                  )}
                 </div>
 
                 {/* Avatar */}
@@ -232,7 +240,11 @@ export default function Leaderboard() {
                         padding: '1px 5px',
                         borderRadius: '3px',
                         fontWeight: 900,
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '3px',
                       }}>
+                        <i className={`fa-solid ${rank.icon}`} style={{ fontSize: '9px' }}></i>
                         {rank.label} SIRA
                       </span>
                     )}
