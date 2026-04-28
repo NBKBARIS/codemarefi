@@ -3,8 +3,6 @@ import { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
 import { submitUserPost } from '../lib/userPosts';
 import { hasBadWords } from '../lib/badWords';
-import Navbar from '../components/Navbar';
-import Footer from '../components/Footer';
 import { useRouter } from 'next/navigation';
 
 export default function PaylasPage() {
@@ -43,7 +41,6 @@ export default function PaylasPage() {
   if (accessDenied) {
     return (
       <main style={{ background: '#050505', minHeight: '100vh', color: '#fff' }}>
-        <Navbar />
         <div style={{ minHeight: '80vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }}>
           <div style={{ textAlign: 'center', maxWidth: '520px' }}>
             <div style={{ width: '110px', height: '110px', borderRadius: '50%', background: 'rgba(230,0,0,0.08)', border: '2px solid #e60000', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 30px', fontSize: '44px', color: '#e60000', boxShadow: '0 0 50px rgba(230,0,0,0.15)' }}>
@@ -80,7 +77,6 @@ export default function PaylasPage() {
   if (user && showRules) {
     return (
       <main style={{ background: '#050505', minHeight: '100vh', color: '#fff' }}>
-        <Navbar />
         <div style={{ minHeight: '80vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }}>
         <div style={{ 
           maxWidth: '560px', 
@@ -257,7 +253,6 @@ export default function PaylasPage() {
 
   return (
     <main style={{ background: '#050505', minHeight: '100vh', color: '#fff' }}>
-      <Navbar />
       
       <div style={{ maxWidth: '800px', margin: '40px auto', padding: '0 20px' }}>
         <div style={{ background: '#111', border: '1px solid #1e1e1e', padding: '30px', borderRadius: '8px' }}>

@@ -2,8 +2,6 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
 import { getPendingPosts, approvePost, deletePost, UserPost } from '../lib/userPosts';
-import Navbar from '../components/Navbar';
-import Footer from '../components/Footer';
 import { useRouter } from 'next/navigation';
 
 export default function YonetimPage() {
@@ -62,18 +60,18 @@ export default function YonetimPage() {
       await approvePost(id);
       
       // Yazarı "YAZAR" (author) rütbesine yükselt (Eğer sadece Üye ise)
-      if (post?.user_id) {
+      if (post?.author_id) {
         const { data: userProfile } = await supabase
           .from('profiles')
           .select('role')
-          .eq('id', post.user_id)
+          .eq('id', post.author_id)
           .single();
         
         if (userProfile?.role === 'member') {
           await supabase
             .from('profiles')
             .update({ role: 'author' })
-            .eq('id', post.user_id);
+            .eq('id', post.author_id);
         }
       }
 
