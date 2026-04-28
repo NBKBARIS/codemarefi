@@ -60,7 +60,8 @@ export default function Leaderboard() {
       const { data: postData } = await supabase
         .from('user_posts')
         .select('author_id, profiles(full_name, avatar_url, role)')
-        .eq('is_approved', true);
+        .eq('is_approved', true)
+        .limit(200); // limit ekle
 
       if (postData) {
         const counts: Record<string, LeaderEntry> = {};
@@ -84,7 +85,8 @@ export default function Leaderboard() {
       const { data: commentData } = await supabase
         .from('comments')
         .select('user_id, profiles(full_name, avatar_url, role)')
-        .not('user_id', 'is', null);
+        .not('user_id', 'is', null)
+        .limit(500); // limit ekle — sonsuz veri çekmeyi önle
 
       if (commentData) {
         const counts: Record<string, LeaderEntry> = {};

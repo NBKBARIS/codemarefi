@@ -158,10 +158,11 @@ export default function Sidebar() {
             {[
               { icon: 'fa-facebook-f', label: 'Facebook', color: '#3b5998', url: 'https://www.facebook.com/CodeMareFi' },
               { icon: 'fa-twitter', label: 'Twitter', color: '#1da1f2', url: 'https://twitter.com/mare_fi' },
-              { icon: 'fa-youtube', label: 'YouTube', color: '#ff0000', url: '#' },
-              { icon: 'fa-discord', label: 'Discord', color: '#7289da', url: '#' },
-              { icon: 'fa-instagram', label: 'Instagram', color: '#e1306c', url: '#' },
+              { icon: 'fa-youtube', label: 'YouTube — Çok Yakında', color: '#333', url: null },
+              { icon: 'fa-discord', label: 'Discord — Çok Yakında', color: '#333', url: null },
+              { icon: 'fa-instagram', label: 'Instagram — Çok Yakında', color: '#333', url: null },
             ].map(s => (
+              s.url ? (
               <a key={s.label} href={s.url} target="_blank" rel="noreferrer" style={{
                 display: 'flex',
                 alignItems: 'center',
@@ -172,6 +173,7 @@ export default function Sidebar() {
                 fontSize: '12px',
                 fontWeight: 'bold',
                 transition: 'opacity 0.2s',
+                textDecoration: 'none',
               }}
                 onMouseEnter={e => (e.currentTarget.style.opacity = '0.85')}
                 onMouseLeave={e => (e.currentTarget.style.opacity = '1')}
@@ -179,6 +181,23 @@ export default function Sidebar() {
                 <i className={`fa-brands ${s.icon}`}></i>
                 {s.label}
               </a>
+              ) : (
+              <div key={s.label} style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '10px',
+                background: '#1a1a1a',
+                color: '#555',
+                padding: '8px 12px',
+                fontSize: '12px',
+                fontWeight: 'bold',
+                border: '1px dashed #333',
+                cursor: 'default',
+              }}>
+                <i className={`fa-brands ${s.icon}`}></i>
+                {s.label}
+              </div>
+              )
             ))}
           </div>
         </div>

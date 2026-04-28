@@ -9,7 +9,7 @@ export default function Footer() {
     { label: 'Duyurular',       href: '/kategori/Genel%20Konular' },
     { label: 'Hakkımızda',      href: '/hakkimizda' },
     { label: 'Site Haritası',   href: '/sitemap.xml' },
-    { label: 'CodeMareFi Chat', href: 'https://discord.gg/dRMY8zW' },
+    { label: 'CodeMareFi Chat', href: 'mailto:support@codemarefi.com' },
   ];
 
   return (

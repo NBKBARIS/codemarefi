@@ -28,11 +28,15 @@ export default function PostCard({ post }: PostCardProps) {
   const excerpt = stripHtml(post.content).slice(0, 160) + '...';
 
   useEffect(() => {
-    supabase
-      .from('comments')
-      .select('*', { count: 'exact', head: true })
-      .eq('post_id', post.id)
-      .then(({ count }) => setCommentCount(count ?? 0));
+    // Kısa bir gecikme ile sorgula — aynı anda çok fazla istek göndermeyi önle
+    const timer = setTimeout(() => {
+      supabase
+        .from('comments')
+        .select('id', { count: 'exact', head: true })
+        .eq('post_id', post.id)
+        .then(({ count }) => setCommentCount(count ?? 0));
+    }, Math.random() * 500); // 0-500ms arası rastgele gecikme
+    return () => clearTimeout(timer);
   }, [post.id]);
 
   return (

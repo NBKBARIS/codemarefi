@@ -13,7 +13,8 @@ async function getTopCommenters(): Promise<string[]> {
   const { data } = await supabase
     .from('comments')
     .select('user_id')
-    .not('user_id', 'is', null);
+    .not('user_id', 'is', null)
+    .limit(500); // limit — free tier'da büyük tablo çekmeyi önle
   if (!data) return [];
   const counts: Record<string, number> = {};
   data.forEach((r: any) => { if (r.user_id) counts[r.user_id] = (counts[r.user_id] || 0) + 1; });
@@ -299,7 +300,6 @@ export default function Comments({ postId }: { postId: string }) {
   useEffect(() => {
     if (user) {
       supabase.from('profiles').select('*').eq('id', user.id).single().then(({ data }) => {
-        console.log('Current User Profile Loaded:', data);
         setProfile(data);
         if (data?.full_name) setAuthorName(data.full_name);
       });

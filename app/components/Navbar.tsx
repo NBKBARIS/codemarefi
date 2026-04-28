@@ -100,28 +100,39 @@ export default function Navbar() {
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '2px' }}>
             {[
-              { icon: 'fa-twitter' },
-              { icon: 'fa-facebook-f' },
-              { icon: 'fa-google-plus-g' },
-              { icon: 'fa-instagram' },
-              { icon: 'fa-youtube' },
-              { icon: 'fa-vimeo-v' },
-              { icon: 'fa-soundcloud' },
-              { icon: 'fa-pinterest-p' },
-              { icon: 'fa-github' },
-              { icon: 'fa-dribbble' },
-              { icon: 'fa-vk' },
+              { icon: 'fa-twitter',     url: 'https://twitter.com/mare_fi' },
+              { icon: 'fa-facebook-f',  url: 'https://www.facebook.com/CodeMareFi' },
+              { icon: 'fa-google-plus-g', url: null },
+              { icon: 'fa-instagram',   url: null },
+              { icon: 'fa-youtube',     url: null },
+              { icon: 'fa-vimeo-v',     url: null },
+              { icon: 'fa-soundcloud',  url: null },
+              { icon: 'fa-pinterest-p', url: null },
+              { icon: 'fa-github',      url: null },
+              { icon: 'fa-dribbble',    url: null },
+              { icon: 'fa-vk',          url: null },
             ].map(s => (
-              <a 
-                key={s.icon} 
-                href="#" 
-                onClick={(e) => { e.preventDefault(); alert('CodeMareFi sosyal medya hesaplarımız yakında açılacaktır!'); }}
-                style={{ color: '#888', fontSize: '12px', padding: '3px 5px', transition: 'color 0.2s', textDecoration: 'none' }}
-                onMouseEnter={e => (e.currentTarget.style.color = '#e60000')}
-                onMouseLeave={e => (e.currentTarget.style.color = '#888')}
-              >
-                <i className={`fa-brands ${s.icon}`}></i>
-              </a>
+              s.url ? (
+                <a
+                  key={s.icon}
+                  href={s.url}
+                  target="_blank"
+                  rel="noreferrer"
+                  style={{ color: '#888', fontSize: '12px', padding: '3px 5px', transition: 'color 0.2s', textDecoration: 'none' }}
+                  onMouseEnter={e => (e.currentTarget.style.color = '#e60000')}
+                  onMouseLeave={e => (e.currentTarget.style.color = '#888')}
+                >
+                  <i className={`fa-brands ${s.icon}`}></i>
+                </a>
+              ) : (
+                <span
+                  key={s.icon}
+                  title="Çok Yakında"
+                  style={{ color: '#333', fontSize: '12px', padding: '3px 5px', cursor: 'default' }}
+                >
+                  <i className={`fa-brands ${s.icon}`}></i>
+                </span>
+              )
             ))}
             <a href="/arama" style={{ color: '#888', fontSize: '12px', padding: '3px 8px', transition: 'color 0.2s', textDecoration: 'none' }}
               onMouseEnter={e => (e.currentTarget.style.color = '#e60000')}
