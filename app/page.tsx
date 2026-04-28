@@ -102,53 +102,6 @@ export default function HomePage() {
 
   return (
     <>
-      {/* ── ÜST THUMBNAIL ŞERİDİ ── */}
-      {posts.length > 0 && (
-        <div style={{ background: '#111', borderBottom: '2px solid #1a1a1a' }}>
-          <div style={{ maxWidth: '1300px', margin: '0 auto', display: 'flex', overflowX: 'auto', scrollbarWidth: 'none' }}>
-            {posts.slice(0, 5).map((p) => (
-              <Link
-                key={p.id}
-                href={p.url}
-                style={{
-                  flex: '1 1 200px',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  textDecoration: 'none',
-                  borderRight: '1px solid #1a1a1a',
-                  overflow: 'hidden',
-                  minWidth: '180px',
-                  transition: 'background 0.2s',
-                }}
-                onMouseEnter={e => (e.currentTarget.style.background = '#1a1a1a')}
-                onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
-              >
-                <div style={{ position: 'relative', width: '100%', paddingTop: '60%', overflow: 'hidden', background: '#222' }}>
-                  {p.thumbnail && (
-                    <img
-                      src={p.thumbnail}
-                      alt=""
-                      style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', transition: 'transform 0.4s' }}
-                      onMouseEnter={e => ((e.currentTarget as HTMLImageElement).style.transform = 'scale(1.08)')}
-                      onMouseLeave={e => ((e.currentTarget as HTMLImageElement).style.transform = 'scale(1)')}
-                    />
-                  )}
-                </div>
-                <div style={{ padding: '8px 10px', background: '#111', flex: 1 }}>
-                  <div style={{ color: '#666', fontSize: '10px', marginBottom: '4px', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                    <i className="fa-regular fa-clock"></i>
-                    {formatDate(p.published)}
-                  </div>
-                  <div style={{ color: '#ddd', fontSize: '12px', fontWeight: 600, lineHeight: 1.3, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
-                    {p.title}
-                  </div>
-                </div>
-              </Link>
-            ))}
-          </div>
-        </div>
-      )}
-
       {/* ── TICKER ── */}
       {tickerPosts.length > 0 && (
         <div style={{ background: '#0d0d0d', borderBottom: '1px solid #1e1e1e' }}>
