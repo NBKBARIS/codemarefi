@@ -62,26 +62,21 @@ export default function IletisimPage() {
             <div style={{ background: '#111', border: '1px solid #1e1e1e', borderRadius: '12px', padding: '30px', textAlign: 'center', transition: 'all 0.3s' }}>
               <i className="fa-brands fa-discord" style={{ fontSize: '40px', color: '#5865F2', marginBottom: '20px' }}></i>
               <h3 style={{ fontSize: '20px', color: '#fff', marginBottom: '10px' }}>Topluluk & Chat</h3>
-              <p style={{ color: '#666', fontSize: '14px', marginBottom: '20px' }}>Geliştiricilerle tanışmak ve anlık yardım almak için Discord sunucumuza katılın:</p>
-              <div style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '10px',
-                background: 'rgba(88,101,242,0.1)',
-                border: '1px dashed #5865F2',
-                borderRadius: '50px',
-                padding: '10px 25px',
-                color: '#5865F2',
+              <p style={{ color: '#666', fontSize: '14px', marginBottom: '20px' }}>Geliştiricilerle tanışmak ve anlık yardım almak için:</p>
+              <a href="https://discord.gg/dRMY8zW" target="_blank" rel="noreferrer" style={{ 
+                display: 'inline-block', 
+                background: '#5865F2', 
+                color: '#fff', 
+                padding: '10px 25px', 
+                borderRadius: '50px', 
+                textDecoration: 'none', 
                 fontWeight: 700,
                 fontSize: '14px',
-              }}>
-                <i className="fa-solid fa-clock" style={{ fontSize: '14px' }}></i>
-                ÇOK YAKINDA
-              </div>
-              <p style={{ color: '#555', fontSize: '12px', marginTop: '12px' }}>
-                Şimdilik bize e-posta ile ulaşabilirsiniz:<br />
-                <a href="mailto:support@codemarefi.com" style={{ color: '#888', textDecoration: 'none' }}>support@codemarefi.com</a>
-              </p>
+                transition: 'transform 0.2s'
+              }}
+              onMouseEnter={e => (e.currentTarget.style.transform = 'scale(1.05)')}
+              onMouseLeave={e => (e.currentTarget.style.transform = 'scale(1)')}
+              >Discord'a Katıl</a>
             </div>
           </div>
 

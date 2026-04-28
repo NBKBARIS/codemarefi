@@ -133,12 +133,6 @@ export default function HomePage() {
                       onMouseLeave={e => ((e.currentTarget as HTMLImageElement).style.transform = 'scale(1)')}
                     />
                   )}
-                  {/* Kategori badge */}
-                  {p.categories[0] && (
-                    <div style={{ position: 'absolute', top: '6px', left: '6px', background: '#e60000', color: '#fff', fontSize: '9px', fontWeight: 800, padding: '2px 6px', borderRadius: '2px', textTransform: 'uppercase' }}>
-                      {p.categories[0].replace(/-/g, ' ')}
-                    </div>
-                  )}
                 </div>
                 <div style={{ padding: '8px 10px', background: '#111', flex: 1 }}>
                   <div style={{ color: '#666', fontSize: '10px', marginBottom: '4px', display: 'flex', alignItems: 'center', gap: '4px' }}>
