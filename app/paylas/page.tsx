@@ -32,7 +32,17 @@ export default function PaylasPage() {
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      // Resim boyut kontrolü (opsiyonel ama tasarım için iyi)
+      // 1. MIME type kontrolü - sadece gerçek resim
+      if (!file.type.startsWith('image/')) {
+        setMessage({ type: 'error', text: 'Sadece resim dosyası yükleyebilirsiniz!' });
+        return;
+      }
+      // 2. Dosya boyutu kontrolü - max 5MB
+      if (file.size > 5 * 1024 * 1024) {
+        setMessage({ type: 'error', text: 'Resim boyutu 5MB\'dan küçük olmalıdır!' });
+        return;
+      }
+      // 3. Çözünürlük kontrolü
       const img = new Image();
       img.src = URL.createObjectURL(file);
       img.onload = () => {
@@ -61,14 +71,29 @@ export default function PaylasPage() {
     setMessage({ type: 'info', text: 'Yazınız gönderiliyor, lütfen bekleyin...' });
 
     try {
-      // 1. Resmi Storage'a Yükle
+      // Rate limit: Kullanıcı bugün kaç yazı göndermiş?
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      const { count } = await supabase
+        .from('user_posts')
+        .select('*', { count: 'exact', head: true })
+        .eq('author_id', user.id)
+        .gte('created_at', today.toISOString());
+
+      if ((count ?? 0) >= 3) {
+        setMessage({ type: 'error', text: 'Günlük 3 yazı limitine ulaştınız! Yarın tekrar deneyebilirsiniz.' });
+        setLoading(false);
+        return;
+      }
+
+      // Resmi Storage'a Yükle
       const fileExt = image.name.split('.').pop();
-      const fileName = `${Math.random()}.${fileExt}`;
+      const fileName = `${Date.now()}_${Math.random().toString(36).slice(2)}.${fileExt}`;
       const filePath = `${user.id}/${fileName}`;
 
       const { error: uploadError } = await supabase.storage
         .from('post-thumbnails')
-        .upload(filePath, image);
+        .upload(filePath, image, { contentType: image.type });
 
       if (uploadError) throw uploadError;
 
@@ -76,7 +101,7 @@ export default function PaylasPage() {
         .from('post-thumbnails')
         .getPublicUrl(filePath);
 
-      // 2. Yazıyı Veritabanına Kaydet
+      // Yazıyı Veritabanına Kaydet
       await submitUserPost({
         title,
         content,
