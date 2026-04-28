@@ -94,19 +94,23 @@ export default function Navbar() {
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '2px' }}>
             {[
-              { icon: 'fa-twitter', url: 'https://twitter.com/mare_fi' },
-              { icon: 'fa-facebook-f', url: 'https://facebook.com/CodeMareFi' },
-              { icon: 'fa-google-plus-g', url: '#' },
-              { icon: 'fa-instagram', url: '#' },
-              { icon: 'fa-youtube', url: '#' },
-              { icon: 'fa-vimeo-v', url: '#' },
-              { icon: 'fa-soundcloud', url: '#' },
-              { icon: 'fa-pinterest-p', url: '#' },
-              { icon: 'fa-github', url: '#' },
-              { icon: 'fa-dribbble', url: '#' },
-              { icon: 'fa-vk', url: '#' },
+              { icon: 'fa-twitter' },
+              { icon: 'fa-facebook-f' },
+              { icon: 'fa-google-plus-g' },
+              { icon: 'fa-instagram' },
+              { icon: 'fa-youtube' },
+              { icon: 'fa-vimeo-v' },
+              { icon: 'fa-soundcloud' },
+              { icon: 'fa-pinterest-p' },
+              { icon: 'fa-github' },
+              { icon: 'fa-dribbble' },
+              { icon: 'fa-vk' },
             ].map(s => (
-              <a key={s.icon} href={s.url} target="_blank" rel="noreferrer" style={{ color: '#888', fontSize: '12px', padding: '3px 5px', transition: 'color 0.2s', textDecoration: 'none' }}
+              <a 
+                key={s.icon} 
+                href="#" 
+                onClick={(e) => { e.preventDefault(); alert('CodeMareFi sosyal medya hesaplarımız yakında açılacaktır!'); }}
+                style={{ color: '#888', fontSize: '12px', padding: '3px 5px', transition: 'color 0.2s', textDecoration: 'none' }}
                 onMouseEnter={e => (e.currentTarget.style.color = '#e60000')}
                 onMouseLeave={e => (e.currentTarget.style.color = '#888')}
               >
