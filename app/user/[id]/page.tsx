@@ -57,7 +57,8 @@ export default function PublicProfilePage() {
       if (profileData) {
         setProfile(profileData);
 
-        // Yorumlar
+        // auth.users'dan gerçek kayıt tarihini çek
+        // profiles.created_at boş olabilir, user_posts veya comments'ten fallback al
         const { data: commentData } = await supabase
           .from('comments')
           .select('id, content, created_at, post_id')
@@ -65,6 +66,27 @@ export default function PublicProfilePage() {
           .order('created_at', { ascending: false })
           .limit(20);
         if (commentData) setComments(commentData);
+
+        // En eski user_post tarihini de çek (kayıt tarihi için fallback)
+        const { data: oldestPost } = await supabase
+          .from('user_posts')
+          .select('created_at')
+          .eq('author_id', profileData.id)
+          .order('created_at', { ascending: true })
+          .limit(1)
+          .single();
+
+        // Eğer profile.created_at boşsa en eski aktiviteden tahmin et
+        if (!profileData.created_at || isNaN(new Date(profileData.created_at).getTime())) {
+          const dates = [
+            oldestPost?.created_at,
+            commentData?.[commentData.length - 1]?.created_at,
+          ].filter(Boolean).map(d => new Date(d!).getTime()).filter(t => !isNaN(t));
+          if (dates.length > 0) {
+            profileData = { ...profileData, created_at: new Date(Math.min(...dates)).toISOString() };
+            setProfile(profileData);
+          }
+        }
 
         // Onaylı gönderi sayısı
         const { count } = await supabase
@@ -139,18 +161,15 @@ export default function PublicProfilePage() {
         <p style={{ color: '#888', fontSize: '14px', marginBottom: '30px' }}>
           <i className="fa-solid fa-calendar-days" style={{ marginRight: '8px' }}></i>
           {(() => {
-            let dateStr = profile.created_at;
-            if (!dateStr || isNaN(new Date(dateStr).getTime())) {
-              if (comments.length > 0) {
-                // Yorumlar en yeniden eskiye sıralı, en sonuncu en eskidir
-                dateStr = comments[comments.length - 1].created_at;
-              }
-            }
-            
+            const dateStr = profile.created_at;
             if (dateStr && !isNaN(new Date(dateStr).getTime())) {
-              return `${new Date(dateStr).toLocaleDateString('tr-TR', { day: 'numeric', month: 'long', year: 'numeric' })} tarihinde katıldı`;
+              const d = new Date(dateStr);
+              const day   = String(d.getDate()).padStart(2, '0');
+              const month = String(d.getMonth() + 1).padStart(2, '0');
+              const year  = d.getFullYear();
+              return `${day}.${month}.${year} tarihinde katıldı`;
             }
-            return 'Yeni katıldı';
+            return 'Katılım tarihi bilinmiyor';
           })()}
         </p>
 
