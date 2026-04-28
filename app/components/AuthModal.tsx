@@ -152,6 +152,19 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
             window.location.reload();
           }, 1200);
         } else {
+          // Kullanıcı adı benzersizlik kontrolü
+          const { data: existingUser, error: checkError } = await supabase
+            .from('profiles')
+            .select('full_name')
+            .eq('full_name', fullName)
+            .single();
+
+          if (existingUser) {
+            setMessage({ type: 'error', text: 'Bu kullanıcı adı zaten alınmış! Lütfen başka bir isim seçin.' });
+            setLoading(false);
+            return;
+          }
+
           const { data, error } = await supabase.auth.signUp({
             email,
             password,
