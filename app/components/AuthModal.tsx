@@ -101,16 +101,18 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
   };
 
   const handleOAuthLogin = async (provider: 'google' | 'discord') => {
+    const origin = typeof window !== 'undefined'
+      ? window.location.origin.replace('http://', 'https://')
+      : 'https://www.codemarefi.com';
+
     const { error } = await supabase.auth.signInWithOAuth({
       provider,
       options: {
-        redirectTo: typeof window !== 'undefined' 
-          ? window.location.origin.replace('http://', 'https://') + '/'
-          : 'https://www.codemarefi.com/'
+        redirectTo: `${origin}/auth/callback`,
+        scopes: provider === 'discord' ? 'identify email' : undefined,
       }
     });
     if (error) {
-      console.error('OAuth Error:', error);
       setMessage({ type: 'error', text: `Hata: ${error.message}` });
     }
   };
