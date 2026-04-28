@@ -143,27 +143,32 @@ export default function Leaderboard() {
       }
 
       // Aktiflik — localStorage'dan oku, profil bilgilerini Supabase'den çek
-      const raw = localStorage.getItem(ACTIVITY_KEY);
-      if (raw) {
-        const actMap: Record<string, number> = JSON.parse(raw);
-        const ids = Object.keys(actMap);
-        if (ids.length > 0) {
-          const { data: profiles } = await supabase
-            .from('profiles')
-            .select('id, full_name, avatar_url, role')
-            .in('id', ids);
+      try {
+        const raw = localStorage.getItem(ACTIVITY_KEY);
+        if (raw) {
+          const actMap: Record<string, number> = JSON.parse(raw);
+          const ids = Object.keys(actMap);
+          if (ids.length > 0) {
+            const { data: profiles } = await supabase
+              .from('profiles')
+              .select('id, full_name, avatar_url, role')
+              .in('id', ids);
 
-          if (profiles) {
-            const list = profiles.map((p: any) => ({
-              user_id: p.id,
-              full_name: p.full_name || 'Anonim',
-              avatar_url: p.avatar_url,
-              role: p.role || 'member',
-              seconds: actMap[p.id] || 0,
-            })).sort((a, b) => b.seconds - a.seconds).slice(0, 10);
-            setActivityLeaders(list);
+            if (profiles) {
+              const list = profiles.map((p: any) => ({
+                user_id: p.id,
+                full_name: p.full_name || 'Anonim',
+                avatar_url: p.avatar_url,
+                role: p.role || 'member',
+                seconds: actMap[p.id] || 0,
+              })).sort((a, b) => b.seconds - a.seconds).slice(0, 10);
+              setActivityLeaders(list);
+            }
           }
         }
+      } catch {
+        // localStorage bozuksa sessizce geç
+        localStorage.removeItem(ACTIVITY_KEY);
       }
 
       setLastUpdated(new Date());

@@ -348,7 +348,8 @@ export default function Comments({ postId }: { postId: string }) {
       .select('*')
       .eq('post_id', postId)
       .eq('is_approved', true)
-      .order('created_at', { ascending: true });
+      .order('created_at', { ascending: true })
+      .limit(200); // max 200 yorum
 
     if (error) {
       console.error('Error fetching comments:', error);

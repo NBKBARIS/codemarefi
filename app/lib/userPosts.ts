@@ -39,7 +39,8 @@ export async function getPendingPosts() {
     .from('user_posts')
     .select('*, profiles(full_name, avatar_url)')
     .eq('is_approved', false)
-    .order('created_at', { ascending: false });
+    .order('created_at', { ascending: false })
+    .limit(100); // max 100 bekleyen gönderi
 
   if (error) throw error;
   return data as UserPost[];
@@ -50,7 +51,8 @@ export async function getApprovedPosts() {
     .from('user_posts')
     .select('*, profiles(full_name, avatar_url)')
     .eq('is_approved', true)
-    .order('created_at', { ascending: false });
+    .order('created_at', { ascending: false })
+    .limit(200); // max 200 onaylı gönderi
 
   if (error) throw error;
   return data as UserPost[];

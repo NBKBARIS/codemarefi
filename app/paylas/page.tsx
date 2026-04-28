@@ -221,11 +221,17 @@ export default function PaylasPage() {
     try {
       const today = new Date();
       today.setHours(0, 0, 0, 0);
-      const { count } = await supabase
+      const { count, error: countError } = await supabase
         .from('user_posts')
         .select('*', { count: 'exact', head: true })
         .eq('author_id', user.id)
         .gte('created_at', today.toISOString());
+
+      if (countError) {
+        setMessage({ type: 'error', text: 'Günlük limit kontrol edilemedi. Lütfen tekrar deneyin.' });
+        setLoading(false);
+        return;
+      }
 
       if ((count ?? 0) >= 3) {
         setMessage({ type: 'error', text: 'Günlük 3 yazı limitine ulaştınız! Yarın tekrar deneyebilirsiniz.' });

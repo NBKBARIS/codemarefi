@@ -110,8 +110,12 @@ async function getMergedPosts(): Promise<BlogPost[]> {
   }));
 
   const bloggerPosts: BlogPost[] = localPosts.map(p => ({ ...p, url: `/post/${p.id}` })) as BlogPost[];
-  
-  const merged = [...bloggerPosts, ...mappedUserPosts].sort((a, b) => 
+  const localIds = new Set(localPosts.map(p => p.id));
+
+  // Supabase'den gelen postlarda localPosts ile aynı ID varsa atla (duplicate önleme)
+  const filteredUserPosts = mappedUserPosts.filter(p => !localIds.has(p.id));
+
+  const merged = [...bloggerPosts, ...filteredUserPosts].sort((a, b) =>
     new Date(b.published).getTime() - new Date(a.published).getTime()
   );
 
