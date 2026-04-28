@@ -55,7 +55,8 @@ const CommentNode = ({
 }) => {
   const isAdminAuthor = comment.role === 'admin';
   const isModAuthor = comment.role === 'mod';
-  const isMemberAuthor = comment.role === 'member' || (!isAdminAuthor && !isModAuthor && comment.role !== 'guest');
+  const isAuthorRank = comment.role === 'author';
+  const isMemberAuthor = comment.role === 'member' || (!isAdminAuthor && !isModAuthor && !isAuthorRank && comment.role !== 'guest');
   const isEditing = editingId === comment.id;
   const isGlobalAdmin = profile?.role === 'admin';
 
@@ -77,7 +78,7 @@ const CommentNode = ({
           <img 
             src={comment.avatar_url || 'https://api.dicebear.com/7.x/avataaars/svg?seed=Felix'} 
             alt={comment.author_name} 
-            style={{ width: '42px', height: '42px', borderRadius: '50%', objectFit: 'cover', border: `2px solid ${isAdminAuthor ? '#e60000' : (isModAuthor ? '#2ea44f' : (isMemberAuthor ? '#666' : '#333'))}` }} 
+            style={{ width: '42px', height: '42px', borderRadius: '50%', objectFit: 'cover', border: `2px solid ${isAdminAuthor ? '#e60000' : (isModAuthor ? '#2ea44f' : (isAuthorRank ? '#ff8c00' : (isMemberAuthor ? '#666' : '#333')))}` }} 
           />
         </Link>
         </div>
@@ -89,13 +90,13 @@ const CommentNode = ({
                 style={{ 
                   fontWeight: 'bold', 
                   fontSize: '14px', 
-                  color: isAdminAuthor ? '#e60000' : (isModAuthor ? '#2ea44f' : (isMemberAuthor ? '#f1f1f1' : '#aaa')), 
+                  color: isAdminAuthor ? '#e60000' : (isModAuthor ? '#2ea44f' : (isAuthorRank ? '#ff8c00' : (isMemberAuthor ? '#f1f1f1' : '#aaa'))), 
                   cursor: comment.user_id ? 'pointer' : 'default',
                   textDecoration: 'none',
                   transition: 'color 0.2s'
                 }}
                 onMouseEnter={(e) => comment.user_id && (e.currentTarget.style.color = '#fff')}
-                onMouseLeave={(e) => comment.user_id && (e.currentTarget.style.color = isAdminAuthor ? '#e60000' : (isModAuthor ? '#2ea44f' : (isMemberAuthor ? '#f1f1f1' : '#aaa')))}
+                onMouseLeave={(e) => comment.user_id && (e.currentTarget.style.color = isAdminAuthor ? '#e60000' : (isModAuthor ? '#2ea44f' : (isAuthorRank ? '#ff8c00' : (isMemberAuthor ? '#f1f1f1' : '#aaa'))))}
               >
                 {comment.author_name}
               </Link>
@@ -108,6 +109,11 @@ const CommentNode = ({
               {isModAuthor && (
                 <span style={{ background: '#2ea44f', color: 'white', fontSize: '10px', padding: '2px 5px', borderRadius: '3px', fontWeight: 'bold', marginLeft: '2px' }}>
                   Moderatör
+                </span>
+              )}
+              {isAuthorRank && (
+                <span style={{ background: '#ff8c00', color: 'white', fontSize: '10px', padding: '2px 5px', borderRadius: '3px', fontWeight: 'bold', marginLeft: '2px' }}>
+                  Yazar
                 </span>
               )}
               {isMemberAuthor && (

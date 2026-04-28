@@ -56,13 +56,31 @@ export default function YonetimPage() {
   }
 
   async function handleApprove(id: string) {
-    if (!confirm('Bu yazıyı onaylamak istediğinize emin misiniz?')) return;
+    const post = posts.find(p => p.id === id);
     setActionLoading(id);
     try {
       await approvePost(id);
+      
+      // Yazarı "YAZAR" (author) rütbesine yükselt (Eğer sadece Üye ise)
+      if (post?.user_id) {
+        const { data: userProfile } = await supabase
+          .from('profiles')
+          .select('role')
+          .eq('id', post.user_id)
+          .single();
+        
+        if (userProfile?.role === 'member') {
+          await supabase
+            .from('profiles')
+            .update({ role: 'author' })
+            .eq('id', post.user_id);
+        }
+      }
+
       setPosts(posts.filter(p => p.id !== id));
-      alert('Yazı onaylandı ve yayına alındı!');
+      alert('Yazı onaylandı! Yazar eğer rütbesiz ise rütbesi "YAZAR" olarak güncellendi.');
     } catch (error) {
+      console.error('Approval error:', error);
       alert('Onaylama hatası!');
     } finally {
       setActionLoading(null);

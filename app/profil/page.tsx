@@ -210,7 +210,23 @@ export default function ProfilePage() {
           </div>
           <div style={{ textAlign: 'center' }}>
             <p style={{ color: '#666', fontSize: '13px', letterSpacing: '1px', marginBottom: '5px' }}>SİSTEME KAYITLI E-POSTA</p>
-            <p style={{ color: '#fff', fontSize: '14px', fontWeight: 'bold' }}>{user?.email}</p>
+            <p style={{ color: '#fff', fontSize: '14px', fontWeight: 'bold', marginBottom: '15px' }}>{user?.email}</p>
+            
+            <div style={{ 
+              display: 'inline-block',
+              padding: '5px 20px',
+              borderRadius: '50px',
+              background: profile?.role === 'admin' ? 'rgba(230,0,0,0.1)' : (profile?.role === 'mod' ? 'rgba(46,164,79,0.1)' : (profile?.role === 'author' ? 'rgba(255,140,0,0.1)' : 'rgba(255,255,255,0.05)')),
+              color: profile?.role === 'admin' ? '#e60000' : (profile?.role === 'mod' ? '#2ea44f' : (profile?.role === 'author' ? '#ff8c00' : '#888')),
+              fontSize: '11px',
+              fontWeight: 900,
+              letterSpacing: '2px',
+              textTransform: 'uppercase',
+              border: `1px solid ${profile?.role === 'admin' ? '#e60000' : (profile?.role === 'mod' ? '#2ea44f' : (profile?.role === 'author' ? '#ff8c00' : '#222'))}`
+            }}>
+              <i className={`fa-solid ${profile?.role === 'admin' ? 'fa-user-shield' : (profile?.role === 'mod' ? 'fa-shield-halved' : (profile?.role === 'author' ? 'fa-pen-nib' : 'fa-user'))}`} style={{ marginRight: '8px' }}></i>
+              {profile?.role === 'admin' ? 'Yönetici' : (profile?.role === 'mod' ? 'Moderatör' : (profile?.role === 'author' ? 'Yazar' : 'Üye'))}
+            </div>
           </div>
         </div>
 

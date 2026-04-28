@@ -12,7 +12,7 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
   }
 });
 
-export type CommentRole = 'admin' | 'mod' | 'member' | 'guest';
+export type CommentRole = 'admin' | 'mod' | 'author' | 'member' | 'guest';
 
 export interface CommentType {
   id: string;
