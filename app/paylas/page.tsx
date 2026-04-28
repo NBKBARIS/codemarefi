@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
 import { submitUserPost } from '../lib/userPosts';
+import { hasBadWords } from '../lib/badWords';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import { useRouter } from 'next/navigation';
@@ -64,6 +65,12 @@ export default function PaylasPage() {
     if (!user) return;
     if (!image) {
       setMessage({ type: 'error', text: 'Lütfen bir öne çıkan görsel yükleyin!' });
+      return;
+    }
+
+    // Küfür/argo filtresi
+    if (hasBadWords(title) || hasBadWords(content)) {
+      setMessage({ type: 'error', text: '⚠️ İçeriğinizde uygunsuz kelimeler tespit edildi. Lütfen topluluk kurallarına uygun bir dil kullanın.' });
       return;
     }
 
