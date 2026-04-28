@@ -100,15 +100,15 @@ export default function YonetimPage() {
   }
 
   if (loading) return (
-    <div style={{ background: '#050505', minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '80px 20px' }}>
       <i className="fa-solid fa-spinner fa-spin" style={{ color: '#e60000', fontSize: '36px' }}></i>
     </div>
   );
 
   if (accessDenied) {
     return (
-      <main style={{ background: '#050505', minHeight: '100vh', color: '#fff' }}>
-        <div style={{ minHeight: '80vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }}>
+      <div style={{ color: '#fff' }}>
+        <div style={{ minHeight: '60vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }}>
           <div style={{ textAlign: 'center', maxWidth: '520px' }}>
             <div style={{ width: '110px', height: '110px', borderRadius: '50%', background: 'rgba(230,0,0,0.08)', border: '2px solid #e60000', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 30px', fontSize: '44px', color: '#e60000', boxShadow: '0 0 50px rgba(230,0,0,0.15)' }}>
               <i className={accessDenied === 'no-session' ? 'fa-solid fa-user-lock' : 'fa-solid fa-shield-halved'}></i>
@@ -131,12 +131,12 @@ export default function YonetimPage() {
             </button>
           </div>
         </div>
-      </main>
+      </div>
     );
   }
 
   return (
-    <main style={{ background: '#050505', minHeight: '100vh', color: '#fff' }}>
+    <div style={{ padding: '40px 20px' }}>
       <div style={{ maxWidth: '1000px', margin: '40px auto', padding: '0 20px' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '30px' }}>
           <h1 style={{ fontSize: '28px', fontWeight: 800, display: 'flex', alignItems: 'center', gap: '15px' }}>
@@ -199,6 +199,6 @@ export default function YonetimPage() {
           </div>
         )}
       </div>
-    </main>
+    </div>
   );
 }

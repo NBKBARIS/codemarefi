@@ -4,10 +4,11 @@ import { supabase } from '../lib/supabase';
 import { submitUserPost } from '../lib/userPosts';
 import { hasBadWords } from '../lib/badWords';
 import { useRouter } from 'next/navigation';
+import { User } from '@supabase/supabase-js';
 
 export default function PaylasPage() {
   const router = useRouter();
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState({ type: '', text: '' });
   const [accessDenied, setAccessDenied] = useState(false);
@@ -32,16 +33,16 @@ export default function PaylasPage() {
 
   if (!user && !accessDenied) {
     return (
-      <main style={{ background: '#050505', minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '80px 20px' }}>
         <i className="fa-solid fa-spinner fa-spin fa-3x" style={{ color: '#e60000' }}></i>
-      </main>
+    </div>
     );
   }
 
   if (accessDenied) {
     return (
-      <main style={{ background: '#050505', minHeight: '100vh', color: '#fff' }}>
-        <div style={{ minHeight: '80vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }}>
+      <div style={{ color: '#fff' }}>
+        <div style={{ minHeight: '60vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }}>
           <div style={{ textAlign: 'center', maxWidth: '520px' }}>
             <div style={{ width: '110px', height: '110px', borderRadius: '50%', background: 'rgba(230,0,0,0.08)', border: '2px solid #e60000', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 30px', fontSize: '44px', color: '#e60000', boxShadow: '0 0 50px rgba(230,0,0,0.15)' }}>
               <i className="fa-solid fa-pen-to-square"></i>
@@ -70,14 +71,14 @@ export default function PaylasPage() {
             </div>
           </div>
         </div>
-      </main>
+    </div>
     );
   }
 
   if (user && showRules) {
     return (
-      <main style={{ background: '#050505', minHeight: '100vh', color: '#fff' }}>
-        <div style={{ minHeight: '80vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }}>
+      <div style={{ color: '#fff' }}>
+        <div style={{ minHeight: '60vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }}>
         <div style={{ 
           maxWidth: '560px', 
           width: '100%',
@@ -153,7 +154,7 @@ export default function PaylasPage() {
           </div>
         </div>
         </div>
-      </main>
+    </div>
     );
   }
 
@@ -252,7 +253,7 @@ export default function PaylasPage() {
   if (!user) return null;
 
   return (
-    <main style={{ background: '#050505', minHeight: '100vh', color: '#fff' }}>
+    <div style={{ padding: '40px 20px' }}>
       
       <div style={{ maxWidth: '800px', margin: '40px auto', padding: '0 20px' }}>
         <div style={{ background: '#111', border: '1px solid #1e1e1e', padding: '30px', borderRadius: '8px' }}>
@@ -375,6 +376,6 @@ export default function PaylasPage() {
           border-color: #e60000 !important;
         }
       `}</style>
-    </main>
+    </div>
   );
 }
