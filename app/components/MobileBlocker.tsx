@@ -32,17 +32,21 @@ export default function MobileBlocker() {
   return (
     <div style={{
       position: 'fixed',
-      top: 0, left: 0, right: 0, bottom: 0,
+      top: 0, left: 0, 
+      width: '100%', 
+      height: '100%',
       backgroundColor: '#050505',
-      zIndex: 99999,
+      zIndex: 999999,
       display: 'flex',
       flexDirection: 'column',
       alignItems: 'center',
       justifyContent: 'center',
       color: '#fff',
-      padding: '30px',
+      padding: '20px',
       textAlign: 'center',
-      fontFamily: 'monospace'
+      fontFamily: 'monospace',
+      boxSizing: 'border-box',
+      overflow: 'hidden'
     }}>
       {/* Glitch Effect Background */}
       <div style={{
@@ -56,10 +60,12 @@ export default function MobileBlocker() {
       <div style={{
         border: '2px solid #e60000',
         padding: '30px',
+        width: '100%',
         maxWidth: '400px',
         boxShadow: '0 0 30px rgba(230, 0, 0, 0.2)',
         position: 'relative',
-        background: '#0a0a0a'
+        background: '#0a0a0a',
+        boxSizing: 'border-box'
       }}>
         <i className="fa-solid fa-mobile-screen-button" style={{ fontSize: '50px', color: '#e60000', marginBottom: '20px' }}></i>
         
