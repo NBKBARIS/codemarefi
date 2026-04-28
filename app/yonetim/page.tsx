@@ -92,50 +92,26 @@ export default function YonetimPage() {
   if (accessDenied) {
     return (
       <main style={{ background: '#050505', minHeight: '100vh', color: '#fff' }}>
-        <Navbar />
         <div style={{ minHeight: '80vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }}>
-          <div style={{ textAlign: 'center', maxWidth: '500px' }}>
-            {/* Kırmızı uyarı ikonu */}
-            <div style={{
-              width: '100px', height: '100px', borderRadius: '50%',
-              background: 'rgba(230,0,0,0.1)', border: '3px solid #e60000',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              margin: '0 auto 30px', fontSize: '40px', color: '#e60000',
-              boxShadow: '0 0 40px rgba(230,0,0,0.2)'
-            }}>
-              <i className={accessDenied === 'no-session' ? 'fa-solid fa-lock' : 'fa-solid fa-shield-halved'}></i>
+          <div style={{ textAlign: 'center', maxWidth: '520px' }}>
+            <div style={{ width: '110px', height: '110px', borderRadius: '50%', background: 'rgba(230,0,0,0.08)', border: '2px solid #e60000', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 30px', fontSize: '44px', color: '#e60000', boxShadow: '0 0 50px rgba(230,0,0,0.15)' }}>
+              <i className={accessDenied === 'no-session' ? 'fa-solid fa-user-lock' : 'fa-solid fa-shield-halved'}></i>
             </div>
-
-            {/* Başlık */}
-            <h1 style={{ fontSize: '28px', fontWeight: 900, marginBottom: '12px', color: '#e60000', textTransform: 'uppercase', letterSpacing: '2px' }}>
-              {accessDenied === 'no-session' ? 'Giriş Gerekli' : 'Yetkisiz Erişim'}
+            <h1 style={{ fontSize: '26px', fontWeight: 900, letterSpacing: '3px', textTransform: 'uppercase', color: '#e60000', marginBottom: '10px' }}>
+              {accessDenied === 'no-session' ? 'Oturum Gerekli' : 'Yetki Yetersiz'}
             </h1>
-
-            {/* Kırmızı çizgi */}
-            <div style={{ width: '60px', height: '3px', background: '#e60000', margin: '0 auto 20px' }}></div>
-
-            {/* Mesaj */}
-            <p style={{ color: '#888', fontSize: '15px', lineHeight: 1.7, marginBottom: '30px' }}>
+            <div style={{ width: '50px', height: '3px', background: '#e60000', margin: '0 auto 20px' }}></div>
+            <p style={{ color: '#666', fontSize: '14px', lineHeight: 1.8, marginBottom: '25px' }}>
               {accessDenied === 'no-session'
-                ? 'Bu sayfaya erişmek için Discord hesabınızla giriş yapmanız gerekmektedir.'
-                : 'Bu sayfaya erişim için yönetici veya moderatör yetkisine sahip olmanız gerekmektedir. Hesabınızın yetki seviyesi bu sayfaya erişim için yeterli değil.'}
+                ? 'Yönetim paneline erişmek için yetkili bir hesapla oturum açmanız gerekmektedir.'
+                : 'Bu sayfa sadece yönetici ve moderatörlerin erişimine açıktır. Mevcut hesabınızın bu işlem için yetkisi bulunmuyor.'}
             </p>
-
-            {/* Kod bloğu stili uyarı */}
-            <div style={{ background: '#0a0a0a', border: '1px solid #1e1e1e', borderLeft: '4px solid #e60000', borderRadius: '4px', padding: '15px', marginBottom: '30px', textAlign: 'left', fontFamily: 'monospace', fontSize: '13px', color: '#666' }}>
-              <span style={{ color: '#e60000' }}>ERROR</span> {accessDenied === 'no-session' ? '401' : '403'}: Access Denied<br/>
-              <span style={{ color: '#555' }}>// {accessDenied === 'no-session' ? 'Authentication required' : 'Insufficient permissions'}</span>
+            <div style={{ background: '#0a0a0a', border: '1px solid #1a1a1a', borderLeft: '4px solid #e60000', borderRadius: '4px', padding: '14px 18px', marginBottom: '30px', textAlign: 'left', fontFamily: 'monospace', fontSize: '12px', color: '#555' }}>
+              <span style={{ color: '#e60000', fontWeight: 700 }}>RESTRICTED AREA</span> — Error {accessDenied === 'no-session' ? '401' : '403'}<br />
+              <span style={{ color: '#333' }}>{'// ' + (accessDenied === 'no-session' ? 'Admin authentication required' : 'Privileged access only')}</span>
             </div>
-
-            {/* Buton */}
-            <button
-              onClick={() => router.push('/')}
-              style={{ background: '#e60000', color: '#fff', border: 'none', padding: '14px 35px', borderRadius: '4px', fontWeight: 700, cursor: 'pointer', fontSize: '14px', letterSpacing: '1px', textTransform: 'uppercase', transition: 'background 0.2s' }}
-              onMouseEnter={e => e.currentTarget.style.background = '#b00000'}
-              onMouseLeave={e => e.currentTarget.style.background = '#e60000'}
-            >
-              <i className="fa-solid fa-house" style={{ marginRight: '8px' }}></i>
-              Ana Sayfaya Dön
+            <button onClick={() => router.push('/')} style={{ background: '#e60000', color: '#fff', border: 'none', padding: '13px 32px', borderRadius: '4px', fontWeight: 700, cursor: 'pointer', fontSize: '13px', letterSpacing: '1px', textTransform: 'uppercase', transition: 'background 0.2s' }} onMouseEnter={e => e.currentTarget.style.background = '#b00000'} onMouseLeave={e => e.currentTarget.style.background = '#e60000'}>
+              <i className="fa-solid fa-house" style={{ marginRight: '8px' }}></i>Ana Sayfaya Dön
             </button>
           </div>
         </div>
@@ -146,8 +122,6 @@ export default function YonetimPage() {
 
   return (
     <main style={{ background: '#050505', minHeight: '100vh', color: '#fff' }}>
-      <Navbar />
-      
       <div style={{ maxWidth: '1000px', margin: '40px auto', padding: '0 20px' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '30px' }}>
           <h1 style={{ fontSize: '28px', fontWeight: 800, display: 'flex', alignItems: 'center', gap: '15px' }}>
