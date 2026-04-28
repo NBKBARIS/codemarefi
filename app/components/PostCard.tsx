@@ -84,8 +84,7 @@ export default function PostCard({ post }: PostCardProps) {
               onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
-                // Admin ID veya yazarın ismine göre bir sayfaya yönlendir
-                window.location.href = `/user/${post.author === 'NBK BARIŞ' ? 'nbk-baris' : post.author}`;
+                window.location.href = `/user/${encodeURIComponent(post.author)}`;
               }}
               style={{ cursor: 'pointer', transition: 'color 0.2s' }}
               onMouseEnter={(e) => (e.currentTarget.style.color = '#e60000')}

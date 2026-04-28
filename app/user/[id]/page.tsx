@@ -28,26 +28,29 @@ export default function PublicProfilePage() {
     async function fetchUserData() {
       if (!id) return;
 
-      // Profil bilgilerini çek
+      // URL'den gelen ismi decode et (örn: "NBK%20BARI%C5%9E" -> "NBK BARIŞ")
+      const nameParam = decodeURIComponent(Array.isArray(id) ? id[0] : id);
+
+      // full_name'e göre ara (UUID değil isim)
       const { data: profileData } = await supabase
         .from('profiles')
         .select('*')
-        .eq('id', id)
+        .eq('full_name', nameParam)
         .single();
 
       if (profileData) {
         setProfile(profileData);
-      }
 
-      // Kullanıcının yorumlarını çek
-      const { data: commentData } = await supabase
-        .from('comments')
-        .select('*')
-        .eq('user_id', id)
-        .order('created_at', { ascending: false });
+        // Kullanıcının yorumlarını çek (UUID ile)
+        const { data: commentData } = await supabase
+          .from('comments')
+          .select('*')
+          .eq('user_id', profileData.id)
+          .order('created_at', { ascending: false });
 
-      if (commentData) {
-        setComments(commentData);
+        if (commentData) {
+          setComments(commentData);
+        }
       }
 
       setLoading(false);

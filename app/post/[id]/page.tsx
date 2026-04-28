@@ -39,7 +39,7 @@ export default async function PostPage(props: { params: Promise<{ id: string }> 
           </h1>
           <div style={{ display: 'flex', alignItems: 'center', gap: '15px', color: '#888', fontSize: '12px' }}>
             <a 
-              href={`/user/${post.author === 'NBK BARIŞ' ? 'nbk-baris' : post.author}`}
+              href={`/user/${encodeURIComponent(post.author)}`}
               className="author-link"
               style={{ display: 'flex', alignItems: 'center', gap: '5px', textDecoration: 'none', color: '#888' }}
             >
