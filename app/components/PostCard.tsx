@@ -79,9 +79,20 @@ export default function PostCard({ post }: PostCardProps) {
         {/* Alt bilgi */}
         <div className="post-card-footer">
           <div className="post-card-meta-left">
-            <span className="post-card-author">
+            <span 
+              className="post-card-author" 
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                // Admin ID veya yazarın ismine göre bir sayfaya yönlendir
+                window.location.href = `/user/${post.author === 'NBK BARIŞ' ? 'nbk-baris' : post.author}`;
+              }}
+              style={{ cursor: 'pointer', transition: 'color 0.2s' }}
+              onMouseEnter={(e) => (e.currentTarget.style.color = '#e60000')}
+              onMouseLeave={(e) => (e.currentTarget.style.color = '#888')}
+            >
               <i className="fa-solid fa-user" style={{ fontSize: '10px', color: '#e60000' }}></i>
-              <span style={{ color: '#888' }}>{post.author}</span>
+              <span>{post.author}</span>
             </span>
             <span style={{ color: '#555', display: 'flex', alignItems: 'center', gap: '4px' }}>
               <i className="fa-regular fa-clock" style={{ fontSize: '10px' }}></i>
