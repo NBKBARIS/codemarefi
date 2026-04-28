@@ -4,6 +4,30 @@ import { supabase, CommentType, CommentRole } from '../lib/supabase';
 import { hasBadWords } from '../lib/badWords';
 import Link from 'next/link';
 
+// Top 3 yorum yapan kullanıcıları çek (global cache)
+let cachedTopCommenters: string[] = [];
+let cacheTime = 0;
+
+async function getTopCommenters(): Promise<string[]> {
+  if (Date.now() - cacheTime < 5 * 60 * 1000) return cachedTopCommenters;
+  const { data } = await supabase
+    .from('comments')
+    .select('user_id')
+    .not('user_id', 'is', null);
+  if (!data) return [];
+  const counts: Record<string, number> = {};
+  data.forEach((r: any) => { if (r.user_id) counts[r.user_id] = (counts[r.user_id] || 0) + 1; });
+  cachedTopCommenters = Object.entries(counts).sort((a, b) => b[1] - a[1]).slice(0, 3).map(e => e[0]);
+  cacheTime = Date.now();
+  return cachedTopCommenters;
+}
+
+const TOP3_BADGES = [
+  { medal: '🥇', label: '1. SIRA', color: '#FFD700', bg: '#3a2e00' },
+  { medal: '🥈', label: '2. SIRA', color: '#C0C0C0', bg: '#2a2a2a' },
+  { medal: '🥉', label: '3. SIRA', color: '#CD7F32', bg: '#2a1a00' },
+];
+
 function formatCommentDate(dateStr: string) {
   const date = new Date(dateStr);
   const day = date.getDate();
@@ -39,7 +63,8 @@ const CommentNode = ({
   handleUpdate, 
   handleDelete, 
   setReplyingTo,
-  profile
+  profile,
+  topCommenters,
 }: { 
   comment: CommentType, 
   isReply?: boolean,
@@ -51,7 +76,8 @@ const CommentNode = ({
   handleUpdate: (id: string) => void,
   handleDelete: (id: string) => void,
   setReplyingTo: (id: string | null) => void,
-  profile: any
+  profile: any,
+  topCommenters: string[],
 }) => {
   const isAdminAuthor = comment.role === 'admin';
   const isModAuthor = comment.role === 'mod';
@@ -59,6 +85,10 @@ const CommentNode = ({
   const isMemberAuthor = comment.role === 'member' || (!isAdminAuthor && !isModAuthor && !isAuthorRank && comment.role !== 'guest');
   const isEditing = editingId === comment.id;
   const isGlobalAdmin = profile?.role === 'admin';
+
+  // Leaderboard sırası
+  const topRank = comment.user_id ? topCommenters.indexOf(comment.user_id) : -1;
+  const topBadge = topRank >= 0 ? TOP3_BADGES[topRank] : null;
 
   return (
     <div style={{ marginBottom: '15px', marginLeft: isReply ? '45px' : '0' }}>
@@ -119,6 +149,22 @@ const CommentNode = ({
               {isMemberAuthor && (
                 <span style={{ background: '#007bff', color: 'white', fontSize: '10px', padding: '2px 5px', borderRadius: '3px', fontWeight: 'bold', marginLeft: '2px' }}>
                   Üye
+                </span>
+              )}
+              {/* Leaderboard rozeti */}
+              {topBadge && (
+                <span style={{
+                  background: topBadge.bg,
+                  color: topBadge.color,
+                  fontSize: '10px',
+                  padding: '2px 6px',
+                  borderRadius: '3px',
+                  fontWeight: 900,
+                  border: `1px solid ${topBadge.color}`,
+                  marginLeft: '2px',
+                  letterSpacing: '0.3px',
+                }}>
+                  {topBadge.medal} {topBadge.label}
                 </span>
               )}
 
@@ -207,6 +253,7 @@ const CommentNode = ({
                     handleDelete={handleDelete}
                     setReplyingTo={setReplyingTo}
                     profile={profile}
+                    topCommenters={topCommenters}
                   />
                ))}
              </div>
@@ -222,6 +269,7 @@ export default function Comments({ postId }: { postId: string }) {
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState<any>(null);
   const [profile, setProfile] = useState<any>(null);
+  const [topCommenters, setTopCommenters] = useState<string[]>([]);
   
   const [authorName, setAuthorName] = useState('');
   const [content, setContent] = useState('');
@@ -236,6 +284,9 @@ export default function Comments({ postId }: { postId: string }) {
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setUser(session?.user ?? null);
     });
+
+    // Top commenters yükle
+    getTopCommenters().then(setTopCommenters);
 
     return () => subscription.unsubscribe();
   }, []);
@@ -488,6 +539,7 @@ export default function Comments({ postId }: { postId: string }) {
               handleDelete={handleDelete}
               setReplyingTo={setReplyingTo}
               profile={profile}
+              topCommenters={topCommenters}
             />
           ))}
         </div>

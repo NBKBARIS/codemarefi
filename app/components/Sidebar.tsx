@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { CATEGORIES } from '../lib/blogger';
+import Leaderboard from './Leaderboard';
 
 export default function Sidebar() {
   const [time, setTime] = useState<Date | null>(null);
@@ -140,6 +141,9 @@ export default function Sidebar() {
         </div>
       </div>
 
+
+      {/* LEADERBOARD */}
+      <Leaderboard />
 
       {/* SOSYAL MEDYA */}
       <div className="sidebar-widget">
