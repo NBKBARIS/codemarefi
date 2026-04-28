@@ -85,11 +85,18 @@ export default function Navbar() {
       <div style={{ background: '#111', borderBottom: '1px solid #1e1e1e', padding: '5px 0' }} className="top-social-bar">
         <div style={{ maxWidth: '1300px', margin: '0 auto', padding: '0 15px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <div style={{ display: 'flex', gap: '0' }} className="top-nav-links">
-            {['Ana Sayfa', 'Yönetim', 'İletişim', 'Duyurular', 'Hakkımızda', 'Site Haritası'].map(l => (
-              <a key={l} href="#" style={{ color: '#bbb', fontSize: '12px', padding: '3px 10px', borderRight: '1px solid #222', textDecoration: 'none', transition: 'color 0.2s' }}
+            {[
+              { l: 'Ana Sayfa', href: '/' },
+              { l: 'Yönetim', href: '/yonetim' },
+              { l: 'İletişim', href: '/iletisim' },
+              { l: 'Duyurular', href: '#' },
+              { l: 'Hakkımızda', href: '/hakkimizda' },
+              { l: 'Site Haritası', href: '/sitemap.xml' }
+            ].map(item => (
+              <a key={item.l} href={item.href} style={{ color: '#bbb', fontSize: '12px', padding: '3px 10px', borderRight: '1px solid #222', textDecoration: 'none', transition: 'color 0.2s' }}
                 onMouseEnter={e => (e.currentTarget.style.color = '#e60000')}
                 onMouseLeave={e => (e.currentTarget.style.color = '#bbb')}
-              >{l}</a>
+              >{item.l}</a>
             ))}
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '2px' }}>
