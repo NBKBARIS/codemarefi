@@ -88,17 +88,24 @@ export default function PostCard({ post }: PostCardProps) {
 
         <div className="post-card-footer">
           <div className="post-card-meta-left">
-            <Link
-              href={`/user/${encodeURIComponent(post.authorId || post.author)}`}
-              className="post-card-author"
-              onClick={e => e.stopPropagation()}
-              style={{ color: '#888', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '4px', transition: 'color 0.2s' }}
-              onMouseEnter={e => (e.currentTarget.style.color = '#e60000')}
-              onMouseLeave={e => (e.currentTarget.style.color = '#888')}
-            >
-              <i className="fa-solid fa-user" style={{ fontSize: '10px', color: '#e60000' }}></i>
-              <span>{post.author}</span>
-            </Link>
+            {post.authorId ? (
+              <Link
+                href={`/user/${encodeURIComponent(post.authorId)}`}
+                className="post-card-author"
+                onClick={e => e.stopPropagation()}
+                style={{ color: '#888', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '4px', transition: 'color 0.2s' }}
+                onMouseEnter={e => (e.currentTarget.style.color = '#e60000')}
+                onMouseLeave={e => (e.currentTarget.style.color = '#888')}
+              >
+                <i className="fa-solid fa-user" style={{ fontSize: '10px', color: '#e60000' }}></i>
+                <span>{post.author}</span>
+              </Link>
+            ) : (
+              <span style={{ color: '#888', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                <i className="fa-solid fa-user" style={{ fontSize: '10px', color: '#e60000' }}></i>
+                <span>{post.author}</span>
+              </span>
+            )}
             <span style={{ color: '#555', display: 'flex', alignItems: 'center', gap: '4px' }}>
               <i className="fa-regular fa-clock" style={{ fontSize: '10px' }}></i>
               {formatDate(post.published)}

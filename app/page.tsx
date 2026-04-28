@@ -35,22 +35,31 @@ export default function HomePage() {
   const [bannerIdx, setBannerIdx]       = useState(0);
   const [activeTab, setActiveTab]       = useState('SON EKLENENLER');
   const [allPosts, setAllPosts]         = useState<BlogPost[]>([]); // for shuffle
+  const [debugInfo, setDebugInfo]       = useState<string>(''); // DEBUG
 
   // Fetch posts — liste için sayfalama
   useEffect(() => {
     setLoading(true);
     const tab = TABS.find(t => t.label === activeTab);
-    // 1. sayfada hero gösteriliyor, liste yine de en baştan başlasın
-    // böylece gönderiler eksik görünmez.
-    const startIndex = ((page - 1) * POSTS_PER_PAGE) + 1; 
     
+    // 1. sayfada hero için 5 post + liste için 8 post = 13 post çek
+    // Diğer sayfalarda normal 8 post çek
+    const postsToFetch = page === 1 ? POSTS_PER_PAGE + 5 : POSTS_PER_PAGE;
+    // startIndex: 1. sayfa = 1, 2. sayfa = 14 (5 hero + 8 liste + 1), 3. sayfa = 22, vb.
+    const startIndex = page === 1 ? 1 : 1 + 5 + ((page - 1) * POSTS_PER_PAGE);
     
-    fetchPosts(POSTS_PER_PAGE, startIndex, tab?.cat || '').then(({ posts: p, total: t }) => {
+    fetchPosts(postsToFetch, startIndex, tab?.cat || '').then(({ posts: p, total: t }) => {
+      console.log(`📄 Sayfa ${page} - İstenen: ${postsToFetch}, Gelen: ${p.length}, Toplam: ${t}, StartIndex: ${startIndex}`);
+      console.log('📝 Gelen postlar:', p.map(post => ({ id: post.id, title: post.title })));
+      
+      // DEBUG: Ekrana yazdır
+      setDebugInfo(`Sayfa: ${page} | İstenen: ${postsToFetch} | Gelen: ${p.length} | Toplam: ${t} | Hero: ${heroPosts.length}`);
+      
       setPosts(p);
       setTotal(t);
       setLoading(false);
     });
-  }, [page, activeTab]);
+  }, [page, activeTab, heroPosts.length]);
 
   // Hero için sadece 1 kez ilk 5 postu çek (sayfa/tab değişince güncelle)
   useEffect(() => {
@@ -100,12 +109,20 @@ export default function HomePage() {
     return () => window.removeEventListener('cmf-shuffle', handler);
   }, [handleShuffle]);
 
-  const totalPages  = Math.ceil(total / POSTS_PER_PAGE);
+  // Toplam sayfa hesaplama: İlk 5 post hero'da gösteriliyor, geri kalanı sayfalara bölünüyor
+  const totalPages  = Math.ceil(Math.max(0, total - 5) / POSTS_PER_PAGE) + 1;
   const tickerPosts = posts.slice(0, 8);
-  const listPosts   = posts.slice(0, POSTS_PER_PAGE);
+  // 1. sayfada: ilk 5 post hero'da, sonraki 8 post listede
+  // Diğer sayfalarda: tüm postlar listede
+  const listPosts   = page === 1 ? posts.slice(5, 13) : posts.slice(0, POSTS_PER_PAGE);
 
   return (
     <>
+      {/* DEBUG PANEL - Geçici */}
+      <div style={{ position: 'fixed', top: '80px', left: '50%', transform: 'translateX(-50%)', background: '#e60000', color: '#fff', padding: '20px 30px', borderRadius: '12px', fontSize: '16px', zIndex: 99999, fontFamily: 'monospace', boxShadow: '0 8px 30px rgba(230,0,0,0.8)', fontWeight: 'bold', border: '3px solid #fff' }}>
+        🐛 DEBUG: Sayfa={page} | İstenen={page === 1 ? 13 : 8} | Gelen={posts.length} | Toplam={total} | Hero={heroPosts.length} | Liste={listPosts.length}
+      </div>
+
       {/* ── TICKER ── */}
       {tickerPosts.length > 0 && (
         <div style={{ background: '#0d0d0d', borderBottom: '1px solid #1e1e1e' }}>

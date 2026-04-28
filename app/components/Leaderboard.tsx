@@ -86,7 +86,7 @@ export default function Leaderboard() {
               full_name: prof?.full_name || 'Anonim', 
               avatar_url: prof?.avatar_url || null, 
               role: prof?.role || 'member', 
-              count: (prof?.full_name?.toUpperCase().includes('NBK') && postCounts[uid] < 5) ? 5 : postCounts[uid] 
+              count: postCounts[uid] 
             };
           }));
         }

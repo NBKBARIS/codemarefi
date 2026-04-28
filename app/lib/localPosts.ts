@@ -8,8 +8,12 @@
   categories: string[];
   thumbnail: string;
   author: string;
+  authorId?: string; // UUID — profil linki için
   commentCount: number;
 }
+
+// NBK BARIŞ kullanıcısının UUID'si (AuthorBadge'den alındı)
+const NBK_USER_ID = 'e2a270ed-39b1-4de8-8b22-4784dbfe27ca';
 
 export const localPosts: LocalPost[] = [
   {
@@ -18,6 +22,7 @@ export const localPosts: LocalPost[] = [
     slug: "discord-bot-gelistirme-rehberi-2026",
     thumbnail: "/images/discord_bot_2026_1777229959529.png",
     author: "NBK BARIS",
+    authorId: NBK_USER_ID,
     published: "2026-04-26T12:00:00Z",
     updated: "2026-04-26T12:00:00Z",
     categories: ["Discord-bot-kodlari", "JavaScript", "Python"],
@@ -53,6 +58,7 @@ client.login('SENIN_BOT_TOKEN_BURAYA');</code></pre>
     slug: "modern-web-tasarim-trendleri",
     thumbnail: "/images/web_design_trends_1777230327387.png",
     author: "NBK BARIS",
+    authorId: NBK_USER_ID,
     published: "2026-04-25T10:30:00Z",
     updated: "2026-04-25T10:30:00Z",
     categories: ["Html", "CSS", "Genel Konular"],
@@ -87,6 +93,7 @@ client.login('SENIN_BOT_TOKEN_BURAYA');</code></pre>
     slug: "javascript-ile-programlamaya-giris",
     thumbnail: "/images/javascript_beginner_1777230673341.png",
     author: "NBK BARIS",
+    authorId: NBK_USER_ID,
     published: "2026-04-24T09:15:00Z",
     updated: "2026-04-24T09:15:00Z",
     categories: ["JavaScript", "Genel Konular"],
@@ -119,6 +126,7 @@ console.log(siteAdi + " sitemize hos geldiniz!");</code></pre>
     slug: "vercel-ve-nextjs-kullanimi",
     thumbnail: "/images/vercel_nextjs_1777230862288.png",
     author: "NBK BARIS",
+    authorId: NBK_USER_ID,
     published: "2026-04-23T14:45:00Z",
     updated: "2026-04-23T14:45:00Z",
     categories: ["Tavsiyemiz", "Populer", "Genel Konular"],
@@ -149,6 +157,7 @@ console.log(siteAdi + " sitemize hos geldiniz!");</code></pre>
     slug: "discord-bot-client-arayuz",
     thumbnail: "/discord-bot-banner.png",
     author: "NBK BARIS",
+    authorId: NBK_USER_ID,
     published: "2026-04-22T15:00:00Z",
     updated: "2026-04-22T15:00:00Z",
     categories: ["Discord-Bot-Tanitimi", "Projeler"],

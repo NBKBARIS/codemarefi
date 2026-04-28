@@ -71,7 +71,7 @@ import { getApprovedPosts, UserPost } from './userPosts';
 
 // ── İstemci tarafı in-memory cache ───────────────────────────
 const postCache = new Map<string, { data: any; ts: number }>();
-const POST_CACHE_TTL = 5 * 60 * 1000; // 5 dakika
+const POST_CACHE_TTL = 30 * 1000; // 30 saniye (debug için kısalttık)
 
 function getCache<T>(key: string): T | null {
   const entry = postCache.get(key);
@@ -89,9 +89,11 @@ let mergedPostsCache: { data: BlogPost[]; ts: number } | null = null;
 async function getMergedPosts(): Promise<BlogPost[]> {
   // Cache geçerliyse direkt dön
   if (mergedPostsCache && Date.now() - mergedPostsCache.ts < POST_CACHE_TTL) {
+    console.log('📦 Cache\'den döndürülüyor:', mergedPostsCache.data.length, 'post');
     return mergedPostsCache.data;
   }
 
+  console.log('🔄 Yeni veri çekiliyor...');
   const approved = await getApprovedPosts();
   
   const mappedUserPosts: BlogPost[] = approved.map(p => ({
@@ -120,6 +122,15 @@ async function getMergedPosts(): Promise<BlogPost[]> {
     new Date(b.published).getTime() - new Date(a.published).getTime()
   );
 
+  // Debug: Console'a bilgi yazdır
+  console.log('📊 Post İstatistikleri:', {
+    'Local Posts': bloggerPosts.length,
+    'Supabase Onaylı': approved.length,
+    'Filtrelenmiş Supabase': filteredUserPosts.length,
+    'Toplam Merged': merged.length,
+    'İlk 10 Post Başlıkları': merged.slice(0, 10).map(p => p.title)
+  });
+
   // Cache'e kaydet
   mergedPostsCache = { data: merged, ts: Date.now() };
   return merged;
@@ -135,13 +146,19 @@ export function invalidatePostCache() {
 export async function fetchPosts(maxResults = 10, startIndex = 1, label?: string): Promise<{ posts: BlogPost[]; total: number }> {
   let allPosts = await getMergedPosts();
   
+  console.log(`🔍 fetchPosts çağrıldı - maxResults: ${maxResults}, startIndex: ${startIndex}, label: ${label || 'yok'}`);
+  console.log(`📚 Toplam post sayısı (filtreleme öncesi): ${allPosts.length}`);
+  
   if (label) {
     allPosts = allPosts.filter(p => p.categories.includes(label));
+    console.log(`🏷️ Label filtrelendi (${label}): ${allPosts.length} post kaldı`);
   }
 
   const total = allPosts.length;
   const start = startIndex - 1;
   const paginated = allPosts.slice(start, start + maxResults);
+  
+  console.log(`✂️ Slice: ${start} - ${start + maxResults}, Dönen: ${paginated.length} post`);
 
   return { posts: paginated, total };
 }

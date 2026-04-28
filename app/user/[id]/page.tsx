@@ -19,10 +19,18 @@ interface UserComment {
   post_id: string;
 }
 
+interface UserPost {
+  id: string;
+  title: string;
+  created_at: string;
+  slug: string;
+}
+
 export default function PublicProfilePage() {
   const { id } = useParams();
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [comments, setComments] = useState<UserComment[]>([]);
+  const [posts, setPosts] = useState<UserPost[]>([]);
   const [postCount, setPostCount] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
@@ -88,13 +96,16 @@ export default function PublicProfilePage() {
           }
         }
 
-        // Onaylı gönderi sayısı
-        const { count } = await supabase
+        // Onaylı gönderiler
+        const { data: postsData, count } = await supabase
           .from('user_posts')
-          .select('*', { count: 'exact', head: true })
+          .select('id, title, created_at, slug', { count: 'exact' })
           .eq('author_id', profileData.id)
-          .eq('is_approved', true);
+          .eq('is_approved', true)
+          .order('created_at', { ascending: false });
+        
         setPostCount(count ?? 0);
+        setPosts(postsData || []);
       } else {
         setError(true);
       }
@@ -235,21 +246,54 @@ export default function PublicProfilePage() {
         {/* Recent Activity */}
         <div style={{ textAlign: 'left' }}>
           <h3 style={{ borderBottom: '2px solid #e60000', display: 'inline-block', paddingBottom: '5px', marginBottom: '20px' }}>
-            <i className="fa-solid fa-bolt" style={{ marginRight: '10px', color: '#e60000' }}></i>
-            Son Aktiviteler
+            <i className="fa-solid fa-pen-nib" style={{ marginRight: '10px', color: '#e60000' }}></i>
+            Gönderiler
           </h3>
 
-          {comments.length === 0 ? (
+          {posts.length === 0 ? (
             <div style={{ padding: '40px', textAlign: 'center', background: '#111', borderRadius: '12px', color: '#555' }}>
-              Henüz bir aktivite bulunmuyor.
+              Henüz gönderi bulunmuyor.
             </div>
           ) : (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
-              {comments.map((comment) => (
-                <div key={comment.id} style={{ background: '#111', padding: '15px', borderRadius: '10px', borderLeft: '4px solid #e60000' }}>
+              {posts.map((post) => (
+                <Link 
+                  key={post.id} 
+                  href={`/post/${post.id}`}
+                  style={{ background: '#111', padding: '15px', borderRadius: '10px', borderLeft: '4px solid #e60000', textDecoration: 'none', transition: 'all 0.2s' }}
+                  onMouseEnter={(e) => e.currentTarget.style.background = '#1a1a1a'}
+                  onMouseLeave={(e) => e.currentTarget.style.background = '#111'}
+                >
                   <div style={{ fontSize: '11px', color: '#e60000', marginBottom: '5px' }}>
+                    <i className="fa-solid fa-pen-nib" style={{ marginRight: '5px' }}></i>
+                    Gönderi • {post.created_at && !isNaN(new Date(post.created_at).getTime()) ? new Date(post.created_at).toLocaleDateString('tr-TR') : 'Bilinmiyor'}
+                  </div>
+                  <div style={{ fontSize: '16px', color: '#fff', fontWeight: 700, marginBottom: '5px' }}>
+                    {post.title}
+                  </div>
+                  <div style={{ fontSize: '12px', color: '#888', display: 'flex', alignItems: 'center', gap: '5px' }}>
+                    Devamını Oku <i className="fa-solid fa-arrow-right" style={{ fontSize: '10px' }}></i>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Comments Section */}
+        {comments.length > 0 && (
+          <div style={{ textAlign: 'left', marginTop: '40px' }}>
+            <h3 style={{ borderBottom: '2px solid #007bff', display: 'inline-block', paddingBottom: '5px', marginBottom: '20px' }}>
+              <i className="fa-solid fa-comments" style={{ marginRight: '10px', color: '#007bff' }}></i>
+              Son Yorumlar
+            </h3>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
+              {comments.slice(0, 10).map((comment) => (
+                <div key={comment.id} style={{ background: '#111', padding: '15px', borderRadius: '10px', borderLeft: '4px solid #007bff' }}>
+                  <div style={{ fontSize: '11px', color: '#007bff', marginBottom: '5px' }}>
                     <i className="fa-solid fa-comment" style={{ marginRight: '5px' }}></i>
-                    Yorum Yaptı • {comment.created_at && !isNaN(new Date(comment.created_at).getTime()) ? new Date(comment.created_at).toLocaleDateString('tr-TR') : 'Bilinmiyor'}
+                    Yorum • {comment.created_at && !isNaN(new Date(comment.created_at).getTime()) ? new Date(comment.created_at).toLocaleDateString('tr-TR') : 'Bilinmiyor'}
                   </div>
                   <div style={{ fontSize: '14px', color: '#ddd', fontStyle: 'italic', marginBottom: '10px' }}>
                     "{comment.content}"
@@ -257,7 +301,7 @@ export default function PublicProfilePage() {
                   <Link 
                     href={`/post/${comment.post_id}`} 
                     style={{ fontSize: '12px', color: '#888', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '5px' }}
-                    onMouseEnter={(e) => e.currentTarget.style.color = '#e60000'}
+                    onMouseEnter={(e) => e.currentTarget.style.color = '#007bff'}
                     onMouseLeave={(e) => e.currentTarget.style.color = '#888'}
                   >
                     Konuyu Gör <i className="fa-solid fa-arrow-right" style={{ fontSize: '10px' }}></i>
@@ -265,8 +309,8 @@ export default function PublicProfilePage() {
                 </div>
               ))}
             </div>
-          )}
-        </div>
+          </div>
+        )}
 
       </div>
     </div>
