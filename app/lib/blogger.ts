@@ -65,7 +65,8 @@ function parsePost(entry: any): BlogPost {
 }
 
 import { localPosts, LocalPost } from './localPosts';
-import { getApprovedPosts, UserPost, supabase } from './userPosts';
+import { supabase } from './supabase';
+import { getApprovedPosts, UserPost } from './userPosts';
 
 async function getMergedPosts(): Promise<BlogPost[]> {
   const approved = await getApprovedPosts();
