@@ -45,6 +45,13 @@ export default function RootLayout({
           src="https://challenges.cloudflare.com/turnstile/v0/api.js" 
           strategy="afterInteractive" 
         />
+        <Script id="domain-redirect" strategy="beforeInteractive">
+          {`
+            if (window.location.hostname === 'codemarefi-site.vercel.app' || window.location.hostname === 'codemarefi.vercel.app') {
+              window.location.href = 'https://www.codemarefi.com' + window.location.pathname + window.location.search;
+            }
+          `}
+        </Script>
       </head>
       <body style={{ fontFamily: "'Outfit', Arial, sans-serif" }}>
         <MobileBlocker />
