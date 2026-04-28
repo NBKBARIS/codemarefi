@@ -13,6 +13,8 @@ export default function PaylasPage() {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState({ type: '', text: '' });
   const [accessDenied, setAccessDenied] = useState(false);
+  const [showRules, setShowRules] = useState(true);
+  const [rulesAccepted, setRulesAccepted] = useState(false);
   
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
@@ -67,20 +69,98 @@ export default function PaylasPage() {
     );
   }
 
+  if (user && showRules) {
+    return (
+      <main style={{ background: '#050505', minHeight: '100vh', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }}>
+        <div style={{ 
+          maxWidth: '560px', 
+          width: '100%',
+          background: '#0a0a0a', 
+          border: '1px solid #e60000', 
+          borderRadius: '16px', 
+          padding: '40px',
+          boxShadow: '0 0 50px rgba(230,0,0,0.1)'
+        }}>
+          <div style={{ textAlign: 'center', marginBottom: '30px' }}>
+            <div style={{ 
+              width: '70px', height: '70px', background: 'rgba(230,0,0,0.1)', borderRadius: '50%', 
+              display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px',
+              border: '2px solid #e60000', color: '#e60000', fontSize: '28px'
+            }}>
+              <i className="fa-solid fa-scroll"></i>
+            </div>
+            <h1 style={{ fontSize: '24px', fontWeight: 900, marginBottom: '10px' }}>Yayın Kuralları</h1>
+            <p style={{ color: '#666', fontSize: '14px' }}>Yazını paylaşmadan önce lütfen bu kuralları oku.</p>
+          </div>
+
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '30px' }}>
+            {[
+              { icon: 'fa-image', text: 'Yazınla birlikte min. 800x450px kaliteli bir görsel yüklemen zorunludur.' },
+              { icon: 'fa-code', text: 'İçerik yazılım, Discord bot, web tasarım veya teknoloji konularında olmalıdır.' },
+              { icon: 'fa-ban', text: 'Hakaret, spam, reklam ve kötü içerik kesinlikle yasaktır.' },
+              { icon: 'fa-clock', text: 'Günde en fazla 3 yazı paylaşabilirsin.' },
+              { icon: 'fa-bullhorn', text: 'Yazılar yönetici onayından sonra yayına girer, sabırlı ol.' },
+              { icon: 'fa-copyright', text: 'Başkasından kopyaladığın içerikleri kaynak belirtmeden paylaşma.' }
+            ].map((rule, i) => (
+              <div key={i} style={{ 
+                background: '#111', padding: '15px 20px', borderRadius: '10px', border: '1px solid #1e1e1e',
+                display: 'flex', alignItems: 'center', gap: '15px'
+              }}>
+                <div style={{ color: '#e60000', width: '20px', textAlign: 'center' }}>
+                  <i className={`fa-solid ${rule.icon}`}></i>
+                </div>
+                <p style={{ margin: 0, fontSize: '13px', color: '#ccc', lineHeight: 1.5 }}>{rule.text}</p>
+              </div>
+            ))}
+          </div>
+
+          <label style={{ display: 'flex', alignItems: 'center', gap: '12px', cursor: 'pointer', marginBottom: '30px', padding: '0 5px' }}>
+            <input 
+              type="checkbox" 
+              checked={rulesAccepted} 
+              onChange={e => setRulesAccepted(e.target.checked)}
+              style={{ width: '18px', height: '18px', accentColor: '#e60000', cursor: 'pointer' }}
+            />
+            <span style={{ fontSize: '14px', color: '#999' }}>Tüm kuralları okudum ve kabul ediyorum.</span>
+          </label>
+
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1.5fr', gap: '15px' }}>
+            <button 
+              onClick={() => router.push('/')}
+              style={{ background: '#1a1a1a', color: '#666', border: '1px solid #333', padding: '15px', borderRadius: '10px', fontWeight: 700, cursor: 'pointer' }}
+            >
+              Vazgeç
+            </button>
+            <button 
+              onClick={() => setShowRules(false)}
+              disabled={!rulesAccepted}
+              style={{ 
+                background: rulesAccepted ? '#e60000' : '#222', 
+                color: rulesAccepted ? '#fff' : '#444', 
+                border: 'none', padding: '15px', borderRadius: '10px', fontWeight: 700, 
+                cursor: rulesAccepted ? 'pointer' : 'not-allowed',
+                display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px'
+              }}
+            >
+              <i className="fa-solid fa-feather-pointed"></i> Yazmaya Başla
+            </button>
+          </div>
+        </div>
+      </main>
+    );
+  }
+
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      // 1. MIME type kontrolü - sadece gerçek resim
       if (!file.type.startsWith('image/')) {
         setMessage({ type: 'error', text: 'Sadece resim dosyası yükleyebilirsiniz!' });
         return;
       }
-      // 2. Dosya boyutu kontrolü - max 5MB
       if (file.size > 5 * 1024 * 1024) {
         setMessage({ type: 'error', text: 'Resim boyutu 5MB\'dan küçük olmalıdır!' });
         return;
       }
-      // 3. Çözünürlük kontrolü
       const img = new Image();
       img.src = URL.createObjectURL(file);
       img.onload = () => {
@@ -104,8 +184,6 @@ export default function PaylasPage() {
       setMessage({ type: 'error', text: 'Lütfen bir öne çıkan görsel yükleyin!' });
       return;
     }
-
-    // Küfür/argo filtresi
     if (hasBadWords(title) || hasBadWords(content)) {
       setMessage({ type: 'error', text: '⚠️ İçeriğinizde uygunsuz kelimeler tespit edildi. Lütfen topluluk kurallarına uygun bir dil kullanın.' });
       return;
@@ -115,7 +193,6 @@ export default function PaylasPage() {
     setMessage({ type: 'info', text: 'Yazınız gönderiliyor, lütfen bekleyin...' });
 
     try {
-      // Rate limit: Kullanıcı bugün kaç yazı göndermiş?
       const today = new Date();
       today.setHours(0, 0, 0, 0);
       const { count } = await supabase
@@ -130,7 +207,6 @@ export default function PaylasPage() {
         return;
       }
 
-      // Resmi Storage'a Yükle
       const fileExt = image.name.split('.').pop();
       const fileName = `${Date.now()}_${Math.random().toString(36).slice(2)}.${fileExt}`;
       const filePath = `${user.id}/${fileName}`;
@@ -145,7 +221,6 @@ export default function PaylasPage() {
         .from('post-thumbnails')
         .getPublicUrl(filePath);
 
-      // Yazıyı Veritabanına Kaydet
       await submitUserPost({
         title,
         content,
@@ -195,7 +270,6 @@ export default function PaylasPage() {
           )}
 
           <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-            {/* Resim Yükleme */}
             <div>
               <label style={{ display: 'block', fontSize: '13px', color: '#888', marginBottom: '8px' }}>Öne Çıkan Görsel (Zorunlu - Min 800x450)</label>
               <div 
@@ -228,7 +302,6 @@ export default function PaylasPage() {
               <input id="file-input" type="file" accept="image/*" onChange={handleImageChange} style={{ display: 'none' }} />
             </div>
 
-            {/* Başlık */}
             <div>
               <label style={{ display: 'block', fontSize: '13px', color: '#888', marginBottom: '8px' }}>Yazı Başlığı</label>
               <input 
@@ -241,7 +314,6 @@ export default function PaylasPage() {
               />
             </div>
 
-            {/* Kategori */}
             <div>
               <label style={{ display: 'block', fontSize: '13px', color: '#888', marginBottom: '8px' }}>Kategori</label>
               <select 
@@ -257,7 +329,6 @@ export default function PaylasPage() {
               </select>
             </div>
 
-            {/* İçerik */}
             <div>
               <label style={{ display: 'block', fontSize: '13px', color: '#888', marginBottom: '8px' }}>İçerik (HTML Kullanabilirsiniz)</label>
               <textarea 
