@@ -25,6 +25,7 @@ export const metadata: Metadata = {
 
 import Preloader from "./components/Preloader";
 import SecurityProvider from "./components/SecurityProvider";
+import MobileBlocker from "./components/MobileBlocker";
 
 export default function RootLayout({
   children,
@@ -44,6 +45,7 @@ export default function RootLayout({
         />
       </head>
       <body style={{ fontFamily: "'Outfit', Arial, sans-serif" }}>
+        <MobileBlocker />
         <SecurityProvider />
         <Preloader />
         <Navbar />
