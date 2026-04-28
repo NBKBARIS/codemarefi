@@ -87,7 +87,6 @@ export default function Navbar() {
           <div style={{ display: 'flex', gap: '0' }} className="top-nav-links">
             {[
               { l: 'Ana Sayfa', href: '/' },
-              { l: 'Yönetim', href: '/yonetim' },
               { l: 'İletisim', href: '/iletisim' },
               { l: 'Duyurular', href: '#' },
               { l: 'Hakkımızda', href: '/hakkimizda' },
