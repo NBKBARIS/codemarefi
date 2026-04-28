@@ -68,7 +68,7 @@ export default async function PostPage(props: { params: Promise<{ id: string }> 
             {/* Meta */}
             <div style={{ display: 'flex', alignItems: 'center', gap: '18px', color: '#666', fontSize: '12px', marginBottom: '24px', paddingBottom: '20px', borderBottom: '1px solid #1e1e1e', flexWrap: 'wrap' }}>
               <Link
-                href={`/user/${encodeURIComponent(post.author)}`}
+                href={`/user/${encodeURIComponent((post as any).authorId || post.author)}`}
                 className="author-link"
                 style={{ display: 'flex', alignItems: 'center', gap: '6px', textDecoration: 'none', color: '#888' }}
               >

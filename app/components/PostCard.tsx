@@ -28,15 +28,11 @@ export default function PostCard({ post }: PostCardProps) {
   const excerpt = stripHtml(post.content).slice(0, 160) + '...';
 
   useEffect(() => {
-    // Kısa bir gecikme ile sorgula — aynı anda çok fazla istek göndermeyi önle
-    const timer = setTimeout(() => {
-      supabase
-        .from('comments')
-        .select('id', { count: 'exact', head: true })
-        .eq('post_id', post.id)
-        .then(({ count }) => setCommentCount(count ?? 0));
-    }, Math.random() * 500); // 0-500ms arası rastgele gecikme
-    return () => clearTimeout(timer);
+    supabase
+      .from('comments')
+      .select('*', { count: 'exact', head: true })
+      .eq('post_id', post.id)
+      .then(({ count }) => setCommentCount(count ?? 0));
   }, [post.id]);
 
   return (
@@ -72,9 +68,9 @@ export default function PostCard({ post }: PostCardProps) {
         {/* Alt bilgi */}
         <div className="post-card-footer">
           <div className="post-card-meta-left">
-            {/* Author — Link ile, full page reload yok */}
+            {/* Author — UUID varsa UUID ile, yoksa isim ile profil linki */}
             <Link
-              href={`/user/${encodeURIComponent(post.author)}`}
+              href={`/user/${encodeURIComponent(post.authorId || post.author)}`}
               className="post-card-author"
               onClick={e => e.stopPropagation()}
               style={{ color: '#888', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '4px', transition: 'color 0.2s' }}

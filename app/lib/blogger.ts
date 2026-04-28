@@ -9,6 +9,7 @@ export interface BlogPost {
   url: string;
   thumbnail?: string;
   author: string;
+  authorId?: string; // UUID — user postlarda profil linki için
   commentCount: number;
   slug: string;
 }
@@ -81,6 +82,7 @@ async function getMergedPosts(): Promise<BlogPost[]> {
     url: `/post/${p.id}`,
     thumbnail: p.thumbnail_url,
     author: p.profiles?.full_name || 'Üye',
+    authorId: p.author_id, // UUID — profil linki için
     commentCount: 0,
     slug: p.id
   }));
@@ -144,6 +146,7 @@ export async function fetchPostById(id: string): Promise<BlogPost | null> {
       url: `/post/${userPost.id}`,
       thumbnail: userPost.thumbnail_url,
       author: userPost.profiles?.full_name || 'Üye',
+      authorId: userPost.author_id,
       commentCount: 0,
       slug: userPost.id
     };
