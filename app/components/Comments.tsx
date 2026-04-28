@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import { supabase, CommentType, CommentRole } from '../lib/supabase';
 import { hasBadWords } from '../lib/badWords';
+import { sendNotification } from '../lib/notifications';
 import Link from 'next/link';
 
 // Top 3 yorum yapan kullanıcıları çek (global cache)
@@ -13,8 +14,7 @@ async function getTopCommenters(): Promise<string[]> {
   const { data } = await supabase
     .from('comments')
     .select('user_id')
-    .not('user_id', 'is', null)
-    .limit(500); // limit — free tier'da büyük tablo çekmeyi önle
+    .not('user_id', 'is', null);
   if (!data) return [];
   const counts: Record<string, number> = {};
   data.forEach((r: any) => { if (r.user_id) counts[r.user_id] = (counts[r.user_id] || 0) + 1; });
@@ -300,6 +300,7 @@ export default function Comments({ postId }: { postId: string }) {
   useEffect(() => {
     if (user) {
       supabase.from('profiles').select('*').eq('id', user.id).single().then(({ data }) => {
+        console.log('Current User Profile Loaded:', data);
         setProfile(data);
         if (data?.full_name) setAuthorName(data.full_name);
       });
@@ -377,7 +378,30 @@ export default function Comments({ postId }: { postId: string }) {
       setContent('');
       if (!user) setAuthorName('');
       setReplyingTo(null);
-      fetchComments(); // Canlı yayın gelene kadar biz önden güncelleyelim
+      fetchComments();
+
+      // Gönderi sahibine bildirim gönder
+      try {
+        // Gönderi sahibini bul (user_posts tablosundan)
+        const { data: postData } = await supabase
+          .from('user_posts')
+          .select('author_id')
+          .eq('id', postId)
+          .single();
+
+        if (postData?.author_id && postData.author_id !== (user?.id ?? null)) {
+          // Kendi gönderisine yorum yapıyorsa bildirim gönderme
+          await sendNotification(
+            postData.author_id,
+            'comment',
+            `${authorName.trim()} gönderine yorum yaptı`,
+            content.trim().slice(0, 80) + (content.trim().length > 80 ? '...' : ''),
+            postId,
+          );
+        }
+      } catch {
+        // bildirim hatası sessizce geç
+      }
     }
     setIsSubmitting(false);
   }

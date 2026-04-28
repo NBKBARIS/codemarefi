@@ -2,6 +2,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { supabase, updateLastSeen, isSessionExpiredByInactivity, clearLastSeen } from '../lib/supabase';
 import AuthModal from './AuthModal';
+import NotificationBell from './NotificationBell';
 import Link from 'next/link';
 
 const GREEN_MSGS = [
@@ -227,18 +228,22 @@ export default function Navbar() {
               </Link>
 
               {/* Giriş / Profil Butonu */}
-              <div style={{ marginLeft: '5px', display: 'flex', alignItems: 'center', gap: '10px' }}>
+              <div style={{ marginLeft: '5px', display: 'flex', alignItems: 'center', gap: '6px' }}>
                 {user ? (
-                  <Link href="/profil" style={{ display: 'flex', alignItems: 'center', gap: '8px', textDecoration: 'none', color: '#fff' }}>
-                    {profile?.avatar_url ? (
-                      <img src={profile.avatar_url} alt="avatar" style={{ width: '24px', height: '24px', borderRadius: '50%', objectFit: 'cover', border: '1px solid #e60000' }} />
-                    ) : (
-                      <div style={{ width: '24px', height: '24px', borderRadius: '50%', background: '#333', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid #e60000' }}>
-                        <i className="fa-solid fa-user" style={{ fontSize: '10px', color: '#fff' }}></i>
-                      </div>
-                    )}
-                    <span style={{ fontSize: '12px', fontWeight: 600 }}>{profile?.full_name || 'Profilim'}</span>
-                  </Link>
+                  <>
+                    {/* Bildirim Zili */}
+                    <NotificationBell userId={user.id} />
+                    <Link href="/profil" style={{ display: 'flex', alignItems: 'center', gap: '8px', textDecoration: 'none', color: '#fff' }}>
+                      {profile?.avatar_url ? (
+                        <img src={profile.avatar_url} alt="avatar" style={{ width: '24px', height: '24px', borderRadius: '50%', objectFit: 'cover', border: '1px solid #e60000' }} />
+                      ) : (
+                        <div style={{ width: '24px', height: '24px', borderRadius: '50%', background: '#333', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid #e60000' }}>
+                          <i className="fa-solid fa-user" style={{ fontSize: '10px', color: '#fff' }}></i>
+                        </div>
+                      )}
+                      <span style={{ fontSize: '12px', fontWeight: 600 }}>{profile?.full_name || 'Profilim'}</span>
+                    </Link>
+                  </>
                 ) : (
                   <button 
                     onClick={() => window.dispatchEvent(new CustomEvent('open-auth-modal'))}
