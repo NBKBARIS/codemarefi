@@ -13,27 +13,63 @@ export const viewport: Viewport = {
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://www.codemarefi.com'),
-  title: "CodeMareFi - Modern Yazılım ve Discord Bot Geliştirme Platformu",
-  description: "Türkiye'nin en kaliteli Discord bot kodları, güncel yazılım haberleri ve modern web teknolojileri rehberi. CodeMareFi ile geleceğin kodlarını keşfedin.",
-  keywords: "discord bot kodları, discord bot komutları, yazılım geliştirme, javascript kod paylaşım, teknoloji haberleri, codemarefi",
+  title: {
+    default: 'CodeMareFi - Discord Bot Kodları & Yazılım Platformu',
+    template: '%s | CodeMareFi',
+  },
+  description: "Türkiye'nin en büyük Discord bot kod paylaşım platformu. Ücretsiz Discord bot kodları, JavaScript, Python, web tasarım rehberleri ve yazılım haberleri.",
+  keywords: [
+    'discord bot kodları', 'discord bot komutları', 'ücretsiz discord bot',
+    'javascript discord bot', 'python discord bot', 'discord.js',
+    'web tasarım', 'yazılım geliştirme', 'kod paylaşım', 'codemarefi',
+    'discord bot yapımı', 'discord bot 2026', 'türkçe discord bot',
+  ],
+  authors: [{ name: 'NBK BARIŞ', url: 'https://www.codemarefi.com' }],
+  creator: 'NBK BARIŞ',
+  publisher: 'CodeMareFi',
+  category: 'technology',
   icons: {
     icon: [
       { url: '/favicon.png' },
       { url: '/favicon.png', sizes: '32x32', type: 'image/png' },
     ],
-    apple: [
-      { url: '/favicon.png', sizes: '180x180', type: 'image/png' },
-    ],
+    apple: [{ url: '/favicon.png', sizes: '180x180', type: 'image/png' }],
   },
   openGraph: {
-    title: "CodeMareFi - Yazılım & Discord Bot Dünyası",
-    description: "Türkiye'nin en büyük ve modern Discord Bot Kod Paylaşım Platformu",
-    type: "website",
-    url: "https://codemarefi.com",
-    images: ['/favicon.png'],
+    title: 'CodeMareFi - Discord Bot Kodları & Yazılım Platformu',
+    description: "Türkiye'nin en büyük Discord bot kod paylaşım platformu. Ücretsiz bot kodları, yazılım rehberleri.",
+    type: 'website',
+    url: 'https://www.codemarefi.com',
+    siteName: 'CodeMareFi',
+    locale: 'tr_TR',
+    images: [{ url: '/logo.png', width: 1200, height: 630, alt: 'CodeMareFi Logo' }],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'CodeMareFi - Discord Bot Kodları & Yazılım',
+    description: "Türkiye'nin en büyük Discord bot kod paylaşım platformu.",
+    images: ['/logo.png'],
+    creator: '@mare_fi',
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
+  },
+  alternates: {
+    canonical: 'https://www.codemarefi.com',
+    languages: {
+      'tr-TR': 'https://www.codemarefi.com',
+    },
   },
   verification: {
-    google: "8aOQLQYj5GxcMWcGMtjF5y7D_pJh-BV4hUYSZb6BMmE",
+    google: '8aOQLQYj5GxcMWcGMtjF5y7D_pJh-BV4hUYSZb6BMmE',
   },
 };
 
@@ -61,6 +97,33 @@ export default function RootLayout({
         />
       </head>
       <body>
+        {/* JSON-LD Organization Schema */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'WebSite',
+            name: 'CodeMareFi',
+            url: 'https://www.codemarefi.com',
+            description: "Türkiye'nin en büyük Discord bot kod paylaşım platformu",
+            inLanguage: 'tr-TR',
+            potentialAction: {
+              '@type': 'SearchAction',
+              target: { '@type': 'EntryPoint', urlTemplate: 'https://www.codemarefi.com/arama?q={search_term_string}' },
+              'query-input': 'required name=search_term_string',
+            },
+            publisher: {
+              '@type': 'Organization',
+              name: 'CodeMareFi',
+              url: 'https://www.codemarefi.com',
+              logo: { '@type': 'ImageObject', url: 'https://www.codemarefi.com/logo.png' },
+              sameAs: [
+                'https://www.facebook.com/CodeMareFi',
+                'https://twitter.com/mare_fi',
+              ],
+            },
+          })}}
+        />
         <MobileBlocker />
         <SecurityProvider />
         <Preloader />
