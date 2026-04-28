@@ -9,6 +9,7 @@ interface UserProfile {
   full_name: string;
   avatar_url: string;
   created_at: string;
+  role?: string;
 }
 
 interface UserComment {
@@ -92,7 +93,26 @@ export default function PublicProfilePage() {
       </div>
 
       <div className="container" style={{ maxWidth: '800px', margin: '80px auto 0', padding: '0 20px', textAlign: 'center' }}>
-        <h1 style={{ fontSize: '32px', marginBottom: '5px', color: '#e60000', fontWeight: '800' }}>{profile.full_name}</h1>
+        <h1 style={{ fontSize: '32px', marginBottom: '8px', color: '#fff', fontWeight: '800' }}>{profile.full_name}</h1>
+        
+        {/* Rütbe Rozeti */}
+        <div style={{ 
+          display: 'inline-block',
+          padding: '6px 20px',
+          borderRadius: '50px',
+          background: profile?.role === 'admin' ? 'rgba(230,0,0,0.15)' : (profile?.role === 'mod' ? 'rgba(46,164,79,0.15)' : (profile?.role === 'author' ? 'rgba(255,140,0,0.15)' : 'rgba(255,255,255,0.05)')),
+          color: profile?.role === 'admin' ? '#e60000' : (profile?.role === 'mod' ? '#2ea44f' : (profile?.role === 'author' ? '#ff8c00' : '#888')),
+          fontSize: '11px',
+          fontWeight: 900,
+          letterSpacing: '2px',
+          textTransform: 'uppercase',
+          border: `1px solid ${profile?.role === 'admin' ? '#e60000' : (profile?.role === 'mod' ? '#2ea44f' : (profile?.role === 'author' ? '#ff8c00' : '#333'))}`,
+          marginBottom: '20px',
+          boxShadow: '0 4px 15px rgba(0,0,0,0.2)'
+        }}>
+          <i className={`fa-solid ${profile?.role === 'admin' ? 'fa-user-shield' : (profile?.role === 'mod' ? 'fa-shield-halved' : (profile?.role === 'author' ? 'fa-pen-nib' : 'fa-user'))}`} style={{ marginRight: '8px' }}></i>
+          {profile?.role === 'admin' ? 'Yönetici' : (profile?.role === 'mod' ? 'Moderatör' : (profile?.role === 'author' ? 'Yazar' : 'Üye'))}
+        </div>
         <p style={{ color: '#888', fontSize: '14px', marginBottom: '30px' }}>
           <i className="fa-solid fa-calendar-days" style={{ marginRight: '8px' }}></i>
           {(() => {
