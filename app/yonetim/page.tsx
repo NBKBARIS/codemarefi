@@ -4,6 +4,7 @@ import { supabase } from '../lib/supabase';
 import { getPendingPosts, approvePost, deletePost, UserPost } from '../lib/userPosts';
 import { writeLog, LOG_LABELS, ActivityLog, LogAction } from '../lib/activityLog';
 import { sendNotification } from '../lib/notifications';
+import { enhanceSeo } from '../lib/seoEnhancer';
 import { useRouter } from 'next/navigation';
 
 type Tab = 'posts' | 'users' | 'comments' | 'logs';
@@ -69,23 +70,34 @@ export default function YonetimPage() {
     const post = posts.find(p => p.id === id);
     setActionLoading(id);
     try {
-      await approvePost(id);
+      // SEO otomatik düzeltici uygula
+      const seo = enhanceSeo(
+        post?.title || '',
+        post?.content || '',
+        post?.categories || [],
+      );
+
+      // SEO düzeltilmiş içerikle güncelle + onayla
+      await supabase
+        .from('user_posts')
+        .update({ content: seo.content, is_approved: true })
+        .eq('id', id);
+
       if (post?.author_id) {
         const { data: up } = await supabase.from('profiles').select('role').eq('id', post.author_id).single();
         if (up?.role === 'member') await supabase.from('profiles').update({ role: 'author' }).eq('id', post.author_id);
-        // Bildirim gönder
         await sendNotification(
           post.author_id,
           'post_approved',
           'Gönderiniz onaylandı!',
-          `"${post.title}" başlıklı gönderiniz yayına alındı.`,
+          `"${post.title}" başlıklı gönderiniz yayına alındı. SEO skoru: ${seo.seoScore}/100`,
           id,
         );
       }
-      await writeLog('post_approved', `"${post?.title}" onaylandı`, user?.id, post?.author_id, post?.profiles?.full_name);
+      await writeLog('post_approved', `"${post?.title}" onaylandı (SEO: ${seo.seoScore}/100)`, user?.id, post?.author_id, post?.profiles?.full_name);
       setPosts(posts.filter(p => p.id !== id));
-      alert('Yazı onaylandı!');
-    } catch { alert('Onaylama hatası!'); }
+      alert(`Yazı onaylandı! SEO skoru: ${seo.seoScore}/100\nYapılan iyileştirmeler:\n• ${seo.improvements.join('\n• ') || 'İçerik zaten SEO uyumlu'}`);
+    } catch (err: any) { alert('Onaylama hatası: ' + err.message); }
     finally { setActionLoading(null); }
   }
 
@@ -208,14 +220,36 @@ export default function YonetimPage() {
       <div style={{ maxWidth: '1100px', margin: '0 auto' }}>
 
         {/* Başlık */}
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '25px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '25px', flexWrap: 'wrap', gap: '10px' }}>
           <h1 style={{ fontSize: '24px', fontWeight: 800, display: 'flex', alignItems: 'center', gap: '12px' }}>
             <i className="fa-solid fa-user-shield" style={{ color: '#e60000' }}></i>
             Yönetim Paneli
           </h1>
-          <div style={{ background: '#111', padding: '8px 18px', borderRadius: '50px', border: '1px solid #1e1e1e', fontSize: '13px' }}>
-            <i className="fa-solid fa-circle" style={{ color: '#2ea44f', fontSize: '8px', marginRight: '6px' }}></i>
-            {profile?.role?.toUpperCase()} — {profile?.full_name}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <button
+              onClick={async () => {
+                if (!confirm('Tüm onaylı gönderilere SEO düzeltmesi uygulanacak. Devam?')) return;
+                const { data: allPosts } = await supabase.from('user_posts').select('*').eq('is_approved', true);
+                if (!allPosts?.length) { alert('Onaylı gönderi yok.'); return; }
+                let fixed = 0;
+                for (const p of allPosts) {
+                  const seo = enhanceSeo(p.title, p.content, p.categories);
+                  if (seo.improvements.length > 0) {
+                    await supabase.from('user_posts').update({ content: seo.content }).eq('id', p.id);
+                    fixed++;
+                  }
+                }
+                alert(`${fixed} gönderi SEO düzeltmesi uygulandı!`);
+              }}
+              style={{ background: '#1a1a1a', color: '#2ea44f', border: '1px solid #2ea44f', padding: '8px 14px', borderRadius: '4px', cursor: 'pointer', fontSize: '12px', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '6px' }}
+            >
+              <i className="fa-solid fa-wand-magic-sparkles"></i>
+              Tüm Postları SEO Düzelt
+            </button>
+            <div style={{ background: '#111', padding: '8px 18px', borderRadius: '50px', border: '1px solid #1e1e1e', fontSize: '13px' }}>
+              <i className="fa-solid fa-circle" style={{ color: '#2ea44f', fontSize: '8px', marginRight: '6px' }}></i>
+              {profile?.role?.toUpperCase()} — {profile?.full_name}
+            </div>
           </div>
         </div>
 

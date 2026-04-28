@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import type { Metadata } from 'next';
 import { fetchPostById, formatDate } from '../../lib/blogger';
 import { localPosts } from '../../lib/localPosts';
 import Sidebar from '../../components/Sidebar';
@@ -8,6 +9,52 @@ import PostDeleteButton from '../../components/PostDeleteButton';
 
 export async function generateStaticParams() {
   return localPosts.map((post) => ({ id: post.id }));
+}
+
+// ── Dinamik SEO Metadata ──────────────────────────────────────
+export async function generateMetadata(
+  props: { params: Promise<{ id: string }> }
+): Promise<Metadata> {
+  const params = await props.params;
+  const post = await fetchPostById(params.id);
+  if (!post) return { title: 'Yazı Bulunamadı — CodeMareFi' };
+
+  // HTML taglarını temizle, ilk 160 karakter description
+  const plainText = post.content
+    .replace(/<[^>]+>/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+  const description = plainText.slice(0, 155) + (plainText.length > 155 ? '...' : '');
+  const keywords = [
+    ...post.categories.map(c => c.replace(/-/g, ' ')),
+    'codemarefi', 'discord bot', 'yazılım', post.author,
+  ].join(', ');
+
+  return {
+    title: `${post.title} — CodeMareFi`,
+    description,
+    keywords,
+    authors: [{ name: post.author }],
+    openGraph: {
+      title: post.title,
+      description,
+      type: 'article',
+      url: `https://www.codemarefi.com/post/${params.id}`,
+      images: post.thumbnail ? [{ url: post.thumbnail, width: 1200, height: 630, alt: post.title }] : [],
+      publishedTime: post.published,
+      authors: [post.author],
+      tags: post.categories,
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: post.title,
+      description,
+      images: post.thumbnail ? [post.thumbnail] : [],
+    },
+    alternates: {
+      canonical: `https://www.codemarefi.com/post/${params.id}`,
+    },
+  };
 }
 
 export default async function PostPage(props: { params: Promise<{ id: string }> }) {
