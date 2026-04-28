@@ -328,11 +328,31 @@ export default function PaylasPage() {
                 onChange={e => setCategory(e.target.value)}
                 style={{ width: '100%', background: '#0a0a0a', border: '1px solid #333', padding: '12px', color: '#fff', borderRadius: '4px', outline: 'none' }}
               >
-                <option value="Discord-bot-kodları">Discord Bot Kodları</option>
-                <option value="Web-Tasarım">Web Tasarım</option>
-                <option value="JavaScript">JavaScript</option>
-                <option value="Python">Python</option>
-                <option value="Genel">Genel</option>
+                <optgroup label="Discord">
+                  <option value="Discord-bot-kodları">Discord Bot Kodları</option>
+                  <option value="Discord-bot-konuları">Discord Bot Konuları</option>
+                  <option value="Discord-Konuları">Discord Konuları</option>
+                  <option value="Discord-Hazır-Bot-Altyapılar">Discord Hazır Bot Altyapılar</option>
+                </optgroup>
+                <optgroup label="Programlama">
+                  <option value="JavaScript">JavaScript</option>
+                  <option value="Python">Python</option>
+                  <option value="CSS">CSS</option>
+                  <option value="Html">HTML</option>
+                  <option value="Blogger-Konuları">Blogger Konuları</option>
+                </optgroup>
+                <optgroup label="Tasarım & Web">
+                  <option value="Web-Tasarım">Web Tasarım</option>
+                  <option value="UI-UX">UI / UX Tasarım</option>
+                </optgroup>
+                <optgroup label="Diğer">
+                  <option value="Genel Konular">Genel Konular</option>
+                  <option value="Tavsiyemiz">Tavsiyemiz</option>
+                  <option value="Popüler">Popüler</option>
+                  <option value="Yazılım-Haberleri">Yazılım Haberleri</option>
+                  <option value="Siber-Güvenlik">Siber Güvenlik</option>
+                  <option value="Yapay-Zeka">Yapay Zeka</option>
+                </optgroup>
               </select>
             </div>
 

@@ -1,14 +1,59 @@
+// Türkçe ve İngilizce kötü kelimeler + argo filtresi
 export const badWords = [
-  "aq", "amk", "amına", "göt", "piç", "oç", "sik", "siktir", "yarrak", "taşşak",
-  "ibne", "kahpe", "yavşak", "meme", "daşşak", "sg", "ananı", "bacını", "pic",
-  "orosbu", "orospu", "gavat", "pipi", "vaji", "penis", "seks", "sex"
+  // Türkçe küfürler
+  "aq", "amk", "amına", "amina", "göt", "got", "piç", "pic", "oç", "oc",
+  "sik", "siktir", "yarrak", "taşşak", "tassak", "ibne", "kahpe", "yavşak",
+  "yavşak", "meme", "daşşak", "sg", "ananı", "anani", "bacını", "bacini",
+  "orosbu", "orospu", "gavat", "pipi", "vaji", "vajina", "penis", "seks", "sex",
+  "götveren", "göt veren", "amcık", "amcik", "orosbuçocuğu", "bok", "boktan",
+  "serefsiz", "şerefsiz", "alçak", "kaltak", "sürtük", "surtuk", "fahişe",
+  "fahise", "pezevenk", "salak", "gerizekalı", "gerzek", "aptal", "mal",
+  "dangalak", "haysiyetsiz", "namussuz", "iti", "köpek", "eşek", "esek",
+  "domuz", "oğlak", "puşt", "pust", "götveren", "dölsüz", "dolsuz",
+  // İngilizce
+  "fuck", "shit", "bitch", "asshole", "bastard", "cunt", "dick", "cock",
+  "pussy", "whore", "slut", "nigger", "faggot", "retard", "porn", "nude",
+  "naked", "xxx", "nsfw",
+  // Spam / reklam kelimeleri (kullanıcı adı için)
+  "admin", "yönetici", "moderator", "mod", "nbkbaris", "codemarefi",
+];
+
+// Kullanıcı adı için ek yasaklı kelimeler
+const usernameBlacklist = [
+  "admin", "yönetici", "moderator", "mod", "nbkbaris", "nbk_baris",
+  "codemarefi", "system", "bot", "official", "resmi", "destek", "support",
+  "root", "superuser", "staff", "team",
 ];
 
 export function hasBadWords(text: string): boolean {
-  const normalizedText = text.toLowerCase().replace(/[0-9]/g, '').replace(/\s+/g, '');
+  if (!text) return false;
+  const normalized = text.toLowerCase()
+    .replace(/[0@]/g, 'o')
+    .replace(/[1!]/g, 'i')
+    .replace(/[3]/g, 'e')
+    .replace(/[4]/g, 'a')
+    .replace(/\s+/g, '');
+
   return badWords.some(word => {
-    // Kelimeyi direkt içeriyor mu veya boşluksuz halini içeriyor mu bak
-    const regex = new RegExp(word, 'gi');
-    return regex.test(text) || normalizedText.includes(word);
+    const clean = word.toLowerCase();
+    return normalized.includes(clean) || new RegExp(clean, 'gi').test(text);
   });
+}
+
+export function hasUsernameViolation(username: string): boolean {
+  if (!username || username.trim().length < 2) return true;
+  if (username.trim().length > 30) return true;
+
+  // Sadece harf, rakam, boşluk, alt çizgi, nokta izin ver
+  if (!/^[\w\s.\-ğüşıöçĞÜŞİÖÇ]+$/u.test(username)) return false; // özel karakter varsa geç
+
+  const lower = username.toLowerCase().replace(/\s/g, '');
+
+  // Kötü kelime kontrolü
+  if (hasBadWords(username)) return true;
+
+  // Yasaklı kullanıcı adları
+  if (usernameBlacklist.some(w => lower.includes(w))) return true;
+
+  return false;
 }

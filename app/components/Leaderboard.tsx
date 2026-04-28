@@ -27,13 +27,31 @@ const ROLE_BADGE: Record<string, { label: string; color: string }> = {
 type Tab = 'posts' | 'comments' | 'activity';
 
 const TABS: { key: Tab; icon: string; label: string }[] = [
-  { key: 'posts',    icon: 'fa-pen-nib',  label: 'Paylaşım' },
-  { key: 'comments', icon: 'fa-comments', label: 'Yorum'    },
-  { key: 'activity', icon: 'fa-fire',     label: 'Aktiflik' },
+  { key: 'posts',    icon: 'fa-pen-nib',  label: 'Paylaşım'   },
+  { key: 'comments', icon: 'fa-comments', label: 'Yorum'      },
+  { key: 'activity', icon: 'fa-fire',     label: 'Bu Hafta'   },
 ];
 
 // Aktiflik: localStorage'da her kullanıcı için süre tutulur (saniye cinsinden)
 const ACTIVITY_KEY = 'cmf_activity'; // { [user_id]: seconds }
+const ACTIVITY_RESET_KEY = 'cmf_activity_week'; // hangi haftada sıfırlandı
+
+function getWeekNumber(): string {
+  const now = new Date();
+  const startOfYear = new Date(now.getFullYear(), 0, 1);
+  const week = Math.ceil(((now.getTime() - startOfYear.getTime()) / 86400000 + startOfYear.getDay() + 1) / 7);
+  return `${now.getFullYear()}-W${week}`;
+}
+
+function resetActivityIfNewWeek() {
+  if (typeof window === 'undefined') return;
+  const currentWeek = getWeekNumber();
+  const lastWeek = localStorage.getItem(ACTIVITY_RESET_KEY);
+  if (lastWeek !== currentWeek) {
+    localStorage.removeItem(ACTIVITY_KEY);
+    localStorage.setItem(ACTIVITY_RESET_KEY, currentWeek);
+  }
+}
 
 function formatDuration(seconds: number): string {
   if (seconds < 60) return `${seconds}sn`;
@@ -55,13 +73,14 @@ export default function Leaderboard() {
 
   // ── Veri çekme ──────────────────────────────────────────────
   const fetchLeaders = useCallback(async () => {
+    // Yeni hafta başladıysa aktifliği sıfırla
+    resetActivityIfNewWeek();
     try {
       // Paylaşım
       const { data: postData } = await supabase
         .from('user_posts')
         .select('author_id, profiles(full_name, avatar_url, role)')
-        .eq('is_approved', true)
-        .limit(200); // limit ekle
+        .eq('is_approved', true);
 
       if (postData) {
         const counts: Record<string, LeaderEntry> = {};
@@ -85,8 +104,7 @@ export default function Leaderboard() {
       const { data: commentData } = await supabase
         .from('comments')
         .select('user_id, profiles(full_name, avatar_url, role)')
-        .not('user_id', 'is', null)
-        .limit(500); // limit ekle — sonsuz veri çekmeyi önle
+        .not('user_id', 'is', null);
 
       if (commentData) {
         const counts: Record<string, LeaderEntry> = {};
@@ -140,6 +158,9 @@ export default function Leaderboard() {
 
   // ── Aktiflik takibi: giriş yapmış kullanıcının süresini artır ──
   useEffect(() => {
+    // Sayfa açılışında haftalık sıfırlama kontrolü
+    resetActivityIfNewWeek();
+
     let userId: string | null = null;
 
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -337,7 +358,7 @@ export default function Leaderboard() {
       {/* Alt bilgi */}
       <div style={{ padding: '6px 12px', borderTop: '1px solid #1a1a1a', fontSize: '10px', color: '#444', textAlign: 'center', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}>
         <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#2ea44f', display: 'inline-block', animation: 'pulse-green 1.5s infinite' }}></span>
-        Her 30 saniyede otomatik güncellenir
+        Her 30sn güncellenir · Aktiflik her Pazartesi sıfırlanır
       </div>
 
       <style>{`

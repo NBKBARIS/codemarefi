@@ -1,8 +1,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { hasBadWords, hasUsernameViolation } from '../lib/badWords';
 import { supabase } from '../lib/supabase';
-
 interface AuthModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -157,7 +157,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
           }, 1200);
         } else {
           // Kullanıcı adı benzersizlik kontrolü
-          const { data: existingUser, error: checkError } = await supabase
+          const { data: existingUser } = await supabase
             .from('profiles')
             .select('full_name')
             .eq('full_name', fullName)
@@ -165,6 +165,13 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
 
           if (existingUser) {
             setMessage({ type: 'error', text: 'Bu kullanıcı adı zaten alınmış! Lütfen başka bir isim seçin.' });
+            setLoading(false);
+            return;
+          }
+
+          // Kullanıcı adı kötü kelime / yasaklı isim kontrolü
+          if (hasUsernameViolation(fullName)) {
+            setMessage({ type: 'error', text: 'Bu kullanıcı adı uygunsuz veya yasaklı kelimeler içeriyor. Lütfen başka bir isim seçin.' });
             setLoading(false);
             return;
           }
