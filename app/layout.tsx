@@ -19,7 +19,6 @@ export const metadata: Metadata = {
     url: "https://codemarefi.com",
     images: ['/favicon.png'],
   },
-  viewport: "width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0",
   verification: {
     google: "8aOQLQYj5GxcMWcGMtjF5y7D_pJh-BV4hUYSZb6BMmE",
   },
