@@ -40,7 +40,9 @@ export default function HomePage() {
   useEffect(() => {
     setLoading(true);
     const tab = TABS.find(t => t.label === activeTab);
-    const startIndex = (page - 1) * POSTS_PER_PAGE + 1;
+    // 1. sayfada hero'dan sonra başla (6. post), diğer sayfalarda normal devam et
+    const offset = page === 1 ? 5 : 0;
+    const startIndex = (page - 1) * POSTS_PER_PAGE + 1 + offset;
     fetchPosts(POSTS_PER_PAGE, startIndex, tab?.cat || '').then(({ posts: p, total: t }) => {
       setPosts(p);
       setTotal(t);
