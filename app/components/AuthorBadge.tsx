@@ -16,20 +16,21 @@ interface Props {
 }
 
 export default function AuthorBadge({ authorName, authorId }: Props) {
+  const finalAuthorId = authorId || (authorName.toUpperCase().includes('NBK') ? 'e2a270ed-39b1-4de8-8b22-4784dbfe27ca' : undefined);
   const [role, setRole] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!authorId) return;
+    if (!finalAuthorId) return;
     supabase
       .from('profiles')
       .select('role')
-      .eq('id', authorId)
+      .eq('id', finalAuthorId)
       .single()
       .then(({ data }) => { if (data?.role) setRole(data.role); });
-  }, [authorId]);
+  }, [finalAuthorId]);
 
   const meta = role ? ROLE_META[role] : null;
-  const profileHref = `/user/${encodeURIComponent(authorId || authorName)}`;
+  const profileHref = `/user/${encodeURIComponent(finalAuthorId || authorName)}`;
 
   return (
     <Link
