@@ -73,7 +73,7 @@ export default function Navbar() {
   const navItems = [
     { label: 'Home', icon: 'fa-house', href: '/', active: true },
     { label: '+ En Yeniler', href: '/kategori/En-Yeniler' },
-    { label: '★ MEGA Menü', href: '#' },
+    { label: '★ MEGA Menü', href: '/arama' },
     { label: '♥ Öne Çıkan Yazılar', href: '/kategori/Öne-Çıkanlar' },
     { label: '✎ Web Tasarım', href: '/kategori/Web-Tasarım' },
     { label: '</> Discord Bot Konuları', href: '/kategori/Discord-bot-konuları' },
@@ -88,7 +88,7 @@ export default function Navbar() {
             {[
               { l: 'Ana Sayfa', href: '/' },
               { l: 'İletisim', href: '/iletisim' },
-              { l: 'Duyurular', href: '#' },
+              { l: 'Duyurular', href: '/kategori/Genel%20Konular' },
               { l: 'Hakkımızda', href: '/hakkimizda' },
               { l: 'Site Haritası', href: '/sitemap.xml' }
             ].map(item => (
@@ -261,6 +261,7 @@ export default function Navbar() {
           ))}
           {/* Shuffle */}
           <div
+            onClick={() => window.dispatchEvent(new CustomEvent('cmf-shuffle'))}
             style={{ marginLeft: 'auto', background: '#e60000', width: '46px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', flexShrink: 0, transition: 'background 0.2s' }}
             onMouseEnter={e => ((e.currentTarget as HTMLElement).style.background = '#cc0000')}
             onMouseLeave={e => ((e.currentTarget as HTMLElement).style.background = '#e60000')}

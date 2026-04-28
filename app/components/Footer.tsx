@@ -3,13 +3,13 @@ import Link from 'next/link';
 
 export default function Footer() {
   const footerLinks = [
-    { label: 'Ana Sayfa', href: '/' },
-    { label: 'Yönetim', href: '#' },
-    { label: 'İletişim', href: '/iletisim' },
-    { label: 'Duyurular', href: '#' },
-    { label: 'Hakkımızda', href: '/hakkimizda' },
-    { label: 'Site Haritası', href: '#' },
-    { label: 'CodeMareFi Chat', href: '#' },
+    { label: 'Ana Sayfa',       href: '/' },
+    { label: 'Yönetim',         href: '/yonetim' },
+    { label: 'İletişim',        href: '/iletisim' },
+    { label: 'Duyurular',       href: '/kategori/Genel%20Konular' },
+    { label: 'Hakkımızda',      href: '/hakkimizda' },
+    { label: 'Site Haritası',   href: '/sitemap.xml' },
+    { label: 'CodeMareFi Chat', href: 'https://discord.gg/dRMY8zW' },
   ];
 
   return (

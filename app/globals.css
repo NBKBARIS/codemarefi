@@ -14,22 +14,24 @@ html, body {
   overflow-x: hidden;
   width: 100%;
   position: relative;
-  touch-action: pan-y; /* Sadece yukarı aşağı kaydırmaya izin ver */
+  touch-action: manipulation; /* Kaydırma performansını optimize et */
 }
 
 body {
-  background-color: #1a1a1a;
+  background-color: #050505;
   color: #ffffff;
-  font-family: 'Arial', sans-serif;
+  font-family: 'Outfit', 'Arial', sans-serif;
   font-size: 14px;
   line-height: 1.6;
-  cursor: url(https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiuYiG39sL-Rr0xYeps_VbYcXeTKjQpvnSKHWxPg4WU_kkO48htQNq0lNi0E3zdLW5yIttKxVGSiQcgU8SCHSpx6Fmnwj4VO2YEuasCdy2MR1qeC3LCpFlxxnrBlYnD6KBTb_oW-JW1VR4/s1600/MareFi-1.png), auto;
+  margin: 0;
+  padding: 0;
+  cursor: url("https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiuYiG39sL-Rr0xYeps_VbYcXeTKjQpvnSKHWxPg4WU_kkO48htQNq0lNi0E3zdLW5yIttKxVGSiQcgU8SCHSpx6Fmnwj4VO2YEuasCdy2MR1qeC3LCpFlxxnrBlYnD6KBTb_oW-JW1VR4/s1600/MareFi-1.png"), auto;
 }
 
 a {
   color: inherit;
   text-decoration: none;
-  cursor: url(https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiuYiG39sL-Rr0xYeps_VbYcXeTKjQpvnSKHWxPg4WU_kkO48htQNq0lNi0E3zdLW5yIttKxVGSiQcgU8SCHSpx6Fmnwj4VO2YEuasCdy2MR1qeC3LCpFlxxnrBlYnD6KBTb_oW-JW1VR4/s1600/MareFi-1.png), auto;
+  cursor: url("https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiuYiG39sL-Rr0xYeps_VbYcXeTKjQpvnSKHWxPg4WU_kkO48htQNq0lNi0E3zdLW5yIttKxVGSiQcgU8SCHSpx6Fmnwj4VO2YEuasCdy2MR1qeC3LCpFlxxnrBlYnD6KBTb_oW-JW1VR4/s1600/MareFi-1.png"), auto;
 }
 
 body.hide-cursor, body.hide-cursor * {
@@ -433,24 +435,6 @@ img {
   transform: translateX(-50%);
   display: flex;
   gap: 6px;
-  z-index: 4;
-}
-
-.featured-main-content {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  padding: 20px;
-}
-
-.featured-slider-dots {
-  position: absolute;
-  top: 15px;
-  left: 50%;
-  transform: translateX(-50%);
-  display: flex;
-  gap: 6px;
   z-index: 5;
 }
 
@@ -541,14 +525,6 @@ img {
   right: 0;
   padding: 10px;
   z-index: 2;
-}
-
-.featured-small-content {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  padding: 10px;
 }
 
 .featured-small-cat {

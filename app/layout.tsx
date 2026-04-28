@@ -39,6 +39,7 @@ export const metadata: Metadata = {
 import Preloader from "./components/Preloader";
 import SecurityProvider from "./components/SecurityProvider";
 import MobileBlocker from "./components/MobileBlocker";
+import ClientOnly from "./components/ClientOnly";
 
 
 export default function RootLayout({
@@ -58,15 +59,20 @@ export default function RootLayout({
           strategy="afterInteractive" 
         />
       </head>
-      <body style={{ fontFamily: "'Outfit', Arial, sans-serif" }}>
+      <body>
         <MobileBlocker />
         <SecurityProvider />
         <Preloader />
 
-        <Navbar />
-        <main>{children}</main>
-        <Footer />
-        <script dangerouslySetInnerHTML={{ __html: `document.addEventListener('contextmenu', event => event.preventDefault());` }} />
+        <ClientOnly>
+          <Navbar />
+        </ClientOnly>
+        <div id="main-content-wrapper" style={{ minHeight: '80vh' }}>
+          {children}
+        </div>
+        <ClientOnly>
+          <Footer />
+        </ClientOnly>
       </body>
     </html>
   );

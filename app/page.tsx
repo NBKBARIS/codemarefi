@@ -1,80 +1,106 @@
 'use client';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { fetchPosts, formatDate, BlogPost } from './lib/blogger';
 import PostCard from './components/PostCard';
 import Sidebar from './components/Sidebar';
 
 const POSTS_PER_PAGE = 8;
-const CAT_COLORS = ['#5865f2', '#ff5722', '#2ea44f', '#0070f3', '#e91e63', '#9c27b0', '#00bcd4', '#e67e22'];
+
+const BANNERS = [
+  { text: "TÜRKİYENİN EN BÜYÜK VE KALİTELİ DİSCORD BOT KOD PAYLAŞIM SİTESİ", color: "#8cc63f", icon: "fa-solid fa-leaf" },
+  { text: "SİTEMİZE HOŞ GELDİNİZ! YENİ NESİL KOD PAYLAŞIM PLATFORMU", color: "#e60000", icon: "fa-solid fa-fire" },
+  { text: "BİLGİSAYAR, YAZILIM VE BOT KODLARI HAKKINDA HER ŞEY BURADA", color: "#00a8cc", icon: "fa-solid fa-code" },
+  { text: "DİSCORD SUNUCUMUZA KATILARAK BİZE DESTEK OLABİLİRSİNİZ", color: "#5865f2", icon: "fa-brands fa-discord" },
+];
+
+const TABS = [
+  { label: 'SON EKLENENLER', icon: 'fa-clock',     cat: '' },
+  { label: 'TRENDLER',       icon: 'fa-fire',      cat: 'Discord-bot-kodları' },
+  { label: 'TAVSİYEMİZ',     icon: 'fa-thumbs-up', cat: 'Tavsiyemiz' },
+  { label: 'POPÜLERLER',     icon: 'fa-star',      cat: 'Popüler' },
+];
 
 export default function HomePage() {
-  const [posts, setPosts] = useState<BlogPost[]>([]);
-  const [total, setTotal] = useState(0);
-  const [loading, setLoading] = useState(true);
-  const [page, setPage] = useState(1);
-  const [heroIdx, setHeroIdx] = useState(0);
-  const [tickerIdx, setTickerIdx] = useState(0);
+  const router = useRouter();
+  const [posts, setPosts]               = useState<BlogPost[]>([]);
+  const [total, setTotal]               = useState(0);
+  const [loading, setLoading]           = useState(true);
+  const [page, setPage]                 = useState(1);
+  const [heroIdx, setHeroIdx]           = useState(0);
+  const [tickerIdx, setTickerIdx]       = useState(0);
   const [tickerPaused, setTickerPaused] = useState(false);
-  const [bannerIdx, setBannerIdx] = useState(0);
-  const [activeTab, setActiveTab] = useState('SON EKLENENLER');
+  const [bannerIdx, setBannerIdx]       = useState(0);
+  const [activeTab, setActiveTab]       = useState('SON EKLENENLER');
+  const [allPosts, setAllPosts]         = useState<BlogPost[]>([]); // for shuffle
 
-  const banners = [
-    { text: "TÜRKİYENİN EN BÜYÜK VE KALİTELİ DİSCORD BOT KOD PAYLAŞIM SİTESİ {CodeMareFi}", color: "#8cc63f", icon: "fa-solid fa-leaf" },
-    { text: "SİTEMİZE HOŞ GELDİNİZ! YENİ NESİL KOD PAYLAŞIM PLATFORMU", color: "#e60000", icon: "fa-solid fa-fire" },
-    { text: "BİLGİSAYAR, YAZILIM VE BOT KODLARI HAKKINDA HER ŞEY BURADA", color: "#00a8cc", icon: "fa-solid fa-code" },
-    { text: "DİSCORD SUNUCUMUZA KATILARAK BİZE DESTEK OLABİLİRSİNİZ", color: "#5865f2", icon: "fa-brands fa-discord" },
-  ];
-
+  // Fetch posts
   useEffect(() => {
     setLoading(true);
-    let catFilter = '';
-    if (activeTab === 'TAVSİYEMİZ') catFilter = 'Tavsiyemiz';
-    if (activeTab === 'POPÜLERLER') catFilter = 'Popüler';
-    if (activeTab === 'CODEMAREFI TRENDLER') catFilter = 'Discord-bot-kodları'; // Or some other major category
-
-    fetchPosts(POSTS_PER_PAGE + 5, (page - 1) * POSTS_PER_PAGE + 1, catFilter).then(({ posts: p, total: t }) => {
+    const tab = TABS.find(t => t.label === activeTab);
+    fetchPosts(POSTS_PER_PAGE + 5, (page - 1) * POSTS_PER_PAGE + 1, tab?.cat || '').then(({ posts: p, total: t }) => {
       setPosts(p);
       setTotal(t);
       setLoading(false);
     });
   }, [page, activeTab]);
 
-  // Hero Slider auto-advance
+  // Fetch all posts once for shuffle
+  useEffect(() => {
+    fetchPosts(100, 1, '').then(({ posts: p }) => setAllPosts(p));
+  }, []);
+
+  // Hero slider
   useEffect(() => {
     if (!posts.length) return;
     const t = setInterval(() => setHeroIdx(i => (i + 1) % Math.min(posts.length, 5)), 6000);
     return () => clearInterval(t);
   }, [posts]);
 
-  // Ticker auto-advance
+  // Ticker
   useEffect(() => {
     if (!posts.length || tickerPaused) return;
     const t = setInterval(() => setTickerIdx(i => (i + 1) % Math.min(posts.length, 8)), 4000);
     return () => clearInterval(t);
   }, [posts, tickerPaused]);
 
-  // Banner auto-advance
+  // Banner
   useEffect(() => {
-    const t = setInterval(() => setBannerIdx(i => (i + 1) % banners.length), 3500);
+    const t = setInterval(() => setBannerIdx(i => (i + 1) % BANNERS.length), 3500);
     return () => clearInterval(t);
-  }, [banners.length]);
+  }, []);
 
-  const totalPages = Math.ceil(total / POSTS_PER_PAGE);
+  // Shuffle: random post
+  const handleShuffle = useCallback(() => {
+    const pool = allPosts.length > 0 ? allPosts : posts;
+    if (!pool.length) return;
+    const random = pool[Math.floor(Math.random() * pool.length)];
+    router.push(random.url);
+  }, [allPosts, posts, router]);
+
+  // Expose shuffle to Navbar via custom event
+  useEffect(() => {
+    const handler = () => handleShuffle();
+    window.addEventListener('cmf-shuffle', handler);
+    return () => window.removeEventListener('cmf-shuffle', handler);
+  }, [handleShuffle]);
+
+  const totalPages  = Math.ceil(total / POSTS_PER_PAGE);
   const tickerPosts = posts.slice(0, 8);
-  const listPosts = posts.slice(0, POSTS_PER_PAGE);
+  const listPosts   = posts.slice(0, POSTS_PER_PAGE);
+  const heroPosts   = posts.slice(0, 5);
 
   return (
     <>
-      {/* SON YAZILAR - ust yatay thumbnail serit */}
+      {/* ── ÜST THUMBNAIL ŞERİDİ ── */}
       {posts.length > 0 && (
-        <div style={{ background: '#111', borderBottom: '1px solid #222' }} className="top-thumbnail-strip">
+        <div style={{ background: '#111', borderBottom: '2px solid #1a1a1a' }}>
           <div style={{ maxWidth: '1300px', margin: '0 auto', display: 'flex', overflowX: 'auto', scrollbarWidth: 'none' }}>
             {posts.slice(0, 5).map((p) => (
               <Link
                 key={p.id}
                 href={p.url}
-                className="strip-item"
                 style={{
                   flex: '1 1 200px',
                   display: 'flex',
@@ -82,14 +108,14 @@ export default function HomePage() {
                   textDecoration: 'none',
                   borderRight: '1px solid #1a1a1a',
                   overflow: 'hidden',
-                  position: 'relative',
-                  minWidth: '180px'
+                  minWidth: '180px',
+                  transition: 'background 0.2s',
                 }}
+                onMouseEnter={e => (e.currentTarget.style.background = '#1a1a1a')}
+                onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
               >
-                {/* thumbnail */}
-                <div style={{ position: 'relative', width: '100%', paddingTop: '65%', overflow: 'hidden', background: '#222' }}>
+                <div style={{ position: 'relative', width: '100%', paddingTop: '60%', overflow: 'hidden', background: '#222' }}>
                   {p.thumbnail && (
-                    // eslint-disable-next-line @next/next/no-img-element
                     <img
                       src={p.thumbnail}
                       alt=""
@@ -98,17 +124,19 @@ export default function HomePage() {
                       onMouseLeave={e => ((e.currentTarget as HTMLImageElement).style.transform = 'scale(1)')}
                     />
                   )}
+                  {/* Kategori badge */}
+                  {p.categories[0] && (
+                    <div style={{ position: 'absolute', top: '6px', left: '6px', background: '#e60000', color: '#fff', fontSize: '9px', fontWeight: 800, padding: '2px 6px', borderRadius: '2px', textTransform: 'uppercase' }}>
+                      {p.categories[0].replace(/-/g, ' ')}
+                    </div>
+                  )}
                 </div>
-                {/* meta */}
-                <div style={{ padding: '6px 8px', background: '#111', flex: 1 }}>
-                  <div style={{ color: '#888', fontSize: '10px', marginBottom: '3px' }}>
-                    <i className="fa-regular fa-clock" style={{ marginRight: '3px' }}></i>
+                <div style={{ padding: '8px 10px', background: '#111', flex: 1 }}>
+                  <div style={{ color: '#666', fontSize: '10px', marginBottom: '4px', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                    <i className="fa-regular fa-clock"></i>
                     {formatDate(p.published)}
                   </div>
-                  <div style={{
-                    color: '#ddd', fontSize: '12px', fontWeight: 600, lineHeight: 1.3,
-                    display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden',
-                  }}>
+                  <div style={{ color: '#ddd', fontSize: '12px', fontWeight: 600, lineHeight: 1.3, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
                     {p.title}
                   </div>
                 </div>
@@ -118,14 +146,13 @@ export default function HomePage() {
         </div>
       )}
 
-      {/* SON YAZILAR TICKER */}
+      {/* ── TICKER ── */}
       {tickerPosts.length > 0 && (
-        <div style={{ background: '#141414', borderBottom: '1px solid #1e1e1e' }}>
+        <div style={{ background: '#0d0d0d', borderBottom: '1px solid #1e1e1e' }}>
           <div style={{ maxWidth: '1300px', margin: '0 auto' }}>
             <div className="post-ticker-bar">
               <Link href={tickerPosts[tickerIdx]?.url || '#'} className="post-ticker-content" style={{ textDecoration: 'none' }}>
                 {tickerPosts[tickerIdx]?.thumbnail && (
-                  // eslint-disable-next-line @next/next/no-img-element
                   <img src={tickerPosts[tickerIdx].thumbnail} alt="" className="post-ticker-img" />
                 )}
                 <div className="post-ticker-info">
@@ -137,13 +164,13 @@ export default function HomePage() {
                 </div>
               </Link>
               <div className="post-ticker-controls">
-                <button className="ticker-btn" onClick={() => setTickerIdx(i => (i - 1 + tickerPosts.length) % tickerPosts.length)}>
+                <button className="ticker-btn" onClick={() => setTickerIdx(i => (i - 1 + tickerPosts.length) % tickerPosts.length)} aria-label="Önceki">
                   <i className="fa-solid fa-chevron-up"></i>
                 </button>
-                <button className="ticker-btn" onClick={() => setTickerPaused(p => !p)}>
+                <button className="ticker-btn" onClick={() => setTickerPaused(p => !p)} aria-label={tickerPaused ? 'Oynat' : 'Duraklat'}>
                   <i className={`fa-solid ${tickerPaused ? 'fa-play' : 'fa-pause'}`}></i>
                 </button>
-                <button className="ticker-btn" onClick={() => setTickerIdx(i => (i + 1) % tickerPosts.length)}>
+                <button className="ticker-btn" onClick={() => setTickerIdx(i => (i + 1) % tickerPosts.length)} aria-label="Sonraki">
                   <i className="fa-solid fa-chevron-down"></i>
                 </button>
               </div>
@@ -152,169 +179,158 @@ export default function HomePage() {
         </div>
       )}
 
-      {/* ANA ICERIK + SIDEBAR */}
+      {/* ── ANA İÇERİK + SIDEBAR ── */}
       <div className="main-layout">
         <div>
 
-          {/* DİNAMİK ROTATING BANNER */}
-          <div style={{ background: banners[bannerIdx].color, padding: '12px 15px', color: '#fff', fontSize: '13px', display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '20px', borderRadius: '2px', textTransform: 'uppercase', letterSpacing: '0.5px', transition: 'background 0.5s ease' }}>
-            <i className={banners[bannerIdx].icon} style={{ fontSize: '14px' }}></i>
-            <span style={{ transition: 'opacity 0.3s ease', animation: 'fadeIn 0.5s' }} key={bannerIdx}>{banners[bannerIdx].text}</span>
+          {/* Dönen Banner */}
+          <div
+            key={bannerIdx}
+            style={{
+              background: `linear-gradient(90deg, ${BANNERS[bannerIdx].color}22, ${BANNERS[bannerIdx].color}11)`,
+              border: `1px solid ${BANNERS[bannerIdx].color}44`,
+              padding: '10px 15px',
+              color: '#fff',
+              fontSize: '12px',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '10px',
+              marginBottom: '20px',
+              borderRadius: '3px',
+              textTransform: 'uppercase',
+              letterSpacing: '0.5px',
+              animation: 'fadeIn 0.5s',
+            }}
+          >
+            <i className={BANNERS[bannerIdx].icon} style={{ fontSize: '14px', color: BANNERS[bannerIdx].color }}></i>
+            <span style={{ color: BANNERS[bannerIdx].color, fontWeight: 700 }}>{BANNERS[bannerIdx].text}</span>
           </div>
 
-
-          {/* PREMIUM TABS: Trends, Recommended, etc. */}
-          <div style={{ display: 'flex', gap: '20px', marginBottom: '15px', borderBottom: '2px solid #222', paddingBottom: '5px', overflowX: 'auto', whiteSpace: 'nowrap' }} className="premium-tabs">
-            {['CODEMAREFI TRENDLER', 'TAVSİYEMİZ', 'POPÜLERLER', 'SON EKLENENLER'].map((tab, i) => (
-              <div 
-                key={tab} 
-                onClick={() => { setActiveTab(tab); setPage(1); }}
-                style={{ 
-                  color: activeTab === tab ? '#fff' : '#888', 
-                  fontSize: '13px', 
-                  fontWeight: 700, 
+          {/* Sekmeler */}
+          <div style={{ display: 'flex', gap: '0', marginBottom: '20px', borderBottom: '2px solid #222', overflowX: 'auto', scrollbarWidth: 'none' }}>
+            {TABS.map((tab) => (
+              <button
+                key={tab.label}
+                onClick={() => { setActiveTab(tab.label); setPage(1); }}
+                style={{
+                  background: activeTab === tab.label ? '#e60000' : 'transparent',
+                  color: activeTab === tab.label ? '#fff' : '#888',
+                  border: 'none',
+                  borderBottom: activeTab === tab.label ? '2px solid #e60000' : '2px solid transparent',
+                  padding: '10px 18px',
+                  fontSize: '12px',
+                  fontWeight: 700,
                   cursor: 'pointer',
-                  paddingBottom: '8px',
-                  borderBottom: activeTab === tab ? '2px solid #e60000' : 'none',
                   textTransform: 'uppercase',
+                  letterSpacing: '0.5px',
                   display: 'flex',
                   alignItems: 'center',
-                  gap: '8px',
-                  transition: 'all 0.3s'
+                  gap: '7px',
+                  whiteSpace: 'nowrap',
+                  transition: 'all 0.2s',
+                  marginBottom: '-2px',
                 }}
+                onMouseEnter={e => { if (activeTab !== tab.label) e.currentTarget.style.color = '#fff'; }}
+                onMouseLeave={e => { if (activeTab !== tab.label) e.currentTarget.style.color = '#888'; }}
               >
-                <i className={['fa-solid fa-fire', 'fa-solid fa-thumbs-up', 'fa-solid fa-star', 'fa-solid fa-clock'][i]}></i>
-                {tab}
-              </div>
+                <i className={`fa-solid ${tab.icon}`}></i>
+                {tab.label}
+              </button>
             ))}
           </div>
 
-          {/* PREMIUM FEATURED SECTION: 1 Buyuk Slider Sol + 2x2 Grid Sag */}
-          {posts.length > 0 && (
+          {/* Hero Featured Grid */}
+          {heroPosts.length > 0 && (
             <div className="featured-grid" style={{ marginBottom: '30px' }}>
-              
-              {/* SOL: Buyuk Hero Slider Kart */}
-              {posts[heroIdx] && (
-                <div className="featured-main" style={{ position: 'relative', overflow: 'hidden', borderRadius: '4px' }}>
-                  <Link
-                    href={posts[heroIdx].url}
-                    style={{
-                      position: 'relative',
-                      display: 'flex',
-                      flexDirection: 'column',
-                      background: '#000',
-                      textDecoration: 'none',
-                      height: '100%',
-                      transition: 'transform 0.3s ease',
-                    }}
-                    onMouseEnter={e => e.currentTarget.style.transform = 'scale(1.01)'}
-                    onMouseLeave={e => e.currentTarget.style.transform = 'scale(1)'}
-                  >
-                    {posts[heroIdx].thumbnail && (
-                      <img 
-                        key={heroIdx}
-                        src={posts[heroIdx].thumbnail} 
-                        alt="" 
-                        style={{ width: '100%', height: '100%', objectFit: 'cover', opacity: 0.7, animation: 'fadeIn 0.5s' }} 
-                      />
-                    )}
-                    {/* Overlay */}
-                    <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, padding: '30px', background: 'linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.6) 50%, transparent 100%)' }}>
-                      <div style={{ background: '#e60000', color: '#fff', fontSize: '10px', fontWeight: 800, padding: '4px 8px', borderRadius: '2px', display: 'inline-block', marginBottom: '12px', textTransform: 'uppercase' }}>
-                        {posts[heroIdx].categories[0] || 'GÜNCEL'}
-                      </div>
-                      <h2 style={{ color: '#fff', fontSize: '26px', fontWeight: 800, lineHeight: 1.2, marginBottom: '12px', textShadow: '0 2px 4px rgba(0,0,0,0.5)' }}>
-                        {posts[heroIdx].title}
-                      </h2>
-                      <div style={{ color: '#ccc', fontSize: '13px', lineHeight: 1.5, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden', marginBottom: '15px' }}>
-                        {posts[heroIdx].content?.replace(/<[^>]+>/g, '').slice(0, 160)}...
-                      </div>
-                      <div style={{ color: '#eee', fontSize: '11px', display: 'flex', gap: '15px', alignItems: 'center' }}>
-                        <span><i className="fa-solid fa-user" style={{ color: '#e60000', marginRight: '6px' }}></i>{posts[heroIdx].author}</span>
-                        <span><i className="fa-regular fa-clock" style={{ marginRight: '6px' }}></i>{formatDate(posts[heroIdx].published)}</span>
-                      </div>
-                    </div>
-                  </Link>
 
-                  {/* Navigation Dots */}
-                  <div style={{ position: 'absolute', top: '20px', right: '20px', display: 'flex', gap: '8px', zIndex: 10 }}>
-                    {posts.slice(0, 5).map((_, i) => (
+              {/* Sol: Büyük Hero Slider */}
+              {heroPosts[heroIdx] && (
+                <div className="featured-main" style={{ position: 'relative', overflow: 'hidden', cursor: 'pointer' }}
+                  onClick={() => router.push(heroPosts[heroIdx].url)}
+                >
+                  {heroPosts[heroIdx].thumbnail && (
+                    <img
+                      key={heroIdx}
+                      src={heroPosts[heroIdx].thumbnail}
+                      alt=""
+                      style={{ width: '100%', height: '100%', objectFit: 'cover', opacity: 0.75, animation: 'fadeIn 0.6s' }}
+                    />
+                  )}
+                  <div className="featured-main-overlay"></div>
+                  <div className="featured-main-content">
+                    <span className="featured-cat-badge">{heroPosts[heroIdx].categories[0]?.replace(/-/g, ' ') || 'GÜNCEL'}</span>
+                    <h2 className="featured-main-title">{heroPosts[heroIdx].title}</h2>
+                    <div className="featured-main-meta">
+                      <span><i className="fa-solid fa-user" style={{ color: '#e60000', marginRight: '5px' }}></i>{heroPosts[heroIdx].author}</span>
+                      <span><i className="fa-regular fa-clock" style={{ marginRight: '5px' }}></i>{formatDate(heroPosts[heroIdx].published)}</span>
+                      <span style={{ marginLeft: 'auto', background: '#e60000', color: '#fff', padding: '4px 12px', fontSize: '11px', fontWeight: 700, borderRadius: '2px' }}>
+                        Devamını Oku →
+                      </span>
+                    </div>
+                  </div>
+                  {/* Dots */}
+                  <div className="featured-slider-dots">
+                    {heroPosts.map((_, i) => (
                       <div
                         key={i}
-                        onClick={() => setHeroIdx(i)}
-                        style={{
-                          width: '10px',
-                          height: '10px',
-                          borderRadius: '50%',
-                          background: heroIdx === i ? '#e60000' : 'rgba(255,255,255,0.5)',
-                          cursor: 'pointer',
-                          transition: 'all 0.3s ease',
-                          border: heroIdx === i ? '2px solid #fff' : 'none'
-                        }}
+                        onClick={e => { e.stopPropagation(); setHeroIdx(i); }}
+                        className={`slider-dot ${heroIdx === i ? 'active' : ''}`}
                       />
                     ))}
                   </div>
                 </div>
               )}
 
-              {/* SAG: 2x2 Grid */}
+              {/* Sağ: 2x2 Grid */}
               <div className="featured-side">
-                {posts.slice(1, 5).map((p, idx) => (
-                  <div key={p.id} className="featured-small">
-                    <Link
-                      href={p.url}
-                      style={{
-                        position: 'relative',
-                        display: 'block',
-                        background: '#000',
-                        textDecoration: 'none',
-                        borderRadius: '4px',
-                        overflow: 'hidden',
-                        transition: 'transform 0.3s ease',
-                        height: '100%'
-                      }}
-                      onMouseEnter={e => e.currentTarget.style.transform = 'scale(1.03)'}
-                      onMouseLeave={e => e.currentTarget.style.transform = 'scale(1)'}
-                    >
-                      {p.thumbnail && (
-                        <img src={p.thumbnail} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', opacity: 0.6 }} />
-                      )}
-                      {/* Overlay */}
-                      <div style={{ position: 'absolute', top: '10px', left: '10px' }}>
-                        <div style={{ 
-                          background: idx % 2 === 0 ? '#2ea44f' : '#f68b1e', 
-                          color: '#fff', fontSize: '9px', fontWeight: 800, padding: '3px 6px', borderRadius: '2px', textTransform: 'uppercase' 
-                        }}>
-                          {p.categories[0] || 'KATEGORİ'}
-                        </div>
-                      </div>
-                      <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, padding: '15px', background: 'linear-gradient(to top, rgba(0,0,0,0.9) 0%, transparent 100%)' }}>
-                        <div style={{ color: '#fff', fontSize: '13px', fontWeight: 700, lineHeight: 1.3, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
-                          {p.title}
-                        </div>
-                        <div style={{ color: '#bbb', fontSize: '10px', marginTop: '8px', display: 'flex', justifyContent: 'space-between' }}>
-                          <span>{formatDate(p.published)}</span>
-                        </div>
-                      </div>
-                    </Link>
+                {heroPosts.slice(1, 5).map((p, idx) => (
+                  <div key={p.id} className="featured-small" onClick={() => router.push(p.url)} style={{ cursor: 'pointer' }}>
+                    {p.thumbnail && (
+                      <img src={p.thumbnail} alt="" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }} />
+                    )}
+                    <div className="featured-small-overlay"></div>
+                    <div style={{ position: 'absolute', top: '8px', left: '8px', zIndex: 2 }}>
+                      <span className="featured-small-cat" style={{ background: idx % 2 === 0 ? '#2ea44f' : '#e60000' }}>
+                        {p.categories[0]?.replace(/-/g, ' ') || 'KATEGORİ'}
+                      </span>
+                    </div>
+                    <div className="featured-small-content">
+                      <div className="featured-small-title">{p.title}</div>
+                      <div className="featured-small-meta">{formatDate(p.published)}</div>
+                    </div>
                   </div>
                 ))}
               </div>
             </div>
           )}
 
-
-          {/* TRENDLER BASLIGI */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '0 0 8px', marginBottom: '10px', borderBottom: '2px solid #e60000' }}>
-            <i className="fa-solid fa-fire" style={{ color: '#e60000', fontSize: '15px' }}></i>
-            <span style={{ fontSize: '13px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.5px', color: '#fff' }}>
-              {activeTab === 'SON EKLENENLER' ? 'EN YENİLER' : activeTab}
-            </span>
+          {/* Bölüm başlığı */}
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 0 10px', marginBottom: '10px', borderBottom: '2px solid #e60000' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+              <i className="fa-solid fa-fire" style={{ color: '#e60000', fontSize: '15px' }}></i>
+              <span style={{ fontSize: '13px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.5px', color: '#fff' }}>
+                {activeTab === 'SON EKLENENLER' ? 'EN YENİLER' : activeTab}
+              </span>
+            </div>
+            <button
+              onClick={handleShuffle}
+              title="Rastgele Yazı"
+              style={{ background: '#1a1a1a', border: '1px solid #333', color: '#888', padding: '5px 12px', borderRadius: '3px', cursor: 'pointer', fontSize: '11px', display: 'flex', alignItems: 'center', gap: '6px', transition: 'all 0.2s' }}
+              onMouseEnter={e => { e.currentTarget.style.background = '#e60000'; e.currentTarget.style.color = '#fff'; e.currentTarget.style.borderColor = '#e60000'; }}
+              onMouseLeave={e => { e.currentTarget.style.background = '#1a1a1a'; e.currentTarget.style.color = '#888'; e.currentTarget.style.borderColor = '#333'; }}
+            >
+              <i className="fa-solid fa-shuffle"></i> Rastgele
+            </button>
           </div>
 
-          {/* YAZI LISTESI */}
+          {/* Yazı Listesi */}
           {loading ? (
             <div className="loading-spinner"><div className="spinner"></div></div>
+          ) : listPosts.length === 0 ? (
+            <div style={{ textAlign: 'center', padding: '60px 20px', color: '#555' }}>
+              <i className="fa-solid fa-inbox" style={{ fontSize: '40px', marginBottom: '15px', display: 'block' }}></i>
+              Bu kategoride henüz yazı bulunmuyor.
+            </div>
           ) : (
             <>
               <div className="posts-grid">
@@ -323,7 +339,7 @@ export default function HomePage() {
 
               {totalPages > 1 && (
                 <div className="pagination">
-                  <button className="page-btn" onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1}>
+                  <button className="page-btn" onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1} aria-label="Önceki sayfa">
                     <i className="fa-solid fa-angle-left"></i>
                   </button>
                   {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
@@ -334,7 +350,7 @@ export default function HomePage() {
                       </button>
                     );
                   })}
-                  <button className="page-btn" onClick={() => setPage(p => Math.min(totalPages, p + 1))} disabled={page === totalPages}>
+                  <button className="page-btn" onClick={() => setPage(p => Math.min(totalPages, p + 1))} disabled={page === totalPages} aria-label="Sonraki sayfa">
                     <i className="fa-solid fa-angle-right"></i>
                   </button>
                 </div>
@@ -343,9 +359,12 @@ export default function HomePage() {
           )}
         </div>
 
-        {/* ── SIDEBAR ── */}
         <Sidebar />
       </div>
+
+      <style>{`
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+      `}</style>
     </>
   );
 }
