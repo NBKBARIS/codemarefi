@@ -5,6 +5,7 @@ import { submitUserPost } from '../lib/userPosts';
 import { hasBadWords } from '../lib/badWords';
 import { useRouter } from 'next/navigation';
 import { User } from '@supabase/supabase-js';
+import CommentEditor from '../components/CommentEditor';
 
 export default function PaylasPage() {
   const router = useRouter();
@@ -380,7 +381,7 @@ export default function PaylasPage() {
 
             <div>
               <label style={{ display: 'block', fontSize: '13px', color: '#888', marginBottom: '8px' }}>
-                İçerik (HTML Kullanabilirsiniz)
+                İçerik
                 {(() => {
                   const wc = content.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim().split(/\s+/).filter(Boolean).length;
                   return (
@@ -390,13 +391,12 @@ export default function PaylasPage() {
                   );
                 })()}
               </label>
-              <textarea 
-                required
-                rows={10}
+              <CommentEditor
                 value={content}
-                onChange={e => setContent(e.target.value)}
-                placeholder="Yazınızı buraya yazın... (En az 100 kelime olmalıdır)"
-                style={{ width: '100%', background: '#0a0a0a', border: '1px solid #333', padding: '12px', color: '#fff', borderRadius: '4px', outline: 'none', resize: 'vertical' }}
+                onChange={setContent}
+                placeholder="Yazınızı buraya yazın... Araç çubuğuyla biçimlendirebilirsiniz. (En az 100 kelime)"
+                disabled={loading}
+                rows={12}
               />
               <div style={{ marginTop: '6px', padding: '8px 12px', background: '#0a0a0a', border: '1px solid #1a1a1a', borderRadius: '4px', fontSize: '11px', color: '#555' }}>
                 <i className="fa-solid fa-circle-info" style={{ color: '#e60000', marginRight: '5px' }}></i>

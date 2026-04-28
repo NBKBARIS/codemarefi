@@ -4,6 +4,7 @@ import { useParams, useRouter } from 'next/navigation';
 import { supabase } from '../../../lib/supabase';
 import { updatePost } from '../../../lib/userPosts';
 import { hasBadWords } from '../../../lib/badWords';
+import CommentEditor from '../../../components/CommentEditor';
 
 const CATEGORIES = [
   { group: 'Discord', options: ['Discord-bot-kodları','Discord-bot-konuları','Discord-Konuları','Discord-Hazır-Bot-Altyapılar'] },
@@ -153,13 +154,18 @@ export default function EditPostPage() {
             {/* İçerik */}
             <div>
               <label style={{ display: 'block', fontSize: '13px', color: '#888', marginBottom: '8px' }}>
-                İçerik (HTML Kullanabilirsiniz)
+                İçerik
                 <span style={{ float: 'right', fontSize: '11px', color: wordCount >= 100 ? '#2ea44f' : '#e60000' }}>
                   {wordCount} kelime {wordCount < 100 ? `(min 100)` : '✓'}
                 </span>
               </label>
-              <textarea required rows={12} value={content} onChange={e => setContent(e.target.value)}
-                style={{ width: '100%', background: '#0a0a0a', border: '1px solid #333', padding: '12px', color: '#fff', borderRadius: '4px', outline: 'none', resize: 'vertical', fontFamily: 'monospace', fontSize: '13px' }} />
+              <CommentEditor
+                value={content}
+                onChange={setContent}
+                placeholder="İçeriğinizi buraya yazın... Araç çubuğuyla biçimlendirebilirsiniz."
+                disabled={saving}
+                rows={12}
+              />
             </div>
 
             <div style={{ display: 'flex', gap: '12px' }}>

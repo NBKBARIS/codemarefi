@@ -6,6 +6,26 @@ import { sendNotification } from '../lib/notifications';
 import CommentEditor from './CommentEditor';
 import Link from 'next/link';
 
+// Güvenli HTML sanitizer — sadece editörden gelen tag'lere izin ver
+function sanitizeCommentHtml(html: string): string {
+  // İzin verilen tag'ler: strong, em, u, s, code, span (sadece color style ile)
+  return html
+    // Tehlikeli tag'leri tamamen kaldır
+    .replace(/<script[^>]*>[\s\S]*?<\/script>/gi, '')
+    .replace(/<iframe[^>]*>[\s\S]*?<\/iframe>/gi, '')
+    .replace(/<object[^>]*>[\s\S]*?<\/object>/gi, '')
+    .replace(/<embed[^>]*>/gi, '')
+    .replace(/<form[^>]*>[\s\S]*?<\/form>/gi, '')
+    .replace(/on\w+="[^"]*"/gi, '') // onclick, onload vb. event handler'ları kaldır
+    .replace(/javascript:/gi, '')
+    // span'larda sadece color style'a izin ver
+    .replace(/<span\s+style="([^"]*)">/gi, (match, style) => {
+      const colorMatch = style.match(/color:\s*[^;]+/);
+      if (colorMatch) return `<span style="${colorMatch[0]}">`;
+      return '<span>';
+    });
+}
+
 // Top 3 yorum yapan kullanıcıları çek (global cache)
 let cachedTopCommenters: string[] = [];
 let cacheTime = 0;
@@ -204,7 +224,7 @@ const CommentNode = ({
                   </div>
                 </div>
               ) : (
-                comment.content
+                <span dangerouslySetInnerHTML={{ __html: sanitizeCommentHtml(comment.content) }} />
               )}
            </div>
 

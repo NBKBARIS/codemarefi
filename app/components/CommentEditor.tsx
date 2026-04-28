@@ -6,6 +6,7 @@ interface Props {
   onChange: (val: string) => void;
   placeholder?: string;
   disabled?: boolean;
+  rows?: number;
 }
 
 const EMOJIS = ['😀','😂','🥹','😍','🤔','😎','🔥','💯','👍','👎','❤️','💀','🎉','⚡','🚀','💻','🤖','🎮','👾','🛠️','✅','❌','⚠️','📌','💡','🏆','🥇','🎯','👀','🙏'];
@@ -22,7 +23,7 @@ const FORMATS = [
   { label: '🟡',  style: 'color:#f7df1e',                           wrap: ['<span style="color:#f7df1e">','</span>'], title: 'Sarı' },
 ];
 
-export default function CommentEditor({ value, onChange, placeholder, disabled }: Props) {
+export default function CommentEditor({ value, onChange, placeholder, disabled, rows = 4 }: Props) {
   const [showEmoji, setShowEmoji] = useState(false);
   const [preview, setPreview] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -132,7 +133,7 @@ export default function CommentEditor({ value, onChange, placeholder, disabled }
           onChange={e => onChange(e.target.value)}
           placeholder={placeholder || 'Yorumunuzu yazın... (Araç çubuğunu kullanarak biçimlendirebilirsiniz)'}
           disabled={disabled}
-          rows={4}
+          rows={rows}
           style={{ width: '100%', padding: '12px', background: 'transparent', border: 'none', color: '#fff', outline: 'none', resize: 'vertical', fontSize: '14px', lineHeight: 1.6, fontFamily: 'inherit' }}
         />
       )}
