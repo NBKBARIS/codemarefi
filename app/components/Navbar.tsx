@@ -131,48 +131,45 @@ export default function Navbar() {
               <i className="fa-solid fa-magnifying-glass"></i>
             </a>
 
-            {/* Giriş / Profil Butonu */}
+            {/* Yönetim & Paylaş Butonları (Herkes Görür) */}
             <div style={{ marginLeft: '10px', display: 'flex', alignItems: 'center', gap: '10px' }}>
-              {user ? (
-                <>
-                  {/* Yönetim Paneli Butonu (Sadece Admin/Mod) */}
-                  {(profile?.role === 'admin' || profile?.role === 'mod') && (
-                    <Link href="/yonetim" style={{
-                      background: '#333',
-                      color: '#fff',
-                      border: '1px solid #444',
-                      borderRadius: '4px',
-                      padding: '4px 10px',
-                      fontSize: '11px',
-                      fontWeight: 700,
-                      textDecoration: 'none',
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '5px'
-                    }}>
-                      <i className="fa-solid fa-user-shield" style={{ color: '#e60000' }}></i>
-                      Yönetim
-                    </Link>
-                  )}
+              <Link href="/yonetim" style={{
+                background: '#333',
+                color: '#fff',
+                border: '1px solid #444',
+                borderRadius: '4px',
+                padding: '4px 10px',
+                fontSize: '11px',
+                fontWeight: 700,
+                textDecoration: 'none',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '5px'
+              }}>
+                <i className="fa-solid fa-user-shield" style={{ color: '#e60000' }}></i>
+                Yönetim
+              </Link>
 
-                  {/* Yazı Paylaş Butonu */}
-                  <Link href="/paylas" style={{
-                    background: '#e60000',
-                    color: '#fff',
-                    borderRadius: '4px',
-                    padding: '4px 10px',
-                    fontSize: '11px',
-                    fontWeight: 700,
-                    textDecoration: 'none',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '5px'
-                  }}>
-                    <i className="fa-solid fa-plus"></i>
-                    Paylaş
-                  </Link>
+              <Link href="/paylas" style={{
+                background: '#e60000',
+                color: '#fff',
+                borderRadius: '4px',
+                padding: '4px 10px',
+                fontSize: '11px',
+                fontWeight: 700,
+                textDecoration: 'none',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '5px'
+              }}>
+                <i className="fa-solid fa-plus"></i>
+                Paylaş
+              </Link>
 
-                  <Link href="/profil" style={{ display: 'flex', alignItems: 'center', gap: '8px', textDecoration: 'none', color: '#fff', marginLeft: '5px' }}>
+              {/* Giriş / Profil Butonu */}
+              <div style={{ marginLeft: '5px', display: 'flex', alignItems: 'center', gap: '10px' }}>
+                {user ? (
+                  <Link href="/profil" style={{ display: 'flex', alignItems: 'center', gap: '8px', textDecoration: 'none', color: '#fff' }}>
                     {profile?.avatar_url ? (
                       <img src={profile.avatar_url} alt="avatar" style={{ width: '24px', height: '24px', borderRadius: '50%', objectFit: 'cover', border: '1px solid #e60000' }} />
                     ) : (
@@ -182,29 +179,29 @@ export default function Navbar() {
                     )}
                     <span style={{ fontSize: '12px', fontWeight: 600 }}>{profile?.full_name || 'Profilim'}</span>
                   </Link>
-                </>
-              ) : (
-                <button 
-                  onClick={() => window.dispatchEvent(new CustomEvent('open-auth-modal'))}
-                  style={{
-                    background: '#e60000',
-                    color: '#fff',
-                    border: 'none',
-                    borderRadius: '4px',
-                    padding: '4px 12px',
-                    fontSize: '11px',
-                    fontWeight: 700,
-                    cursor: 'pointer',
-                    textTransform: 'uppercase',
-                    transition: 'background 0.2s'
-                  }}
-                  onMouseEnter={e => (e.currentTarget.style.background = '#cc0000')}
-                  onMouseLeave={e => (e.currentTarget.style.background = '#e60000')}
-                >
-                  <i className="fa-solid fa-right-to-bracket" style={{ marginRight: '5px' }}></i>
-                  Giriş Yap
-                </button>
-              )}
+                ) : (
+                  <button 
+                    onClick={() => window.dispatchEvent(new CustomEvent('open-auth-modal'))}
+                    style={{
+                      background: '#1a1a1a',
+                      color: '#888',
+                      border: '1px solid #333',
+                      borderRadius: '4px',
+                      padding: '4px 12px',
+                      fontSize: '11px',
+                      fontWeight: 700,
+                      cursor: 'pointer',
+                      textTransform: 'uppercase',
+                      transition: 'all 0.2s'
+                    }}
+                    onMouseEnter={e => { e.currentTarget.style.background = '#222'; e.currentTarget.style.color = '#fff'; }}
+                    onMouseLeave={e => { e.currentTarget.style.background = '#1a1a1a'; e.currentTarget.style.color = '#888'; }}
+                  >
+                    <i className="fa-solid fa-right-to-bracket" style={{ marginRight: '5px' }}></i>
+                    Giriş Yap
+                  </button>
+                )}
+              </div>
             </div>
           </div>
         </div>

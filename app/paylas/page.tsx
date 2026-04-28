@@ -12,6 +12,7 @@ export default function PaylasPage() {
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState({ type: '', text: '' });
+  const [accessDenied, setAccessDenied] = useState(false);
   
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
@@ -22,13 +23,50 @@ export default function PaylasPage() {
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (!session) {
-        router.push('/');
-        window.dispatchEvent(new CustomEvent('open-auth-modal'));
+        setAccessDenied(true);
       } else {
         setUser(session.user);
       }
     });
-  }, [router]);
+  }, []);
+
+  if (accessDenied) {
+    return (
+      <main style={{ background: '#050505', minHeight: '100vh', color: '#fff' }}>
+        <Navbar />
+        <div style={{ minHeight: '80vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }}>
+          <div style={{ textAlign: 'center', maxWidth: '520px' }}>
+            <div style={{ width: '110px', height: '110px', borderRadius: '50%', background: 'rgba(230,0,0,0.08)', border: '2px solid #e60000', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 30px', fontSize: '44px', color: '#e60000', boxShadow: '0 0 50px rgba(230,0,0,0.15)' }}>
+              <i className="fa-solid fa-pen-to-square"></i>
+            </div>
+            <h1 style={{ fontSize: '26px', fontWeight: 900, letterSpacing: '3px', textTransform: 'uppercase', color: '#e60000', marginBottom: '10px' }}>
+              Paylaşım İçin Giriş Yap
+            </h1>
+            <div style={{ width: '50px', height: '3px', background: '#e60000', margin: '0 auto 20px' }}></div>
+            <p style={{ color: '#666', fontSize: '14px', lineHeight: 1.8, marginBottom: '25px' }}>
+              Sitemizde içerik paylaşabilmek için Discord veya Google hesabınızla giriş yapmanız gerekmektedir. Kayıt olmak tamamen ücretsizdir!
+            </p>
+            
+            <div style={{ display: 'flex', gap: '15px', justifyContent: 'center' }}>
+              <button 
+                onClick={() => window.dispatchEvent(new CustomEvent('open-auth-modal'))}
+                style={{ background: '#e60000', color: '#fff', border: 'none', padding: '13px 32px', borderRadius: '4px', fontWeight: 700, cursor: 'pointer', fontSize: '13px', letterSpacing: '1px', textTransform: 'uppercase' }}
+              >
+                Giriş Yap / Kayıt Ol
+              </button>
+              <button 
+                onClick={() => router.push('/')}
+                style={{ background: '#1a1a1a', color: '#888', border: '1px solid #333', padding: '13px 32px', borderRadius: '4px', fontWeight: 700, cursor: 'pointer', fontSize: '13px', letterSpacing: '1px', textTransform: 'uppercase' }}
+              >
+                Ana Sayfaya Dön
+              </button>
+            </div>
+          </div>
+        </div>
+        <Footer />
+      </main>
+    );
+  }
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
