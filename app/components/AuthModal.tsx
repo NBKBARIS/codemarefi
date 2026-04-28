@@ -157,8 +157,10 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
 
     // Validation
     if (step === 'form' && !isLogin) {
-      if (!email.toLowerCase().endsWith('@gmail.com')) {
-        setMessage({ type: 'error', text: 'Yalnızca @gmail.com adresleri kabul edilmektedir!' });
+      // Geçerli email formatı kontrolü (herhangi bir domain kabul et)
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(email)) {
+        setMessage({ type: 'error', text: 'Geçerli bir e-posta adresi girin!' });
         setLoading(false);
         return;
       }
@@ -221,7 +223,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
             setStep('verify');
             setTimer(60);
             setCanResend(false);
-            setMessage({ type: 'success', text: 'Gmail adresine 6 haneli doğrulama kodu gönderildi!' });
+            setMessage({ type: 'success', text: 'E-posta adresine 6 haneli doğrulama kodu gönderildi!' });
           } else {
             setMessage({ type: 'success', text: 'Kayıt Başarılı! Protokoller Hazır.' });
             setTimeout(() => setIsLogin(true), 1500);
