@@ -32,30 +32,19 @@ const TABS: { key: Tab; icon: string; label: string }[] = [
   { key: 'activity', icon: 'fa-fire',     label: 'Bu Hafta'   },
 ];
 
-// Aktiflik: localStorage'da her kullanıcı için süre tutulur (saniye cinsinden)
-const ACTIVITY_KEY = 'cmf_activity'; // { [user_id]: seconds }
-const ACTIVITY_RESET_KEY = 'cmf_activity_week'; // hangi haftada sıfırlandı
+// Aktiflik: Supabase user_activity tablosuna kaydedilir
+const ACTIVITY_RESET_KEY = 'cmf_activity_week';
 
-function getWeekNumber(): string {
+function getWeekKey(): string {
   const now = new Date();
   const startOfYear = new Date(now.getFullYear(), 0, 1);
   const week = Math.ceil(((now.getTime() - startOfYear.getTime()) / 86400000 + startOfYear.getDay() + 1) / 7);
   return `${now.getFullYear()}-W${week}`;
 }
 
-function resetActivityIfNewWeek() {
-  if (typeof window === 'undefined') return;
-  const currentWeek = getWeekNumber();
-  const lastWeek = localStorage.getItem(ACTIVITY_RESET_KEY);
-  if (lastWeek !== currentWeek) {
-    localStorage.removeItem(ACTIVITY_KEY);
-    localStorage.setItem(ACTIVITY_RESET_KEY, currentWeek);
-  }
-}
-
 function formatDuration(seconds: number): string {
   if (seconds < 60) return `${seconds}sn`;
-  if (seconds < 3600) return `${Math.floor(seconds / 60)}dk ${seconds % 60}sn`;
+  if (seconds < 3600) return `${Math.floor(seconds / 60)}dk`;
   const h = Math.floor(seconds / 3600);
   const m = Math.floor((seconds % 3600) / 60);
   return `${h}sa ${m}dk`;
@@ -73,8 +62,6 @@ export default function Leaderboard() {
 
   // ── Veri çekme ──────────────────────────────────────────────
   const fetchLeaders = useCallback(async () => {
-    // Yeni hafta başladıysa aktifliği sıfırla
-    resetActivityIfNewWeek();
     try {
       // Paylaşım — ayrı sorgu ile
       const { data: postData } = await supabase
@@ -142,33 +129,37 @@ export default function Leaderboard() {
         }
       }
 
-      // Aktiflik — localStorage'dan oku, profil bilgilerini Supabase'den çek
-      try {
-        const raw = localStorage.getItem(ACTIVITY_KEY);
-        if (raw) {
-          const actMap: Record<string, number> = JSON.parse(raw);
-          const ids = Object.keys(actMap);
-          if (ids.length > 0) {
-            const { data: profiles } = await supabase
-              .from('profiles')
-              .select('id, full_name, avatar_url, role')
-              .in('id', ids);
+      // Aktiflik — Supabase user_activity tablosundan bu haftanın verilerini çek
+      const weekKey = getWeekKey();
+      const { data: activityData } = await supabase
+        .from('user_activity')
+        .select('user_id, seconds')
+        .eq('week_key', weekKey)
+        .order('seconds', { ascending: false })
+        .limit(10);
 
-            if (profiles) {
-              const list = profiles.map((p: any) => ({
-                user_id: p.id,
-                full_name: p.full_name || 'Anonim',
-                avatar_url: p.avatar_url,
-                role: p.role || 'member',
-                seconds: actMap[p.id] || 0,
-              })).sort((a, b) => b.seconds - a.seconds).slice(0, 10);
-              setActivityLeaders(list);
-            }
-          }
+      if (activityData && activityData.length > 0) {
+        const actIds = activityData.map((a: any) => a.user_id);
+        const { data: actProfiles } = await supabase
+          .from('profiles')
+          .select('id, full_name, avatar_url, role')
+          .in('id', actIds);
+
+        if (actProfiles) {
+          const list = activityData.map((a: any) => {
+            const prof = actProfiles.find((p: any) => p.id === a.user_id);
+            return {
+              user_id: a.user_id,
+              full_name: prof?.full_name || 'Anonim',
+              avatar_url: prof?.avatar_url || null,
+              role: prof?.role || 'member',
+              seconds: a.seconds || 0,
+            };
+          });
+          setActivityLeaders(list);
         }
-      } catch {
-        // localStorage bozuksa sessizce geç
-        localStorage.removeItem(ACTIVITY_KEY);
+      } else {
+        setActivityLeaders([]);
       }
 
       setLastUpdated(new Date());
@@ -179,24 +170,46 @@ export default function Leaderboard() {
     }
   }, []);
 
-  // ── Aktiflik takibi: giriş yapmış kullanıcının süresini artır ──
+  // ── Aktiflik takibi: Supabase user_activity tablosuna kaydet ──
   useEffect(() => {
-    // Sayfa açılışında haftalık sıfırlama kontrolü
-    resetActivityIfNewWeek();
-
     let userId: string | null = null;
+    const weekKey = getWeekKey();
 
     supabase.auth.getSession().then(({ data: { session } }) => {
       userId = session?.user?.id ?? null;
     });
 
-    const tick = setInterval(() => {
+    const tick = setInterval(async () => {
       if (!userId) return;
-      const raw = localStorage.getItem(ACTIVITY_KEY);
-      const map: Record<string, number> = raw ? JSON.parse(raw) : {};
-      map[userId] = (map[userId] || 0) + 300; // +5 dakika
-      localStorage.setItem(ACTIVITY_KEY, JSON.stringify(map));
-    }, 5 * 60 * 1000); // her 5 dakikada bir kaydet
+      try {
+        // upsert: varsa seconds'a 300 ekle, yoksa yeni kayıt oluştur
+        await supabase.rpc('increment_activity', {
+          p_user_id: userId,
+          p_week_key: weekKey,
+          p_seconds: 300,
+        });
+      } catch {
+        // RPC yoksa manuel upsert
+        const { data: existing } = await supabase
+          .from('user_activity')
+          .select('seconds')
+          .eq('user_id', userId)
+          .eq('week_key', weekKey)
+          .single();
+
+        if (existing) {
+          await supabase
+            .from('user_activity')
+            .update({ seconds: (existing.seconds || 0) + 300, updated_at: new Date().toISOString() })
+            .eq('user_id', userId)
+            .eq('week_key', weekKey);
+        } else {
+          await supabase
+            .from('user_activity')
+            .insert({ user_id: userId, week_key: weekKey, seconds: 300 });
+        }
+      }
+    }, 5 * 60 * 1000); // her 5 dakikada bir
 
     return () => clearInterval(tick);
   }, []);
