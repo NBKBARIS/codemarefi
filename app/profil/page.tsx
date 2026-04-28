@@ -5,13 +5,31 @@ import { supabase, clearLastSeen } from '../lib/supabase';
 import { useRouter } from 'next/navigation';
 
 const SOCIAL_FIELDS = [
-  { key: 'github',    icon: 'fa-github',    label: 'GitHub',    placeholder: 'https://github.com/kullanici', color: '#fff' },
-  { key: 'twitter',   icon: 'fa-twitter',   label: 'Twitter',   placeholder: 'https://twitter.com/kullanici', color: '#1da1f2' },
-  { key: 'youtube',   icon: 'fa-youtube',   label: 'YouTube',   placeholder: 'https://youtube.com/@kanal', color: '#ff0000' },
-  { key: 'discord',   icon: 'fa-discord',   label: 'Discord',   placeholder: 'Discord kullanıcı adı#0000', color: '#5865f2' },
-  { key: 'instagram', icon: 'fa-instagram', label: 'Instagram', placeholder: 'https://instagram.com/kullanici', color: '#e1306c' },
-  { key: 'website',   icon: 'fa-globe',     label: 'Website',   placeholder: 'https://siteadresi.com', color: '#2ea44f' },
+  { key: 'github',    icon: 'fa-github',    label: 'GitHub',    placeholder: 'https://github.com/kullanici',    color: '#fff',     pattern: /^https:\/\/(www\.)?github\.com\/.+/i },
+  { key: 'twitter',   icon: 'fa-twitter',   label: 'Twitter',   placeholder: 'https://twitter.com/kullanici',   color: '#1da1f2',  pattern: /^https:\/\/(www\.)?(twitter|x)\.com\/.+/i },
+  { key: 'youtube',   icon: 'fa-youtube',   label: 'YouTube',   placeholder: 'https://youtube.com/@kanal',      color: '#ff0000',  pattern: /^https:\/\/(www\.)?youtube\.com\/.+/i },
+  { key: 'discord',   icon: 'fa-discord',   label: 'Discord',   placeholder: 'KullaniciAdi veya discord.gg/...', color: '#5865f2', pattern: /^.{2,50}$/ },
+  { key: 'instagram', icon: 'fa-instagram', label: 'Instagram', placeholder: 'https://instagram.com/kullanici', color: '#e1306c',  pattern: /^https:\/\/(www\.)?instagram\.com\/.+/i },
+  { key: 'website',   icon: 'fa-globe',     label: 'Website',   placeholder: 'https://siteadresi.com',          color: '#2ea44f',  pattern: /^https?:\/\/.{3,}/i },
 ];
+
+function validateSocialLink(key: string, value: string): string | null {
+  if (!value.trim()) return null; // boş = geçerli (gösterilmez)
+  const field = SOCIAL_FIELDS.find(f => f.key === key);
+  if (!field) return null;
+  if (!field.pattern.test(value.trim())) {
+    const examples: Record<string, string> = {
+      github:    'https://github.com/kullanici-adi',
+      twitter:   'https://twitter.com/kullanici-adi',
+      youtube:   'https://youtube.com/@kanal-adi',
+      discord:   'KullaniciAdi#1234 veya discord.gg/davet',
+      instagram: 'https://instagram.com/kullanici-adi',
+      website:   'https://siteadresi.com',
+    };
+    return `Geçersiz ${field.label} linki. Örnek: ${examples[key]}`;
+  }
+  return null;
+}
 export default function ProfilePage() {
   const [user, setUser] = useState<any>(null);
   const [profile, setProfile] = useState<any>(null);
@@ -61,6 +79,13 @@ export default function ProfilePage() {
   const updateProfile = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!fullName.trim()) { setMessage({ type: 'error', text: 'Kullanıcı adı boş bırakılamaz.' }); return; }
+
+    // Sosyal link validasyonu
+    for (const field of SOCIAL_FIELDS) {
+      const val = socialLinks[field.key] || '';
+      const err = validateSocialLink(field.key, val);
+      if (err) { setMessage({ type: 'error', text: err }); return; }
+    }
     setUpdating(true);
     setMessage({ type: '', text: '' });
     try {
@@ -181,33 +206,51 @@ export default function ProfilePage() {
               SOSYAL MEDYA LİNKLERİ
             </label>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-              {SOCIAL_FIELDS.map(field => (
-                <div key={field.key} style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-                  <div style={{ position: 'relative', flex: 1 }}>
-                    <i className={`fa-brands ${field.icon}`} style={{ position: 'absolute', left: '14px', top: '50%', transform: 'translateY(-50%)', color: socialLinks[field.key] ? field.color : '#444', fontSize: '14px' }}></i>
-                    <input
-                      type="text"
-                      value={socialLinks[field.key] || ''}
-                      onChange={e => setSocialLinks(prev => ({ ...prev, [field.key]: e.target.value }))}
-                      placeholder={field.placeholder}
-                      style={{ width: '100%', padding: '10px 12px 10px 40px', borderRadius: '6px', background: 'rgba(0,0,0,0.3)', border: `1px solid ${socialLinks[field.key] ? field.color + '55' : '#1e1e1e'}`, color: '#ccc', outline: 'none', fontSize: '12px', fontFamily: 'monospace', transition: 'border-color 0.2s', opacity: socialVisible[field.key] === false ? 0.4 : 1 }}
-                      onFocus={e => (e.currentTarget.style.borderColor = field.color)}
-                      onBlur={e => (e.currentTarget.style.borderColor = socialLinks[field.key] ? field.color + '55' : '#1e1e1e')}
-                    />
+              {SOCIAL_FIELDS.map(field => {
+                const val = socialLinks[field.key] || '';
+                const err = val ? validateSocialLink(field.key, val) : null;
+                return (
+                  <div key={field.key}>
+                    <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                      <div style={{ position: 'relative', flex: 1 }}>
+                        <i className={`fa-brands ${field.icon}`} style={{ position: 'absolute', left: '14px', top: '50%', transform: 'translateY(-50%)', color: err ? '#e60000' : val ? field.color : '#444', fontSize: '14px' }}></i>
+                        <input
+                          type="text"
+                          value={val}
+                          onChange={e => setSocialLinks(prev => ({ ...prev, [field.key]: e.target.value }))}
+                          placeholder={field.placeholder}
+                          style={{
+                            width: '100%', padding: '10px 12px 10px 40px', borderRadius: '6px',
+                            background: 'rgba(0,0,0,0.3)',
+                            border: `1px solid ${err ? '#e60000' : val && !err ? field.color + '55' : '#1e1e1e'}`,
+                            color: '#ccc', outline: 'none', fontSize: '12px', fontFamily: 'monospace',
+                            transition: 'border-color 0.2s',
+                            opacity: socialVisible[field.key] === false ? 0.4 : 1,
+                          }}
+                          onFocus={e => (e.currentTarget.style.borderColor = err ? '#e60000' : field.color)}
+                          onBlur={e => (e.currentTarget.style.borderColor = err ? '#e60000' : val ? field.color + '55' : '#1e1e1e')}
+                        />
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => setSocialVisible(prev => ({ ...prev, [field.key]: prev[field.key] === false ? true : false }))}
+                        title={socialVisible[field.key] === false ? 'Gizli — tıkla göster' : 'Görünür — tıkla gizle'}
+                        style={{ background: 'none', border: `1px solid ${socialVisible[field.key] === false ? '#333' : '#444'}`, borderRadius: '6px', padding: '8px 10px', cursor: 'pointer', color: socialVisible[field.key] === false ? '#444' : '#888', fontSize: '12px', flexShrink: 0, transition: 'all 0.2s' }}
+                        onMouseEnter={e => (e.currentTarget.style.borderColor = field.color)}
+                        onMouseLeave={e => (e.currentTarget.style.borderColor = socialVisible[field.key] === false ? '#333' : '#444')}
+                      >
+                        <i className={`fa-solid ${socialVisible[field.key] === false ? 'fa-eye-slash' : 'fa-eye'}`}></i>
+                      </button>
+                    </div>
+                    {err && (
+                      <p style={{ color: '#e60000', fontSize: '11px', margin: '4px 0 0 4px', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                        <i className="fa-solid fa-triangle-exclamation" style={{ fontSize: '10px' }}></i>
+                        {err}
+                      </p>
+                    )}
                   </div>
-                  {/* Gizle/Göster toggle */}
-                  <button
-                    type="button"
-                    onClick={() => setSocialVisible(prev => ({ ...prev, [field.key]: prev[field.key] === false ? true : false }))}
-                    title={socialVisible[field.key] === false ? 'Gizli — tıkla göster' : 'Görünür — tıkla gizle'}
-                    style={{ background: 'none', border: `1px solid ${socialVisible[field.key] === false ? '#333' : '#444'}`, borderRadius: '6px', padding: '8px 10px', cursor: 'pointer', color: socialVisible[field.key] === false ? '#444' : '#888', fontSize: '12px', flexShrink: 0, transition: 'all 0.2s' }}
-                    onMouseEnter={e => (e.currentTarget.style.borderColor = field.color)}
-                    onMouseLeave={e => (e.currentTarget.style.borderColor = socialVisible[field.key] === false ? '#333' : '#444')}
-                  >
-                    <i className={`fa-solid ${socialVisible[field.key] === false ? 'fa-eye-slash' : 'fa-eye'}`}></i>
-                  </button>
-                </div>
-              ))}
+                );
+              })}
             </div>
             <p style={{ color: '#444', fontSize: '11px', marginTop: '8px' }}>
               <i className="fa-solid fa-circle-info" style={{ marginRight: '4px' }}></i>
