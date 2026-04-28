@@ -76,52 +76,70 @@ export default function Leaderboard() {
     // Yeni hafta başladıysa aktifliği sıfırla
     resetActivityIfNewWeek();
     try {
-      // Paylaşım
+      // Paylaşım — ayrı sorgu ile
       const { data: postData } = await supabase
         .from('user_posts')
-        .select('author_id, profiles(full_name, avatar_url, role)')
-        .eq('is_approved', true);
+        .select('author_id')
+        .eq('is_approved', true)
+        .limit(200);
 
-      if (postData) {
-        const counts: Record<string, LeaderEntry> = {};
+      if (postData && postData.length > 0) {
+        const postCounts: Record<string, number> = {};
         postData.forEach((row: any) => {
-          if (!row.author_id || !row.profiles) return;
-          if (!counts[row.author_id]) {
-            counts[row.author_id] = {
-              user_id: row.author_id,
-              full_name: row.profiles.full_name || 'Anonim',
-              avatar_url: row.profiles.avatar_url,
-              role: row.profiles.role || 'member',
-              count: 0,
-            };
-          }
-          counts[row.author_id].count++;
+          if (!row.author_id) return;
+          postCounts[row.author_id] = (postCounts[row.author_id] || 0) + 1;
         });
-        setPostLeaders(Object.values(counts).sort((a, b) => b.count - a.count).slice(0, 10));
+        const topPostIds = Object.entries(postCounts).sort((a, b) => b[1] - a[1]).slice(0, 10).map(([id]) => id);
+        const { data: postProfiles } = await supabase.from('profiles').select('id, full_name, avatar_url, role').in('id', topPostIds);
+        if (postProfiles) {
+          setPostLeaders(topPostIds.map(uid => {
+            const prof = postProfiles.find((p: any) => p.id === uid);
+            return { user_id: uid, full_name: prof?.full_name || 'Anonim', avatar_url: prof?.avatar_url || null, role: prof?.role || 'member', count: postCounts[uid] };
+          }));
+        }
       }
 
-      // Yorum
+      // Yorum — önce yorumları çek, sonra profilleri ayrı sorgula
       const { data: commentData } = await supabase
         .from('comments')
-        .select('user_id, profiles(full_name, avatar_url, role)')
-        .not('user_id', 'is', null);
+        .select('user_id')
+        .not('user_id', 'is', null)
+        .eq('is_approved', true)
+        .limit(500);
 
-      if (commentData) {
-        const counts: Record<string, LeaderEntry> = {};
+      if (commentData && commentData.length > 0) {
+        // user_id'leri say
+        const counts: Record<string, number> = {};
         commentData.forEach((row: any) => {
-          if (!row.user_id || !row.profiles) return;
-          if (!counts[row.user_id]) {
-            counts[row.user_id] = {
-              user_id: row.user_id,
-              full_name: row.profiles.full_name || 'Anonim',
-              avatar_url: row.profiles.avatar_url,
-              role: row.profiles.role || 'member',
-              count: 0,
-            };
-          }
-          counts[row.user_id].count++;
+          if (!row.user_id) return;
+          counts[row.user_id] = (counts[row.user_id] || 0) + 1;
         });
-        setCommentLeaders(Object.values(counts).sort((a, b) => b.count - a.count).slice(0, 10));
+
+        // Top 10 user_id'yi al
+        const topIds = Object.entries(counts)
+          .sort((a, b) => b[1] - a[1])
+          .slice(0, 10)
+          .map(([id]) => id);
+
+        // Profilleri ayrı çek
+        const { data: profileData } = await supabase
+          .from('profiles')
+          .select('id, full_name, avatar_url, role')
+          .in('id', topIds);
+
+        if (profileData) {
+          const leaders: LeaderEntry[] = topIds.map(uid => {
+            const prof = profileData.find((p: any) => p.id === uid);
+            return {
+              user_id: uid,
+              full_name: prof?.full_name || 'Anonim',
+              avatar_url: prof?.avatar_url || null,
+              role: prof?.role || 'member',
+              count: counts[uid],
+            };
+          }).filter(e => e.full_name !== 'Anonim' || e.count > 0);
+          setCommentLeaders(leaders);
+        }
       }
 
       // Aktiflik — localStorage'dan oku, profil bilgilerini Supabase'den çek
