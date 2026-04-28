@@ -5,6 +5,7 @@ import Footer from "./components/Footer";
 import Script from "next/script";
 
 export const metadata: Metadata = {
+  viewport: "width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0",
   title: "CodeMareFi - Modern Yazılım ve Discord Bot Geliştirme Platformu",
   description: "Türkiye'nin en kaliteli Discord bot kodları, güncel yazılım haberleri ve modern web teknolojileri rehberi. CodeMareFi ile geleceğin kodlarını keşfedin.",
   keywords: "discord bot kodları, discord bot komutları, yazılım geliştirme, javascript kod paylaşım, teknoloji haberleri, codemarefi",
@@ -18,6 +19,7 @@ export const metadata: Metadata = {
     url: "https://codemarefi.com",
     images: ['/favicon.png'],
   },
+  viewport: "width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0",
   verification: {
     google: "8aOQLQYj5GxcMWcGMtjF5y7D_pJh-BV4hUYSZb6BMmE",
   },
