@@ -113,9 +113,7 @@ export default function YonetimPage() {
             <button onClick={() => router.push('/')} style={{ background: '#e60000', color: '#fff', border: 'none', padding: '13px 32px', borderRadius: '4px', fontWeight: 700, cursor: 'pointer', fontSize: '13px', letterSpacing: '1px', textTransform: 'uppercase', transition: 'background 0.2s' }} onMouseEnter={e => e.currentTarget.style.background = '#b00000'} onMouseLeave={e => e.currentTarget.style.background = '#e60000'}>
               <i className="fa-solid fa-house" style={{ marginRight: '8px' }}></i>Ana Sayfaya Dön
             </button>
-          </div>
         </div>
-        <Footer />
       </main>
     );
   }
@@ -184,8 +182,6 @@ export default function YonetimPage() {
           </div>
         )}
       </div>
-
-      <Footer />
     </main>
   );
 }

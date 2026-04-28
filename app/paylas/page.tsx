@@ -63,7 +63,6 @@ export default function PaylasPage() {
             </div>
           </div>
         </div>
-        <Footer />
       </main>
     );
   }
@@ -293,8 +292,6 @@ export default function PaylasPage() {
           </form>
         </div>
       </div>
-
-      <Footer />
 
       <style jsx>{`
         input:focus, textarea:focus, select:focus {
