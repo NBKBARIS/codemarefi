@@ -40,9 +40,8 @@ export default async function PostPage(props: { params: Promise<{ id: string }> 
           <div style={{ display: 'flex', alignItems: 'center', gap: '15px', color: '#888', fontSize: '12px' }}>
             <a 
               href={`/user/${post.author === 'NBK BARIŞ' ? 'nbk-baris' : post.author}`}
-              style={{ display: 'flex', alignItems: 'center', gap: '5px', textDecoration: 'none', color: 'inherit', transition: 'color 0.2s' }}
-              onMouseEnter={(e) => (e.currentTarget.style.color = '#e60000')}
-              onMouseLeave={(e) => (e.currentTarget.style.color = '#888')}
+              className="author-link"
+              style={{ display: 'flex', alignItems: 'center', gap: '5px', textDecoration: 'none', color: '#888' }}
             >
               <i className="fa-solid fa-user" style={{ color: '#e60000' }}></i> {post.author}
             </a>

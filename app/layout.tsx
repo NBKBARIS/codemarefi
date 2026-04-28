@@ -1,11 +1,17 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import Script from "next/script";
 
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+};
+
 export const metadata: Metadata = {
-  viewport: "width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0",
   title: "CodeMareFi - Modern Yazılım ve Discord Bot Geliştirme Platformu",
   description: "Türkiye'nin en kaliteli Discord bot kodları, güncel yazılım haberleri ve modern web teknolojileri rehberi. CodeMareFi ile geleceğin kodlarını keşfedin.",
   keywords: "discord bot kodları, discord bot komutları, yazılım geliştirme, javascript kod paylaşım, teknoloji haberleri, codemarefi",

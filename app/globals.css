@@ -36,6 +36,13 @@ body.hide-cursor, body.hide-cursor * {
   cursor: none !important;
 }
 
+.author-link {
+  transition: color 0.2s;
+}
+.author-link:hover {
+  color: #e60000 !important;
+}
+
 img {
   max-width: 100%;
 }
