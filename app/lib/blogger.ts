@@ -65,27 +65,47 @@ function parsePost(entry: any): BlogPost {
 }
 
 import { localPosts, LocalPost } from './localPosts';
+import { getApprovedPosts, UserPost, supabase } from './userPosts';
+
+async function getMergedPosts(): Promise<BlogPost[]> {
+  const approved = await getApprovedPosts();
+  
+  const mappedUserPosts: BlogPost[] = approved.map(p => ({
+    id: p.id,
+    title: p.title,
+    content: p.content,
+    published: p.created_at,
+    updated: p.created_at,
+    categories: p.categories,
+    url: `/post/${p.id}`,
+    thumbnail: p.thumbnail_url,
+    author: p.profiles?.full_name || 'Üye',
+    commentCount: 0,
+    slug: p.id
+  }));
+
+  const bloggerPosts: BlogPost[] = localPosts.map(p => ({ ...p, url: `/post/${p.id}` })) as BlogPost[];
+  
+  return [...bloggerPosts, ...mappedUserPosts].sort((a, b) => 
+    new Date(b.published).getTime() - new Date(a.published).getTime()
+  );
+}
+
 
 export async function fetchPosts(maxResults = 10, startIndex = 1, label?: string): Promise<{ posts: BlogPost[]; total: number }> {
-  // Simulate network delay
-  await new Promise(r => setTimeout(r, 100));
-
-  let filtered = [...localPosts];
+  let allPosts = await getMergedPosts();
+  
   if (label) {
-    filtered = filtered.filter(p => p.categories.includes(label));
+    allPosts = allPosts.filter(p => p.categories.includes(label));
   }
 
-  // Sort by published date descending
-  filtered.sort((a, b) => new Date(b.published).getTime() - new Date(a.published).getTime());
-
-  const total = filtered.length;
-  // startIndex is 1-based in Blogger API
+  const total = allPosts.length;
   const start = startIndex - 1;
-  const paginated = filtered.slice(start, start + maxResults);
+  const paginated = allPosts.slice(start, start + maxResults);
 
-  const mappedPosts = paginated.map(p => ({ ...p, url: `/post/${p.id}` }));
-  return { posts: mappedPosts as BlogPost[], total };
+  return { posts: paginated, total };
 }
+
 
 export async function searchPosts(query: string): Promise<BlogPost[]> {
   await new Promise(r => setTimeout(r, 100));
@@ -101,10 +121,36 @@ export async function searchPosts(query: string): Promise<BlogPost[]> {
 }
 
 export async function fetchPostById(id: string): Promise<BlogPost | null> {
-  await new Promise(r => setTimeout(r, 100));
-  const post = localPosts.find(p => p.id === id);
-  return post ? ({ ...post, url: `/post/${post.id}` } as BlogPost) : null;
+  // Önce localPosts'ta ara
+  const local = localPosts.find(p => p.id === id);
+  if (local) return ({ ...local, url: `/post/${local.id}` } as BlogPost);
+
+  // Yoksa Supabase'de ara
+  const { data: userPost } = await supabase
+    .from('user_posts')
+    .select('*, profiles(full_name, avatar_url)')
+    .eq('id', id)
+    .single();
+
+  if (userPost) {
+    return {
+      id: userPost.id,
+      title: userPost.title,
+      content: userPost.content,
+      published: userPost.created_at,
+      updated: userPost.created_at,
+      categories: userPost.categories,
+      url: `/post/${userPost.id}`,
+      thumbnail: userPost.thumbnail_url,
+      author: userPost.profiles?.full_name || 'Üye',
+      commentCount: 0,
+      slug: userPost.id
+    };
+  }
+
+  return null;
 }
+
 
 export function formatDate(dateStr: string): string {
   try {

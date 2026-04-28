@@ -125,18 +125,57 @@ export default function Navbar() {
             </a>
 
             {/* Giriş / Profil Butonu */}
-            <div style={{ marginLeft: '10px', display: 'flex', alignItems: 'center' }}>
+            <div style={{ marginLeft: '10px', display: 'flex', alignItems: 'center', gap: '10px' }}>
               {user ? (
-                <Link href="/profil" style={{ display: 'flex', alignItems: 'center', gap: '8px', textDecoration: 'none', color: '#fff' }}>
-                  {profile?.avatar_url ? (
-                    <img src={profile.avatar_url} alt="avatar" style={{ width: '24px', height: '24px', borderRadius: '50%', objectFit: 'cover', border: '1px solid #e60000' }} />
-                  ) : (
-                    <div style={{ width: '24px', height: '24px', borderRadius: '50%', background: '#333', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid #e60000' }}>
-                      <i className="fa-solid fa-user" style={{ fontSize: '10px', color: '#fff' }}></i>
-                    </div>
+                <>
+                  {/* Yönetim Paneli Butonu (Sadece Admin/Mod) */}
+                  {(profile?.role === 'admin' || profile?.role === 'mod') && (
+                    <Link href="/yonetim" style={{
+                      background: '#333',
+                      color: '#fff',
+                      border: '1px solid #444',
+                      borderRadius: '4px',
+                      padding: '4px 10px',
+                      fontSize: '11px',
+                      fontWeight: 700,
+                      textDecoration: 'none',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '5px'
+                    }}>
+                      <i className="fa-solid fa-user-shield" style={{ color: '#e60000' }}></i>
+                      Yönetim
+                    </Link>
                   )}
-                  <span style={{ fontSize: '12px', fontWeight: 600 }}>{profile?.full_name || 'Profilim'}</span>
-                </Link>
+
+                  {/* Yazı Paylaş Butonu */}
+                  <Link href="/paylas" style={{
+                    background: '#e60000',
+                    color: '#fff',
+                    borderRadius: '4px',
+                    padding: '4px 10px',
+                    fontSize: '11px',
+                    fontWeight: 700,
+                    textDecoration: 'none',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '5px'
+                  }}>
+                    <i className="fa-solid fa-plus"></i>
+                    Paylaş
+                  </Link>
+
+                  <Link href="/profil" style={{ display: 'flex', alignItems: 'center', gap: '8px', textDecoration: 'none', color: '#fff', marginLeft: '5px' }}>
+                    {profile?.avatar_url ? (
+                      <img src={profile.avatar_url} alt="avatar" style={{ width: '24px', height: '24px', borderRadius: '50%', objectFit: 'cover', border: '1px solid #e60000' }} />
+                    ) : (
+                      <div style={{ width: '24px', height: '24px', borderRadius: '50%', background: '#333', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid #e60000' }}>
+                        <i className="fa-solid fa-user" style={{ fontSize: '10px', color: '#fff' }}></i>
+                      </div>
+                    )}
+                    <span style={{ fontSize: '12px', fontWeight: 600 }}>{profile?.full_name || 'Profilim'}</span>
+                  </Link>
+                </>
               ) : (
                 <button 
                   onClick={() => window.dispatchEvent(new CustomEvent('open-auth-modal'))}
