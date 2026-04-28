@@ -104,7 +104,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
     const { error } = await supabase.auth.signInWithOAuth({
       provider,
       options: {
-        redirectTo: 'https://www.codemarefi.com'
+        redirectTo: typeof window !== 'undefined' ? `${window.location.origin}/` : 'https://www.codemarefi.com'
       }
     });
     if (error) {
