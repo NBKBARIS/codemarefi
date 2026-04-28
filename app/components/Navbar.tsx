@@ -88,15 +88,15 @@ export default function Navbar() {
             {[
               { l: 'Ana Sayfa', href: '/' },
               { l: 'Yönetim', href: '/yonetim' },
-              { l: 'İletişim', href: '/iletisim' },
+              { l: 'İletisim', href: '/iletisim' },
               { l: 'Duyurular', href: '#' },
               { l: 'Hakkımızda', href: '/hakkimizda' },
               { l: 'Site Haritası', href: '/sitemap.xml' }
             ].map(item => (
-              <a key={item.l} href={item.href} style={{ color: '#bbb', fontSize: '12px', padding: '3px 10px', borderRight: '1px solid #222', textDecoration: 'none', transition: 'color 0.2s' }}
+              <Link key={item.l} href={item.href} style={{ color: '#bbb', fontSize: '12px', padding: '3px 10px', borderRight: '1px solid #222', textDecoration: 'none', transition: 'color 0.2s', display: 'inline-block' }}
                 onMouseEnter={e => (e.currentTarget.style.color = '#e60000')}
                 onMouseLeave={e => (e.currentTarget.style.color = '#bbb')}
-              >{item.l}</a>
+              >{item.l}</Link>
             ))}
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '2px' }}>
