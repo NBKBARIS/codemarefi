@@ -9,8 +9,36 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
     autoRefreshToken: true,
     detectSessionInUrl: true,
     storageKey: 'codemarefi-auth-token',
+    storage: typeof window !== 'undefined' ? window.localStorage : undefined,
   }
 });
+
+// ── Güvenlik: son aktiflik takibi ──────────────────────────────
+const LAST_SEEN_KEY = 'cmf_last_seen';
+const SESSION_TIMEOUT_DAYS = 7;
+const SESSION_TIMEOUT_MS = SESSION_TIMEOUT_DAYS * 24 * 60 * 60 * 1000;
+
+export function updateLastSeen() {
+  if (typeof window === 'undefined') return;
+  localStorage.setItem(LAST_SEEN_KEY, Date.now().toString());
+}
+
+export function getLastSeen(): number | null {
+  if (typeof window === 'undefined') return null;
+  const val = localStorage.getItem(LAST_SEEN_KEY);
+  return val ? parseInt(val) : null;
+}
+
+export function isSessionExpiredByInactivity(): boolean {
+  const lastSeen = getLastSeen();
+  if (!lastSeen) return false; // hiç kayıt yoksa expire sayma
+  return Date.now() - lastSeen > SESSION_TIMEOUT_MS;
+}
+
+export function clearLastSeen() {
+  if (typeof window === 'undefined') return;
+  localStorage.removeItem(LAST_SEEN_KEY);
+}
 
 export type CommentRole = 'admin' | 'mod' | 'author' | 'member' | 'guest';
 

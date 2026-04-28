@@ -1,6 +1,6 @@
 'use client';
 import { useState, useEffect, useRef } from 'react';
-import { supabase } from '../lib/supabase';
+import { supabase, updateLastSeen, isSessionExpiredByInactivity, clearLastSeen } from '../lib/supabase';
 import AuthModal from './AuthModal';
 import Link from 'next/link';
 
@@ -36,15 +36,37 @@ export default function Navbar() {
   const [isAuthOpen, setIsAuthOpen] = useState(false);
   const [user, setUser] = useState<any>(null);
   const [profile, setProfile] = useState<any>(null);
+  const [securityNotice, setSecurityNotice] = useState(false); // güvenlik bildirimi
   const greenText = useTypewriter(GREEN_MSGS, 55, 25, 3000);
   const redText = useTypewriter(RED_MSGS, 65, 28, 2800);
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setUser(session?.user ?? null);
+    supabase.auth.getSession().then(async ({ data: { session } }) => {
+      if (session) {
+        // Hareketsizlik kontrolü
+        if (isSessionExpiredByInactivity()) {
+          await supabase.auth.signOut();
+          clearLastSeen();
+          setUser(null);
+          setSecurityNotice(true); // bildirimi göster
+          // 6 saniye sonra gizle
+          setTimeout(() => setSecurityNotice(false), 6000);
+          return;
+        }
+        updateLastSeen(); // aktif — zamanı güncelle
+        setUser(session.user);
+      } else {
+        setUser(null);
+      }
     });
+
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user ?? null);
+      if (session) {
+        updateLastSeen();
+        setUser(session.user);
+      } else {
+        setUser(null);
+      }
     });
     return () => subscription.unsubscribe();
   }, []);
@@ -81,6 +103,45 @@ export default function Navbar() {
 
   return (
     <>
+      {/* ── GÜVENLİK BİLDİRİMİ ── */}
+      {securityNotice && (
+        <div style={{
+          position: 'fixed',
+          top: '20px',
+          left: '50%',
+          transform: 'translateX(-50%)',
+          zIndex: 99999,
+          background: '#0a0a0a',
+          border: '1px solid #e60000',
+          borderLeft: '4px solid #e60000',
+          borderRadius: '6px',
+          padding: '14px 20px',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '12px',
+          boxShadow: '0 4px 30px rgba(230,0,0,0.3)',
+          animation: 'slideDown 0.3s ease',
+          maxWidth: '480px',
+          width: 'calc(100% - 40px)',
+        }}>
+          <i className="fa-solid fa-shield-halved" style={{ color: '#e60000', fontSize: '20px', flexShrink: 0 }}></i>
+          <div>
+            <div style={{ color: '#fff', fontWeight: 700, fontSize: '13px', marginBottom: '3px' }}>
+              Güvenlik Amacıyla Çıkış Yapıldı
+            </div>
+            <div style={{ color: '#888', fontSize: '12px' }}>
+              Uzun süre işlem yapılmadığı için hesabınızdan çıkış yapıldı. Tekrar giriş yapabilirsiniz.
+            </div>
+          </div>
+          <button
+            onClick={() => setSecurityNotice(false)}
+            style={{ background: 'none', border: 'none', color: '#555', cursor: 'pointer', fontSize: '16px', flexShrink: 0, marginLeft: 'auto' }}
+          >
+            <i className="fa-solid fa-xmark"></i>
+          </button>
+        </div>
+      )}
+
       {/* ── EN ÜST BAR: sayfalar + sosyal ── */}
       <div style={{ background: '#111', borderBottom: '1px solid #1e1e1e', padding: '5px 0' }} className="top-social-bar">
         <div style={{ maxWidth: '1300px', margin: '0 auto', padding: '0 15px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -100,39 +161,28 @@ export default function Navbar() {
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '2px' }}>
             {[
-              { icon: 'fa-twitter',     url: 'https://twitter.com/mare_fi' },
-              { icon: 'fa-facebook-f',  url: 'https://www.facebook.com/CodeMareFi' },
-              { icon: 'fa-google-plus-g', url: null },
-              { icon: 'fa-instagram',   url: null },
-              { icon: 'fa-youtube',     url: null },
-              { icon: 'fa-vimeo-v',     url: null },
-              { icon: 'fa-soundcloud',  url: null },
-              { icon: 'fa-pinterest-p', url: null },
-              { icon: 'fa-github',      url: null },
-              { icon: 'fa-dribbble',    url: null },
-              { icon: 'fa-vk',          url: null },
+              { icon: 'fa-twitter' },
+              { icon: 'fa-facebook-f' },
+              { icon: 'fa-google-plus-g' },
+              { icon: 'fa-instagram' },
+              { icon: 'fa-youtube' },
+              { icon: 'fa-vimeo-v' },
+              { icon: 'fa-soundcloud' },
+              { icon: 'fa-pinterest-p' },
+              { icon: 'fa-github' },
+              { icon: 'fa-dribbble' },
+              { icon: 'fa-vk' },
             ].map(s => (
-              s.url ? (
-                <a
-                  key={s.icon}
-                  href={s.url}
-                  target="_blank"
-                  rel="noreferrer"
-                  style={{ color: '#888', fontSize: '12px', padding: '3px 5px', transition: 'color 0.2s', textDecoration: 'none' }}
-                  onMouseEnter={e => (e.currentTarget.style.color = '#e60000')}
-                  onMouseLeave={e => (e.currentTarget.style.color = '#888')}
-                >
-                  <i className={`fa-brands ${s.icon}`}></i>
-                </a>
-              ) : (
-                <span
-                  key={s.icon}
-                  title="Çok Yakında"
-                  style={{ color: '#333', fontSize: '12px', padding: '3px 5px', cursor: 'default' }}
-                >
-                  <i className={`fa-brands ${s.icon}`}></i>
-                </span>
-              )
+              <a 
+                key={s.icon} 
+                href="#" 
+                onClick={(e) => { e.preventDefault(); alert('CodeMareFi sosyal medya hesaplarımız yakında açılacaktır!'); }}
+                style={{ color: '#888', fontSize: '12px', padding: '3px 5px', transition: 'color 0.2s', textDecoration: 'none' }}
+                onMouseEnter={e => (e.currentTarget.style.color = '#e60000')}
+                onMouseLeave={e => (e.currentTarget.style.color = '#888')}
+              >
+                <i className={`fa-brands ${s.icon}`}></i>
+              </a>
             ))}
             <a href="/arama" style={{ color: '#888', fontSize: '12px', padding: '3px 8px', transition: 'color 0.2s', textDecoration: 'none' }}
               onMouseEnter={e => (e.currentTarget.style.color = '#e60000')}
@@ -306,6 +356,7 @@ export default function Navbar() {
 
       <style>{`
         @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+        @keyframes slideDown { from { opacity: 0; transform: translateX(-50%) translateY(-10px); } to { opacity: 1; transform: translateX(-50%) translateY(0); } }
       `}</style>
     </>
   );
