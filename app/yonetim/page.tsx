@@ -276,6 +276,44 @@ export default function YonetimPage() {
               <i className="fa-solid fa-life-ring"></i>
               Silinenleri Kurtar
             </button>
+            <button
+              onClick={async () => {
+                if (!confirm('Tüm onaylı gönderilerdeki duble "CodeMareFi Notu" ve etiketler temizlenecektir. Devam?')) return;
+                try {
+                  const { data: allPosts } = await supabase.from('user_posts').select('id, title, content').eq('is_approved', true);
+                  if (!allPosts?.length) { alert('Onaylı gönderi yok.'); return; }
+                  let fixed = 0;
+                  for (const post of allPosts) {
+                    let content = post.content || '';
+                    let changed = false;
+
+                    const noteMarker = "CodeMareFi Notu:";
+                    if (content.split(noteMarker).length > 2) {
+                      const divPattern = /<div style="background:rgba\(230,0,0,0\.08\);[^>]*>[\s\S]*?<\/div>/gi;
+                      let firstFound = false;
+                      content = content.replace(divPattern, (match) => {
+                        if (match.includes(noteMarker)) {
+                          if (!firstFound) { firstFound = true; return match; }
+                          return ''; // Remove duplicate
+                        }
+                        return match;
+                      });
+                      changed = true;
+                    }
+
+                    if (changed) {
+                      await supabase.from('user_posts').update({ content }).eq('id', post.id);
+                      fixed++;
+                    }
+                  }
+                  alert(`${fixed} gönderideki dubleler temizlendi! Lütfen F5 atın.`);
+                } catch (e: any) { alert('Hata: ' + e.message); }
+              }}
+              style={{ background: '#1a1a1a', color: '#ff8c00', border: '1px solid #ff8c00', padding: '8px 14px', borderRadius: '4px', cursor: 'pointer', fontSize: '12px', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '6px' }}
+            >
+              <i className="fa-solid fa-broom"></i>
+              Duble Temizle
+            </button>
             <div style={{ background: '#111', padding: '8px 18px', borderRadius: '50px', border: '1px solid #1e1e1e', fontSize: '13px' }}>
               <i className="fa-solid fa-circle" style={{ color: '#2ea44f', fontSize: '8px', marginRight: '6px' }}></i>
               {profile?.role?.toUpperCase()} — {profile?.full_name}
