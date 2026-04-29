@@ -294,7 +294,8 @@ app.listen(3000, () => {
         <strong style="color: #e60000;">CodeMareFi Tavsiyesi:</strong>
         <p style="color: #ccc; margin-top: 10px;">API güvenliği için mutlaka JWT authentication ve rate limiting kullanın!</p>
       </div>
-    `,
+    `
+  },
   {
     id: '10',
     title: 'React Server Components Nedir? Next.js 14 ile Kullanımı',
