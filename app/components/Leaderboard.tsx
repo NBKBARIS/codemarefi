@@ -254,7 +254,7 @@ export default function Leaderboard() {
   // ── İlk yükleme + 5 dakikada bir otomatik yenile (istek tasarrufu) ──
   useEffect(() => {
     fetchLeaders();
-    const refreshInterval = setInterval(fetchLeaders, 5 * 60 * 1000); // 5 dakika
+    const refreshInterval = setInterval(fetchLeaders, 2 * 60 * 1000); // 2 dakika (daha sık yenile)
     return () => clearInterval(refreshInterval);
   }, [fetchLeaders]);
 
