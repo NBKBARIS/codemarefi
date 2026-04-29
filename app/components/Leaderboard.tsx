@@ -150,58 +150,38 @@ export default function Leaderboard() {
         }
       }
 
-      // Aktiflik — Son 7 gün içinde paylaşılan gönderiler ve yorumları sayarak aktiflik puanı/süresi oluştur
-      const sevenDaysAgo = new Date();
-      sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
-      
-      const [recentComments, recentPosts] = await Promise.all([
-        supabase.from('comments').select('user_id').gte('created_at', sevenDaysAgo.toISOString()).eq('is_approved', true),
-        supabase.from('user_posts').select('author_id').gte('created_at', sevenDaysAgo.toISOString()).eq('is_approved', true)
-      ]);
+      // Aktiflik — Supabase user_activity tablosundan bu haftanın verilerini çek
+      const weekKey = getWeekKey();
+      const { data: activityData } = await supabase
+        .from('user_activity')
+        .select('user_id, seconds')
+        .eq('week_key', weekKey)
+        .order('seconds', { ascending: false })
+        .limit(10);
 
-      const activityCounts: Record<string, number> = {};
-      
-      // Yorum başına 5 dakika (300 sn)
-      if (recentComments.data && recentComments.data.length > 0) {
-        recentComments.data.forEach((c: any) => {
-          if (!c.user_id) return;
-          activityCounts[c.user_id] = (activityCounts[c.user_id] || 0) + 300;
-        });
-      }
-
-      // Post başına 30 dakika (1800 sn)
-      if (recentPosts.data && recentPosts.data.length > 0) {
-        recentPosts.data.forEach((p: any) => {
-          if (!p.author_id) return;
-          activityCounts[p.author_id] = (activityCounts[p.author_id] || 0) + 1800;
-        });
-      }
-
-      // Local posts'lar da NBK BARIS için eklenebilir ama direkt NBK BARIS'a bonus verelim
-      const nbkId = 'e2a270ed-39b1-4de8-8b22-4784dbfe27ca'; // NBK BARIŞ'ın ID'si
-      if (!activityCounts[nbkId]) activityCounts[nbkId] = 0;
-      activityCounts[nbkId] += 14400; // Ekstra 4 saat aktiflik süresi (postlardan dolayı)
-
-      if (Object.keys(activityCounts).length > 0) {
-        const topActivityIds = Object.entries(activityCounts)
-          .sort((a, b) => b[1] - a[1])
-          .slice(0, 10)
-          .map(([id]) => id);
-        
+      if (activityData && activityData.length > 0) {
+        const actIds = activityData.map((a: any) => a.user_id);
         const { data: actProfiles } = await supabase
           .from('profiles')
           .select('id, full_name, avatar_url, role')
-          .in('id', topActivityIds);
+          .in('id', actIds);
 
         if (actProfiles) {
-          const list = topActivityIds.map(uid => {
-            const prof = actProfiles.find((p: any) => p.id === uid);
+          const list = activityData.map((a: any) => {
+            const prof = actProfiles.find((p: any) => p.id === a.user_id);
+            
+            // NBK BARIŞ için minimum 4 saat (14400 saniye) zorunluluğu
+            let finalSeconds = a.seconds || 0;
+            if (prof?.full_name?.toUpperCase().includes('NBK') && finalSeconds < 14400) {
+              finalSeconds = 14400;
+            }
+
             return {
-              user_id: uid,
+              user_id: a.user_id,
               full_name: prof?.full_name || 'Anonim',
               avatar_url: prof?.avatar_url || null,
               role: prof?.role || 'member',
-              seconds: activityCounts[uid],
+              seconds: finalSeconds,
             };
           });
           setActivityLeaders(list);
@@ -216,6 +196,50 @@ export default function Leaderboard() {
     } finally {
       setLoading(false);
     }
+  }, []);
+
+  // ── Aktiflik takibi: Supabase user_activity tablosuna kaydet ──
+  useEffect(() => {
+    let userId: string | null = null;
+    const weekKey = getWeekKey();
+
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      userId = session?.user?.id ?? null;
+    });
+
+    const tick = setInterval(async () => {
+      if (!userId) return;
+      try {
+        // upsert: varsa seconds'a 60 ekle (her 1 dakikada bir), yoksa yeni kayıt oluştur
+        await supabase.rpc('increment_activity', {
+          p_user_id: userId,
+          p_week_key: weekKey,
+          p_seconds: 60,
+        });
+      } catch {
+        // RPC yoksa manuel upsert
+        const { data: existing } = await supabase
+          .from('user_activity')
+          .select('seconds')
+          .eq('user_id', userId)
+          .eq('week_key', weekKey)
+          .single();
+
+        if (existing) {
+          await supabase
+            .from('user_activity')
+            .update({ seconds: (existing.seconds || 0) + 60, updated_at: new Date().toISOString() })
+            .eq('user_id', userId)
+            .eq('week_key', weekKey);
+        } else {
+          await supabase
+            .from('user_activity')
+            .insert({ user_id: userId, week_key: weekKey, seconds: 60 });
+        }
+      }
+    }, 60 * 1000); // Her 1 dakikada bir veritabanını güncelle
+
+    return () => clearInterval(tick);
   }, []);
 
   // ── İlk yükleme + 5 dakikada bir otomatik yenile (istek tasarrufu) ──
