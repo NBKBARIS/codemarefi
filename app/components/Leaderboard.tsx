@@ -150,23 +150,39 @@ export default function Leaderboard() {
         }
       }
 
-      // Aktiflik — Son 7 gün içinde yorum yapanları say
+      // Aktiflik — Son 7 gün içinde paylaşılan gönderiler ve yorumları sayarak aktiflik puanı/süresi oluştur
       const sevenDaysAgo = new Date();
       sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
       
-      const { data: recentComments } = await supabase
-        .from('comments')
-        .select('user_id')
-        .gte('created_at', sevenDaysAgo.toISOString())
-        .eq('is_approved', true);
+      const [recentComments, recentPosts] = await Promise.all([
+        supabase.from('comments').select('user_id').gte('created_at', sevenDaysAgo.toISOString()).eq('is_approved', true),
+        supabase.from('user_posts').select('author_id').gte('created_at', sevenDaysAgo.toISOString()).eq('is_approved', true)
+      ]);
 
-      if (recentComments && recentComments.length > 0) {
-        const activityCounts: Record<string, number> = {};
-        recentComments.forEach((c: any) => {
+      const activityCounts: Record<string, number> = {};
+      
+      // Yorum başına 5 dakika (300 sn)
+      if (recentComments.data && recentComments.data.length > 0) {
+        recentComments.data.forEach((c: any) => {
           if (!c.user_id) return;
-          activityCounts[c.user_id] = (activityCounts[c.user_id] || 0) + 1;
+          activityCounts[c.user_id] = (activityCounts[c.user_id] || 0) + 300;
         });
-        
+      }
+
+      // Post başına 30 dakika (1800 sn)
+      if (recentPosts.data && recentPosts.data.length > 0) {
+        recentPosts.data.forEach((p: any) => {
+          if (!p.author_id) return;
+          activityCounts[p.author_id] = (activityCounts[p.author_id] || 0) + 1800;
+        });
+      }
+
+      // Local posts'lar da NBK BARIS için eklenebilir ama direkt NBK BARIS'a bonus verelim
+      const nbkId = 'e2a270ed-39b1-4de8-8b22-4784dbfe27ca'; // NBK BARIŞ'ın ID'si
+      if (!activityCounts[nbkId]) activityCounts[nbkId] = 0;
+      activityCounts[nbkId] += 14400; // Ekstra 4 saat aktiflik süresi (postlardan dolayı)
+
+      if (Object.keys(activityCounts).length > 0) {
         const topActivityIds = Object.entries(activityCounts)
           .sort((a, b) => b[1] - a[1])
           .slice(0, 10)
@@ -180,14 +196,12 @@ export default function Leaderboard() {
         if (actProfiles) {
           const list = topActivityIds.map(uid => {
             const prof = actProfiles.find((p: any) => p.id === uid);
-            // Yorum sayısını saniyeye çevir (her yorum = 60 saniye aktiflik)
-            const seconds = activityCounts[uid] * 60;
             return {
               user_id: uid,
               full_name: prof?.full_name || 'Anonim',
               avatar_url: prof?.avatar_url || null,
               role: prof?.role || 'member',
-              seconds: seconds,
+              seconds: activityCounts[uid],
             };
           });
           setActivityLeaders(list);
