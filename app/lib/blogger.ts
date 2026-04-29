@@ -71,7 +71,7 @@ import { getApprovedPosts, UserPost } from './userPosts';
 
 // ── İstemci tarafı in-memory cache ───────────────────────────
 const postCache = new Map<string, { data: any; ts: number }>();
-const POST_CACHE_TTL = 10 * 1000; // 10 saniye - çok kısa tutuyoruz test için
+const POST_CACHE_TTL = 5 * 60 * 1000; // 5 dakika
 
 function getCache<T>(key: string): T | null {
   const entry = postCache.get(key);
@@ -83,14 +83,14 @@ function setPostCache(key: string, data: any) {
   postCache.set(key, { data, ts: Date.now() });
 }
 
-// Tüm merged postları cache'le - DEVRE DIŞI (test için)
+// Tüm merged postları cache'le
 let mergedPostsCache: { data: BlogPost[]; ts: number } | null = null;
 
 async function getMergedPosts(): Promise<BlogPost[]> {
-  // Cache'i devre dışı bırak - her zaman yeni veri çek
-  // if (mergedPostsCache && Date.now() - mergedPostsCache.ts < POST_CACHE_TTL) {
-  //   return mergedPostsCache.data;
-  // }
+  // Cache geçerliyse direkt dön
+  if (mergedPostsCache && Date.now() - mergedPostsCache.ts < POST_CACHE_TTL) {
+    return mergedPostsCache.data;
+  }
 
   const approved = await getApprovedPosts();
   
@@ -119,14 +119,6 @@ async function getMergedPosts(): Promise<BlogPost[]> {
     new Date(b.published).getTime() - new Date(a.published).getTime()
   );
 
-  console.log('🔍 POST SAYILARI:', {
-    'Local': bloggerPosts.length,
-    'Supabase Onaylı': approved.length, 
-    'Filtrelenmiş': filteredUserPosts.length,
-    'TOPLAM': merged.length
-  });
-
-  // Cache'e kaydet
   mergedPostsCache = { data: merged, ts: Date.now() };
   return merged;
 }
@@ -148,8 +140,6 @@ export async function fetchPosts(maxResults = 10, startIndex = 1, label?: string
   const total = allPosts.length;
   const start = startIndex - 1;
   const paginated = allPosts.slice(start, start + maxResults);
-  
-  console.log(`✂️ fetchPosts: Toplam=${total}, Start=${start}, Max=${maxResults}, Dönen=${paginated.length}`);
 
   return { posts: paginated, total };
 }
