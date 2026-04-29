@@ -165,9 +165,42 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
         return;
       }
 
-      const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&._-])[A-Za-z\d@$!%*?&._-]{8,}$/;
-      if (!passwordRegex.test(password)) {
+      // Şifre kontrolü - daha esnek regex
+      const hasLowerCase = /[a-z]/.test(password);
+      const hasUpperCase = /[A-Z]/.test(password);
+      const hasNumber = /\d/.test(password);
+      const hasSymbol = /[@$!%*?&._\-#^(){}[\]:;"'<>,/\\|`~+=]/.test(password);
+      const isLongEnough = password.length >= 8;
+
+      if (!isLongEnough || !hasLowerCase || !hasUpperCase || !hasNumber || !hasSymbol) {
         setMessage({ type: 'error', text: 'Şifre en az 8 karakter, büyük-küçük harf, rakam ve sembol içermelidir!' });
+        setLoading(false);
+        return;
+      }
+
+      // E-posta ve kullanıcı adı benzerlik kontrolü
+      const emailUsername = email.split('@')[0].toLowerCase();
+      const username = fullName.toLowerCase();
+      
+      // Tam eşleşme kontrolü
+      if (emailUsername === username) {
+        setMessage({ type: 'error', text: 'Kullanıcı adı e-posta adresinizle aynı olamaz!' });
+        setLoading(false);
+        return;
+      }
+      
+      // 4+ karakter ardışık benzerlik kontrolü (daha esnek)
+      let hasSimilarity = false;
+      for (let i = 0; i < emailUsername.length - 3; i++) {
+        const substring = emailUsername.substring(i, i + 4);
+        if (username.includes(substring)) {
+          hasSimilarity = true;
+          break;
+        }
+      }
+      
+      if (hasSimilarity) {
+        setMessage({ type: 'error', text: 'Kullanıcı adı e-posta adresinizle çok benzer! Farklı bir kullanıcı adı seçin.' });
         setLoading(false);
         return;
       }

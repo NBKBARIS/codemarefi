@@ -9,10 +9,10 @@ import Sidebar from './components/Sidebar';
 const POSTS_PER_PAGE = 8;
 
 const BANNERS = [
-  { text: "TÜRKİYENİN EN BÜYÜK VE KALİTELİ DİSCORD BOT KOD PAYLAŞIM SİTESİ", color: "#8cc63f", icon: "fa-solid fa-leaf" },
-  { text: "SİTEMİZE HOŞ GELDİNİZ! YENİ NESİL KOD PAYLAŞIM PLATFORMU", color: "#e60000", icon: "fa-solid fa-fire" },
-  { text: "BİLGİSAYAR, YAZILIM VE BOT KODLARI HAKKINDA HER ŞEY BURADA", color: "#00a8cc", icon: "fa-solid fa-code" },
-  { text: "DİSCORD SUNUCUMUZA KATILARAK BİZE DESTEK OLABİLİRSİNİZ", color: "#5865f2", icon: "fa-brands fa-discord" },
+  { text: "TÜRKİYENİN EN BÜYÜK VE KALİTELİ DİSCORD BOT KOD PAYLAŞIM SİTESİ", color: "#8cc63f", icon: "fa-solid fa-leaf", link: null },
+  { text: "SİTEMİZE HOŞ GELDİNİZ! YENİ NESİL KOD PAYLAŞIM PLATFORMU", color: "#e60000", icon: "fa-solid fa-fire", link: null },
+  { text: "BİLGİSAYAR, YAZILIM VE BOT KODLARI HAKKINDA HER ŞEY BURADA", color: "#00a8cc", icon: "fa-solid fa-code", link: null },
+  { text: "DİSCORD SUNUCUMUZA KATILARAK BİZE DESTEK OLABİLİRSİNİZ", color: "#5865f2", icon: "fa-brands fa-discord", link: "https://discord.gg/xhg337eHw6" },
 ];
 
 const TABS = [
@@ -142,27 +142,62 @@ export default function HomePage() {
         <div>
 
           {/* Dönen Banner */}
-          <div
-            key={bannerIdx}
-            style={{
-              background: `linear-gradient(90deg, ${BANNERS[bannerIdx].color}22, ${BANNERS[bannerIdx].color}11)`,
-              border: `1px solid ${BANNERS[bannerIdx].color}44`,
-              padding: '10px 15px',
-              color: '#fff',
-              fontSize: '12px',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '10px',
-              marginBottom: '20px',
-              borderRadius: '3px',
-              textTransform: 'uppercase',
-              letterSpacing: '0.5px',
-              animation: 'fadeIn 0.5s',
-            }}
-          >
-            <i className={BANNERS[bannerIdx].icon} style={{ fontSize: '14px', color: BANNERS[bannerIdx].color }}></i>
-            <span style={{ color: BANNERS[bannerIdx].color, fontWeight: 700 }}>{BANNERS[bannerIdx].text}</span>
-          </div>
+          {BANNERS[bannerIdx].link ? (
+            <a
+              href={BANNERS[bannerIdx].link}
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{ textDecoration: 'none' }}
+            >
+              <div
+                key={bannerIdx}
+                style={{
+                  background: `linear-gradient(90deg, ${BANNERS[bannerIdx].color}22, ${BANNERS[bannerIdx].color}11)`,
+                  border: `1px solid ${BANNERS[bannerIdx].color}44`,
+                  padding: '10px 15px',
+                  color: '#fff',
+                  fontSize: '12px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '10px',
+                  marginBottom: '20px',
+                  borderRadius: '3px',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.5px',
+                  animation: 'fadeIn 0.5s',
+                  cursor: 'pointer',
+                  transition: 'transform 0.2s',
+                }}
+                onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.02)'}
+                onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
+              >
+                <i className={BANNERS[bannerIdx].icon} style={{ fontSize: '14px', color: BANNERS[bannerIdx].color }}></i>
+                <span style={{ color: BANNERS[bannerIdx].color, fontWeight: 700 }}>{BANNERS[bannerIdx].text}</span>
+              </div>
+            </a>
+          ) : (
+            <div
+              key={bannerIdx}
+              style={{
+                background: `linear-gradient(90deg, ${BANNERS[bannerIdx].color}22, ${BANNERS[bannerIdx].color}11)`,
+                border: `1px solid ${BANNERS[bannerIdx].color}44`,
+                padding: '10px 15px',
+                color: '#fff',
+                fontSize: '12px',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '10px',
+                marginBottom: '20px',
+                borderRadius: '3px',
+                textTransform: 'uppercase',
+                letterSpacing: '0.5px',
+                animation: 'fadeIn 0.5s',
+              }}
+            >
+              <i className={BANNERS[bannerIdx].icon} style={{ fontSize: '14px', color: BANNERS[bannerIdx].color }}></i>
+              <span style={{ color: BANNERS[bannerIdx].color, fontWeight: 700 }}>{BANNERS[bannerIdx].text}</span>
+            </div>
+          )}
 
           {/* Sekmeler */}
           <div style={{ display: 'flex', gap: '0', marginBottom: '20px', borderBottom: '2px solid #222', overflowX: 'auto', scrollbarWidth: 'none' }}>
