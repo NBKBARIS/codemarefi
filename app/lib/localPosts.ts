@@ -394,5 +394,116 @@ USING (auth.uid() = author_id);</code></pre>
         <li>AI asistanlarını birer yardımcı olarak günlük iş akışınıza entegre edin.</li>
       </ul>
     `
+  },
+  {
+    id: '14',
+    title: 'Next.js ile Server Actions Kullanımı (Detaylı Rehber)',
+    slug: 'nextjs-server-actions-kullanimi',
+    author: 'NBK BARIŞ',
+    authorId: 'e2a270ed-39b1-4de8-8b22-4784dbfe27ca',
+    published: '2026-04-29T12:00:00.000Z',
+    updated: '2026-04-29T12:00:00.000Z',
+    categories: ['Web-Tasarım', 'JavaScript', 'Tavsiyemiz'],
+    thumbnail: 'https://images.unsplash.com/photo-1555099962-4199c345e5dd?q=80&w=1200&auto=format&fit=crop',
+    commentCount: 0,
+    content: `
+      <p>Next.js'in en güçlü özelliklerinden biri olan <strong>Server Actions</strong>, frontend üzerinden doğrudan veritabanı işlemlerini güvenli bir şekilde yapmamızı sağlıyor. Geleneksel API endpoint'leri yazma devrini kapatan bu teknolojiyi projelerinize nasıl entegre edersiniz?</p>
+      
+      <h3 style="color: #fff; margin-top: 25px;">Server Action Nedir?</h3>
+      <p>Kısaca özetlemek gerekirse; React bileşenleri içinden çağrılabilen ancak sadece ve sadece <strong>sunucu tarafında (Server-side)</strong> çalışan asenkron fonksiyonlardır. Bu sayede API route oluşturmanıza, fetch() kullanmanıza veya state yönetimiyle form verisi taşımanıza gerek kalmaz.</p>
+      
+      <h3 style="color: #fff; margin-top: 25px;">Basit Bir Form Örneği</h3>
+      <p>Geleneksel yöntemde bir iletişim formu yapmak için önce bir API yazıp sonra <code>onSubmit</code> ile o API'ye istek atardık. Server Actions ile olay şu kadar basit:</p>
+      <pre><code>// app/actions.ts
+'use server'
+
+export async function sendMessage(formData: FormData) {
+  const message = formData.get('message');
+  
+  // Doğrudan veritabanına bağlan ve kaydet
+  await db.messages.insert({ text: message });
+}</code></pre>
+      
+      <pre><code>// app/components/Form.tsx
+import { sendMessage } from '../actions'
+
+export default function ContactForm() {
+  return (
+    &lt;form action={sendMessage}&gt;
+      &lt;input type="text" name="message" required /&gt;
+      &lt;button type="submit"&gt;Gönder&lt;/button&gt;
+    &lt;/form&gt;
+  )
+}</code></pre>
+
+      <div style="background: rgba(230, 0, 0, 0.1); border: 1px solid #e60000; padding: 15px; border-radius: 4px; margin-top: 25px;">
+        <strong style="color: #e60000;">CodeMareFi Tavsiyesi:</strong>
+        <p style="color: #ccc; margin-top: 10px;">Server Actions kullanırken, fonksiyonlarınızın içine mutlaka <strong>yetkilendirme (authorization)</strong> ve <strong>veri doğrulama (validation)</strong> mantığını eklemeyi unutmayın. Zira bu fonksiyonlar dışarıdan doğrudan çağrılabilir endpoint'lere dönüşürler.</p>
+      </div>
+    `
+  },
+  {
+    id: '15',
+    title: 'Discord.js v14 ile Müzik Botu Altyapısı Oluşturma',
+    slug: 'discord-js-v14-muzik-botu-altyapisi',
+    author: 'NBK BARIŞ',
+    authorId: 'e2a270ed-39b1-4de8-8b22-4784dbfe27ca',
+    published: '2026-04-29T11:00:00.000Z',
+    updated: '2026-04-29T11:00:00.000Z',
+    categories: ['Discord-bot-kodları', 'Discord-Hazır-Bot-Altyapılar', 'JavaScript'],
+    thumbnail: 'https://images.unsplash.com/photo-1616469829581-73993eb86b02?q=80&w=1200&auto=format&fit=crop',
+    commentCount: 0,
+    content: `
+      <p>Selamlar sevgili CodeMareFi üyeleri! Bugün, Discord'un vazgeçilmezi olan Müzik botlarının perde arkasına bakıyoruz. Discord.js v14 ile güncel, stabil ve kesintisiz müzik çalan bir bot altyapısını nasıl kuracağınızı adım adım anlatacağım.</p>
+      
+      <h3 style="color: #fff; margin-top: 25px;">Neden @discordjs/voice Kullanmalıyız?</h3>
+      <p>Eskiden ytdl-core gibi kütüphaneleri doğrudan ses kanalına bağlardık. Artık Discord'un resmi ses kütüphanesi olan <code>@discordjs/voice</code> ile bağlantı kurmak çok daha sağlıklı ve performanslı. Üstelik bağlantı kopmalarına karşı kendi içinde muazzam bir yönetim sistemi barındırıyor.</p>
+      
+      <h3 style="color: #fff; margin-top: 25px;">Gerekli Kütüphaneler</h3>
+      <p>Projenizi oluşturduktan sonra şu modülleri kurun:</p>
+      <pre><code>npm install discord.js @discordjs/voice ffmpeg-static libsodium-wrappers play-dl</code></pre>
+      <p>Burada <strong>play-dl</strong> kütüphanesi oldukça kritik, zira YouTube üzerinden veri çekerken limitlere takılmamanızı ve yüksek kalitede ses elde etmenizi sağlıyor.</p>
+      
+      <h3 style="color: #fff; margin-top: 25px;">Ses Kanalına Bağlanma</h3>
+      <pre><code>const { joinVoiceChannel } = require('@discordjs/voice');
+
+function baglan(channel) {
+  return joinVoiceChannel({
+    channelId: channel.id,
+    guildId: channel.guild.id,
+    adapterCreator: channel.guild.voiceAdapterCreator,
+  });
+}</code></pre>
+
+      <p>Müzik botu geliştirmek sabır ister. Kuyruk (Queue) sistemi yazmak, sıradaki şarkıya geçiş (skip) ve durdurma (stop) gibi özellikleri eklemek kodunuzun karmaşıklığını artıracaktır. Eğer sıfırdan yazmak istemiyorsanız sitemizdeki Hazır Bot Altyapıları bölümünden tam teşekküllü projelere göz atabilirsiniz.</p>
+    `
+  },
+  {
+    id: '16',
+    title: 'Blogger\'dan Next.js\'e Geçiş Serüvenimiz: Neden Bu Kararı Aldık?',
+    slug: 'bloggerdan-nextjse-gecis-seruvenimiz',
+    author: 'NBK BARIŞ',
+    authorId: 'e2a270ed-39b1-4de8-8b22-4784dbfe27ca',
+    published: '2026-04-29T10:00:00.000Z',
+    updated: '2026-04-29T10:00:00.000Z',
+    categories: ['Genel Konular', 'Blogger-Konuları', 'Popüler'],
+    thumbnail: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=1200&auto=format&fit=crop',
+    commentCount: 0,
+    content: `
+      <p>Yıllarca Blogger altyapısında "CodeMareFi" adıyla sizlere hizmet verdik. Blogger bizim için harika bir okul oldu, yüzlerce özel eklenti yazdık, temalar tasarladık. Ancak büyüyen kitlemiz ve artan ihtiyaçlarımız bizi yeni bir arayışa itti.</p>
+      
+      <h3 style="color: #fff; margin-top: 25px;">Neden Next.js? Neden Supabase?</h3>
+      <p>Blogger'ın kısıtlamaları yüzünden üyelerin kendi aralarında etkileşime girebileceği, yazı paylaşabileceği ve anlık sohbet edebileceği sistemleri kurmak neredeyse imkansızdı. Biz de ipleri tamamen kendi elimize almak istedik.</p>
+      <ul>
+        <li><strong>Performans:</strong> Next.js'in App Router mimarisi sayesinde sitemiz artık ışık hızında çalışıyor.</li>
+        <li><strong>Özgürlük:</strong> Üye sistemi, rütbeler, liderlik tablosu gibi modülleri Supabase veritabanımız ile sıfırdan sorunsuzca kodladık.</li>
+        <li><strong>Görünüm:</strong> Eski Blogger tasarımımızın DNA'sını koruyarak (kırmızı-siyah renk paleti), onu 2026 yılı standartlarına yakışır modern ve şık bir arayüze kavuşturduk.</li>
+      </ul>
+      
+      <div style="background: rgba(0, 255, 128, 0.1); border-left: 4px solid #00ff80; padding: 15px; border-radius: 4px; margin-top: 20px;">
+        <strong style="color: #00ff80;">Gelecek Planlarımız:</strong> 
+        Yakın zamanda kullanıcılar arası özel mesajlaşma ve kod snippet'lerini interaktif olarak test edebileceğiniz canlı bir editörü sitemize entegre edeceğiz. Bizimle kalın!
+      </div>
+    `
   }
 ];

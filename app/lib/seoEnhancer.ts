@@ -43,7 +43,10 @@ export function enhanceSeo(
   if (!hasH2 && !hasH3) {
     // Paragrafları bul, 3. paragraftan sonra H2 ekle
     const paragraphs = html.split(/<\/p>/i);
-    if (paragraphs.length >= 3) {
+    // Zaten 'Hakkında Detaylar' başlığı var mı kontrol et
+    const hasDetailH2 = html.includes('Hakkında Detaylar');
+    
+    if (!hasDetailH2 && paragraphs.length >= 3) {
       const keyword = categories[0]?.replace(/-/g, ' ') || 'Konu';
       paragraphs[2] = paragraphs[2] +
         `</p>\n<h2 style="color:#fff;margin-top:28px;margin-bottom:12px;">${title} Hakkında Detaylar</h2>`;
@@ -70,11 +73,14 @@ export function enhanceSeo(
 
   // ── 3. İçerik çok kısaysa uyarı notu ekle ────────────────────
   if (wordCount < 150) {
-    html += `\n<div style="background:rgba(230,0,0,0.08);border-left:4px solid #e60000;padding:15px;margin-top:20px;border-radius:0 4px 4px 0;">
-      <strong style="color:#e60000;">CodeMareFi Notu:</strong>
-      <p style="color:#ccc;margin:8px 0 0;">Bu konu hakkında daha fazla bilgi almak için yorum bölümünden sorularınızı iletebilirsiniz. Topluluğumuz size yardımcı olmaktan memnuniyet duyar.</p>
-    </div>`;
-    improvements.push('İçerik zenginleştirme notu eklendi');
+    const hasNote = html.includes('CodeMareFi Notu:');
+    if (!hasNote) {
+      html += `\n<div style="background:rgba(230,0,0,0.08);border-left:4px solid #e60000;padding:15px;margin-top:20px;border-radius:0 4px 4px 0;">
+        <strong style="color:#e60000;">CodeMareFi Notu:</strong>
+        <p style="color:#ccc;margin:8px 0 0;">Bu konu hakkında daha fazla bilgi almak için yorum bölümünden sorularınızı iletebilirsiniz. Topluluğumuz size yardımcı olmaktan memnuniyet duyar.</p>
+      </div>`;
+      improvements.push('İçerik zenginleştirme notu eklendi');
+    }
   }
 
   // ── 4. Görsel alt text yoksa ekle ────────────────────────────
