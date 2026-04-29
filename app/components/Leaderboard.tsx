@@ -166,69 +166,31 @@ export default function Leaderboard() {
         }
       }
 
-      // Aktiflik — Son 7 gün içinde yorum + post yapanları say
-      const sevenDaysAgo = new Date();
-      sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
-      
-      // Yorumları say
-      const { data: recentComments } = await supabase
-        .from('comments')
-        .select('user_id, created_at')
-        .gte('created_at', sevenDaysAgo.toISOString())
-        .eq('is_approved', true);
+      // Aktiflik — user_activity tablosundan bu haftanın verilerini çek
+      const weekKey = getWeekKey();
+      const { data: activityData } = await supabase
+        .from('user_activity')
+        .select('user_id, seconds')
+        .eq('week_key', weekKey)
+        .order('seconds', { ascending: false })
+        .limit(10);
 
-      // Postları say
-      const { data: recentPosts } = await supabase
-        .from('user_posts')
-        .select('author_id, created_at')
-        .gte('created_at', sevenDaysAgo.toISOString());
-
-      const activityCounts: Record<string, number> = {};
-      
-      // Yorumları say (her yorum = 2 dakika aktiflik)
-      if (recentComments && recentComments.length > 0) {
-        recentComments.forEach((c: any) => {
-          if (!c.user_id) return;
-          activityCounts[c.user_id] = (activityCounts[c.user_id] || 0) + 120; // 2 dakika = 120 saniye
-        });
-      }
-      
-      // Postları say (her post = 30 dakika aktiflik)
-      if (recentPosts && recentPosts.length > 0) {
-        recentPosts.forEach((p: any) => {
-          if (!p.author_id) return;
-          activityCounts[p.author_id] = (activityCounts[p.author_id] || 0) + 1800; // 30 dakika = 1800 saniye
-        });
-      }
-      
-      // localPosts'taki son 7 gündeki postları da say
-      const sevenDaysAgoTime = sevenDaysAgo.getTime();
-      localPosts.forEach(p => {
-        if (p.authorId && new Date(p.published).getTime() >= sevenDaysAgoTime) {
-          activityCounts[p.authorId] = (activityCounts[p.authorId] || 0) + 1800; // 30 dakika
-        }
-      });
-
-      if (Object.keys(activityCounts).length > 0) {
-        const topActivityIds = Object.entries(activityCounts)
-          .sort((a, b) => b[1] - a[1])
-          .slice(0, 10)
-          .map(([id]) => id);
-        
+      if (activityData && activityData.length > 0) {
+        const actIds = activityData.map((a: any) => a.user_id);
         const { data: actProfiles } = await supabase
           .from('profiles')
           .select('id, full_name, avatar_url, role')
-          .in('id', topActivityIds);
+          .in('id', actIds);
 
         if (actProfiles) {
-          const list = topActivityIds.map(uid => {
-            const prof = actProfiles.find((p: any) => p.id === uid);
+          const list = activityData.map((a: any) => {
+            const prof = actProfiles.find((p: any) => p.id === a.user_id);
             return {
-              user_id: uid,
+              user_id: a.user_id,
               full_name: prof?.full_name || 'Anonim',
               avatar_url: prof?.avatar_url || null,
               role: prof?.role || 'member',
-              seconds: activityCounts[uid],
+              seconds: a.seconds || 0,
             };
           });
           setActivityLeaders(list);

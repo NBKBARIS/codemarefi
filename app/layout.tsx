@@ -77,6 +77,7 @@ import Preloader from "./components/Preloader";
 import SecurityProvider from "./components/SecurityProvider";
 import MobileBlocker from "./components/MobileBlocker";
 import ClientOnly from "./components/ClientOnly";
+import ActivityTracker from "./components/ActivityTracker";
 
 
 export default function RootLayout({
@@ -126,6 +127,7 @@ export default function RootLayout({
         />
         <MobileBlocker />
         <SecurityProvider />
+        <ActivityTracker />
         <Preloader />
 
         <ClientOnly>
