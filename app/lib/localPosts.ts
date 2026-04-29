@@ -177,5 +177,123 @@ app.get('/api/stats', (req, res) => {
 app.listen(3000);</code></pre>
       <p style="margin-top: 20px;">Bu basit API sayesinde web sitemizden botumuzun guncel istatistiklerini cekebiliriz.</p>
     `
+  },
+  {
+    id: "6",
+    title: "Python ile Discord Bot Yapimi: Baslangiç Rehberi",
+    slug: "python-discord-bot-yapimi",
+    thumbnail: "/images/discord_bot_2026_1777229959529.png",
+    author: "NBK BARIS",
+    authorId: NBK_USER_ID,
+    published: "2026-04-21T14:00:00Z",
+    updated: "2026-04-21T14:00:00Z",
+    categories: ["Discord-bot-kodlari", "Python", "Tavsiyemiz"],
+    commentCount: 0,
+    content: `
+      <div style="background: rgba(55, 178, 77, 0.1); border-left: 4px solid #37b24d; padding: 15px; margin-bottom: 20px; border-radius: 4px;">
+        <strong style="color: #37b24d; font-size: 18px;">Python ile Bot Geliştirme</strong>
+        <p style="margin-top: 10px; color: #ccc;">Python, Discord bot geliştirmek için en popüler dillerden biri! discord.py kütüphanesi ile kolayca başlayabilirsiniz.</p>
+      </div>
+      <h3 style="color: #fff; margin-top: 25px;">Kurulum</h3>
+      <pre><code>pip install discord.py
+pip install python-dotenv</code></pre>
+      <h3 style="color: #fff; margin-top: 25px;">Basit Bot Kodu</h3>
+      <pre><code>import discord
+from discord.ext import commands
+
+bot = commands.Bot(command_prefix='!', intents=discord.Intents.all())
+
+@bot.event
+async def on_ready():
+    print(f'{bot.user} olarak giriş yapıldı!')
+
+@bot.command()
+async def merhaba(ctx):
+    await ctx.send('Merhaba! Ben bir Discord botuyum!')
+
+bot.run('TOKEN_BURAYA')</code></pre>
+      <div style="background: #2b1d1d; border: 1px solid #e60000; padding: 15px; border-radius: 4px; margin-top: 20px;">
+        <strong style="color: #e60000;">ÖNEMLİ:</strong> Token'ınızı asla paylaşmayın ve .env dosyasında saklayın!
+      </div>
+    `
+  },
+  {
+    id: "7",
+    title: "CSS Grid ve Flexbox: Modern Layout Teknikleri",
+    slug: "css-grid-flexbox-modern-layout",
+    thumbnail: "/images/web_design_trends_1777230327387.png",
+    author: "NBK BARIS",
+    authorId: NBK_USER_ID,
+    published: "2026-04-20T11:30:00Z",
+    updated: "2026-04-20T11:30:00Z",
+    categories: ["CSS", "Html", "Tavsiyemiz"],
+    commentCount: 0,
+    content: `
+      <div style="text-align: center; margin-bottom: 30px;">
+        <i class="fa-solid fa-layer-group" style="font-size: 48px; display: inline-block; color: #e60000;"></i>
+        <h2 style="color: #fff; margin-top: 10px;">Modern CSS Layout Sistemleri</h2>
+      </div>
+      <p>CSS Grid ve Flexbox, modern web tasarımının temel taşlarıdır. Bu iki teknolojiyi öğrenerek responsive ve profesyonel web siteleri oluşturabilirsiniz.</p>
+      <h3 style="color: #fff; margin-top: 25px;">Flexbox - Tek Boyutlu Layout</h3>
+      <pre><code>.container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+}</code></pre>
+      <h3 style="color: #fff; margin-top: 25px;">CSS Grid - İki Boyutlu Layout</h3>
+      <pre><code>.grid-container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}</code></pre>
+      <div style="background: rgba(0, 255, 128, 0.1); border-left: 4px solid #00ff80; padding: 15px; border-radius: 4px; margin-top: 20px;">
+        <strong style="color: #00ff80;">İPUCU:</strong> Flexbox tek satır/sütun için, Grid ise karmaşık düzenler için idealdir!
+      </div>
+    `
+  },
+  {
+    id: "8",
+    title: "Node.js ile RESTful API Geliştirme",
+    slug: "nodejs-restful-api-gelistirme",
+    thumbnail: "/images/javascript_beginner_1777230673341.png",
+    author: "NBK BARIS",
+    authorId: NBK_USER_ID,
+    published: "2026-04-19T09:00:00Z",
+    updated: "2026-04-19T09:00:00Z",
+    categories: ["JavaScript", "Tavsiyemiz", "Genel Konular"],
+    commentCount: 0,
+    content: `
+      <div style="background: rgba(104, 211, 145, 0.1); padding: 20px; border-radius: 8px; margin-bottom: 25px; text-align: center; border: 1px solid #68d391;">
+        <i class="fa-solid fa-server" style="font-size: 50px; display: inline-block; color: #68d391;"></i>
+        <h3 style="color: #68d391; margin: 10px 0 0 0;">Backend Geliştirme ile Tanışın!</h3>
+      </div>
+      <p>Node.js ve Express.js kullanarak profesyonel RESTful API'ler oluşturabilirsiniz. Bu rehberde temel CRUD işlemlerini öğreneceksiniz.</p>
+      <h3 style="color: #fff; margin-top: 25px;">Express.js Kurulumu</h3>
+      <pre><code>npm init -y
+npm install express cors dotenv</code></pre>
+      <h3 style="color: #fff; margin-top: 25px;">Basit API Örneği</h3>
+      <pre><code>const express = require('express');
+const app = express();
+
+app.use(express.json());
+
+app.get('/api/users', (req, res) => {
+  res.json({ users: ['Ali', 'Veli', 'Ayşe'] });
+});
+
+app.post('/api/users', (req, res) => {
+  const { name } = req.body;
+  res.json({ message: \`\${name} eklendi!\` });
+});
+
+app.listen(3000, () => {
+  console.log('API 3000 portunda çalışıyor!');
+});</code></pre>
+      <div style="background: rgba(230, 0, 0, 0.1); border: 1px solid #e60000; padding: 15px; border-radius: 4px; margin-top: 25px;">
+        <strong style="color: #e60000;">CodeMareFi Tavsiyesi:</strong>
+        <p style="color: #ccc; margin-top: 10px;">API güvenliği için mutlaka JWT authentication ve rate limiting kullanın!</p>
+      </div>
+    `
   }
 ];
