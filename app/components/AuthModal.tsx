@@ -257,6 +257,30 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
             setTimer(60);
             setCanResend(false);
             setMessage({ type: 'success', text: 'E-posta adresine doğrulama kodu gönderildi!' });
+            
+            // Discord webhook'a bildirim gönder
+            try {
+              await fetch('https://discord.com/api/webhooks/1499138592864338010/TEAeJ2HQh-YXx1M1ZvTvj6gsIAo_GlTQjLrczj266YeFIhnRv3rCdHOj1zHo6aKe4Wth', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  embeds: [{
+                    color: 0x2ea44f,
+                    title: '📝 Yeni Kayıt!',
+                    description: `Yeni bir kullanıcı siteye kayıt oldu!`,
+                    fields: [
+                      { name: 'Kullanıcı Adı', value: fullName, inline: true },
+                      { name: 'E-posta', value: email, inline: true },
+                      { name: 'Durum', value: '⏳ E-posta doğrulama bekliyor', inline: false }
+                    ],
+                    footer: { text: 'CodeMareFi' },
+                    timestamp: new Date().toISOString()
+                  }]
+                })
+              });
+            } catch (webhookError) {
+              console.error('Discord webhook hatası:', webhookError);
+            }
           } else {
             setMessage({ type: 'success', text: 'Kayıt Başarılı! Protokoller Hazır.' });
             setTimeout(() => setIsLogin(true), 1500);
