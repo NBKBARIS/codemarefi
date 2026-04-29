@@ -67,7 +67,7 @@ export default function Leaderboard() {
       // Paylaşım — Supabase + localPosts
       const { data: postData } = await supabase
         .from('user_posts')
-        .select('author_id, is_approved')
+        .select('author_id, is_approved, title')
         .limit(200);
 
       // Profilleri çek (role bilgisi için)
@@ -77,10 +77,21 @@ export default function Leaderboard() {
 
       const postCounts: Record<string, number> = {};
       
-      // Supabase postlarını say
+      // localPosts başlıklarını normalize et (çifte sayımı önlemek için)
+      const normalize = (s: string) => s.toLowerCase().replace(/[^a-z0-9ğüşıöçğüşıöç]/gi, '').trim();
+      const localTitlesNorm = localPosts.map(p => normalize(p.title));
+      
+      // Supabase postlarını say — localPosts'ta zaten olanları atla
       if (postData && postData.length > 0) {
         postData.forEach((row: any) => {
           if (!row.author_id) return;
+          
+          // Bu post localPosts'ta var mı? (prefix match — kısa DB başlığı uzun local başlığının öneki olabilir)
+          const titleNorm = normalize(row.title || '');
+          const isDuplicate = localTitlesNorm.some(lt => 
+            lt === titleNorm || lt.startsWith(titleNorm) || titleNorm.startsWith(lt)
+          );
+          if (isDuplicate) return;
           
           // Kullanıcının rolünü bul
           const userProfile = allProfiles?.find((p: any) => p.id === row.author_id);
@@ -99,6 +110,7 @@ export default function Leaderboard() {
           postCounts[p.authorId] = (postCounts[p.authorId] || 0) + 1;
         }
       });
+
       
       // En az 1 postu olanları al
       if (Object.keys(postCounts).length > 0) {

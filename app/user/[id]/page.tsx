@@ -125,16 +125,27 @@ export default function PublicProfilePage() {
           is_approved: true // localPosts her zaman onaylı
         }));
         
+        // Başlık normalizasyonu (localPosts ile DB postları arasındaki prefix eşleşmesi için)
+        const normTitle = (s: string) => s.toLowerCase().replace(/[^a-z0-9ğüşıöç]/gi, '').trim();
+        const localTitlesNorm = userLocalPosts.map(p => normTitle(p.title));
+        
+        // DB postlarından localPosts ile çakışanları çıkar
+        const uniqueDbPosts = (postsData || []).filter(dbPost => {
+          const tn = normTitle(dbPost.title || '');
+          return !localTitlesNorm.some(lt => lt === tn || lt.startsWith(tn) || tn.startsWith(lt));
+        });
+        
         // Tüm postları birleştir ve tarihe göre sırala
-        const allPosts = [...(postsData || []), ...localPostsFormatted].sort((a, b) => {
+        const allPosts = [...uniqueDbPosts, ...localPostsFormatted].sort((a, b) => {
           return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
         });
         
-        // Toplam post sayısı
-        const totalCount = (supabaseCount ?? 0) + userLocalPosts.length;
+        // Toplam post sayısı (sadece unique DB postları + localPosts)
+        const totalCount = uniqueDbPosts.length + userLocalPosts.length;
         
         setPostCount(totalCount);
         setPosts(allPosts);
+
       } else {
         setError(true);
       }
