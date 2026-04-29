@@ -25,6 +25,7 @@ interface UserPost {
   title: string;
   created_at: string;
   slug: string;
+  is_approved?: boolean;
 }
 
 export default function PublicProfilePage() {
@@ -97,22 +98,43 @@ export default function PublicProfilePage() {
           }
         }
 
-        // Onaylı gönderiler (Supabase + localPosts)
-        const { data: postsData, count: supabaseCount } = await supabase
-          .from('user_posts')
-          .select('id, title, created_at, slug', { count: 'exact' })
-          .eq('author_id', profileData.id)
-          .eq('is_approved', true)
-          .order('created_at', { ascending: false });
+        // Gönderileri çek (admin/mod ise tümü, değilse sadece onaylı)
+        const isAdminOrMod = profileData.role === 'admin' || profileData.role === 'mod';
         
-        // localPosts'taki bu kullanıcının postlarını say
-        const localPostCount = localPosts.filter(p => p.authorId === profileData.id).length;
+        let postsQuery = supabase
+          .from('user_posts')
+          .select('id, title, created_at, slug, is_approved', { count: 'exact' })
+          .eq('author_id', profileData.id);
+        
+        // Admin/mod değilse sadece onaylı postları getir
+        if (!isAdminOrMod) {
+          postsQuery = postsQuery.eq('is_approved', true);
+        }
+        
+        const { data: postsData, count: supabaseCount } = await postsQuery.order('created_at', { ascending: false });
+        
+        // localPosts'taki bu kullanıcının postlarını al
+        const userLocalPosts = localPosts.filter(p => p.authorId === profileData.id);
+        
+        // localPosts'u UserPost formatına çevir
+        const localPostsFormatted: UserPost[] = userLocalPosts.map(p => ({
+          id: p.id,
+          title: p.title,
+          created_at: p.published,
+          slug: p.slug,
+          is_approved: true // localPosts her zaman onaylı
+        }));
+        
+        // Tüm postları birleştir ve tarihe göre sırala
+        const allPosts = [...(postsData || []), ...localPostsFormatted].sort((a, b) => {
+          return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+        });
         
         // Toplam post sayısı
-        const totalCount = (supabaseCount ?? 0) + localPostCount;
+        const totalCount = (supabaseCount ?? 0) + userLocalPosts.length;
         
         setPostCount(totalCount);
-        setPosts(postsData || []);
+        setPosts(allPosts);
       } else {
         setError(true);
       }
@@ -263,26 +285,57 @@ export default function PublicProfilePage() {
             </div>
           ) : (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
-              {posts.map((post) => (
-                <Link 
-                  key={post.id} 
-                  href={`/post/${post.id}`}
-                  style={{ background: '#111', padding: '15px', borderRadius: '10px', borderLeft: '4px solid #e60000', textDecoration: 'none', transition: 'all 0.2s' }}
-                  onMouseEnter={(e) => e.currentTarget.style.background = '#1a1a1a'}
-                  onMouseLeave={(e) => e.currentTarget.style.background = '#111'}
-                >
-                  <div style={{ fontSize: '11px', color: '#e60000', marginBottom: '5px' }}>
-                    <i className="fa-solid fa-pen-nib" style={{ marginRight: '5px' }}></i>
-                    Gönderi • {post.created_at && !isNaN(new Date(post.created_at).getTime()) ? new Date(post.created_at).toLocaleDateString('tr-TR') : 'Bilinmiyor'}
-                  </div>
-                  <div style={{ fontSize: '16px', color: '#fff', fontWeight: 700, marginBottom: '5px' }}>
-                    {post.title}
-                  </div>
-                  <div style={{ fontSize: '12px', color: '#888', display: 'flex', alignItems: 'center', gap: '5px' }}>
-                    Devamını Oku <i className="fa-solid fa-arrow-right" style={{ fontSize: '10px' }}></i>
-                  </div>
-                </Link>
-              ))}
+              {posts.map((post) => {
+                // localPost mu yoksa Supabase post mu kontrol et
+                const isLocalPost = localPosts.some(lp => lp.id === post.id);
+                const postUrl = isLocalPost ? `/post/${post.id}` : `/post/${post.id}`;
+                const isApproved = post.is_approved !== false; // undefined veya true ise onaylı
+                
+                return (
+                  <Link 
+                    key={post.id} 
+                    href={postUrl}
+                    style={{ 
+                      background: '#111', 
+                      padding: '15px', 
+                      borderRadius: '10px', 
+                      borderLeft: `4px solid ${isApproved ? '#e60000' : '#ffa500'}`, 
+                      textDecoration: 'none', 
+                      transition: 'all 0.2s',
+                      opacity: isApproved ? 1 : 0.7
+                    }}
+                    onMouseEnter={(e) => e.currentTarget.style.background = '#1a1a1a'}
+                    onMouseLeave={(e) => e.currentTarget.style.background = '#111'}
+                  >
+                    <div style={{ fontSize: '11px', color: isApproved ? '#e60000' : '#ffa500', marginBottom: '5px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <span>
+                        <i className="fa-solid fa-pen-nib" style={{ marginRight: '5px' }}></i>
+                        Gönderi • {post.created_at && !isNaN(new Date(post.created_at).getTime()) ? new Date(post.created_at).toLocaleDateString('tr-TR') : 'Bilinmiyor'}
+                      </span>
+                      {!isApproved && (
+                        <span style={{ 
+                          background: '#ffa500', 
+                          color: '#000', 
+                          padding: '2px 8px', 
+                          borderRadius: '4px', 
+                          fontSize: '9px', 
+                          fontWeight: 700,
+                          textTransform: 'uppercase'
+                        }}>
+                          <i className="fa-solid fa-clock" style={{ marginRight: '4px' }}></i>
+                          Onay Bekliyor
+                        </span>
+                      )}
+                    </div>
+                    <div style={{ fontSize: '16px', color: '#fff', fontWeight: 700, marginBottom: '5px' }}>
+                      {post.title}
+                    </div>
+                    <div style={{ fontSize: '12px', color: '#888', display: 'flex', alignItems: 'center', gap: '5px' }}>
+                      Devamını Oku <i className="fa-solid fa-arrow-right" style={{ fontSize: '10px' }}></i>
+                    </div>
+                  </Link>
+                );
+              })}
             </div>
           )}
         </div>

@@ -67,9 +67,13 @@ export default function Leaderboard() {
       // Paylaşım — Supabase + localPosts
       const { data: postData } = await supabase
         .from('user_posts')
-        .select('author_id')
-        .eq('is_approved', true)
+        .select('author_id, is_approved')
         .limit(200);
+
+      // Profilleri çek (role bilgisi için)
+      const { data: allProfiles } = await supabase
+        .from('profiles')
+        .select('id, role');
 
       const postCounts: Record<string, number> = {};
       
@@ -77,7 +81,15 @@ export default function Leaderboard() {
       if (postData && postData.length > 0) {
         postData.forEach((row: any) => {
           if (!row.author_id) return;
-          postCounts[row.author_id] = (postCounts[row.author_id] || 0) + 1;
+          
+          // Kullanıcının rolünü bul
+          const userProfile = allProfiles?.find((p: any) => p.id === row.author_id);
+          const isAdminOrMod = userProfile?.role === 'admin' || userProfile?.role === 'mod';
+          
+          // Admin/mod ise tüm postları say, değilse sadece onaylı postları
+          if (isAdminOrMod || row.is_approved) {
+            postCounts[row.author_id] = (postCounts[row.author_id] || 0) + 1;
+          }
         });
       }
       
