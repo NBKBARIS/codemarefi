@@ -27,6 +27,16 @@ const usernameBlacklist = [
 
 export function hasBadWords(text: string): boolean {
   if (!text) return false;
+  
+  // "codemarefi" kelimesini izin ver (site adı)
+  const lowerText = text.toLowerCase();
+  if (lowerText.includes('codemarefi') || lowerText.includes('code mare fi')) {
+    // codemarefi içeriyorsa, onu geçici olarak temizle
+    const cleaned = text.replace(/codemarefi/gi, '').replace(/code\s*mare\s*fi/gi, '');
+    if (!cleaned.trim()) return false; // sadece codemarefi varsa izin ver
+    text = cleaned; // codemarefi olmadan kontrol et
+  }
+  
   const normalized = text.toLowerCase()
     .replace(/[0@]/g, 'o')
     .replace(/[1!]/g, 'i')
