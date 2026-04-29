@@ -302,19 +302,49 @@ export default function YonetimPage() {
           {/* Quick Actions Bar */}
           <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap', background: 'rgba(255,255,255,0.02)', padding: '15px', borderRadius: '12px', border: '1px solid #1e1e1e', marginBottom: '30px' }}>
             <button onClick={async () => {
-                if (!confirm('Tüm gönderilere SEO düzeltmesi uygulanacak. Devam?')) return;
-                const { data: allPosts } = await supabase.from('user_posts').select('*');
-                if (!allPosts?.length) { alert('Hiç post bulunamadı.'); return; }
-                let fixed = 0;
-                let totalImprovements = 0;
-                for (const p of allPosts) {
-                  const seo = enhanceSeo(p.title, p.content, p.categories || []);
-                  // Her zaman güncelle, improvement olsun olmasın (SEO skoru için)
-                  await supabase.from('user_posts').update({ content: seo.content }).eq('id', p.id);
-                  fixed++;
-                  totalImprovements += seo.improvements.length;
+                try {
+                  if (!confirm('Tüm gönderilere SEO düzeltmesi uygulanacak. Devam?')) return;
+                  
+                  console.log('🔍 SEO düzeltme başlatılıyor...');
+                  const { data: allPosts, error: fetchError } = await supabase.from('user_posts').select('*');
+                  
+                  if (fetchError) {
+                    console.error('❌ Post çekme hatası:', fetchError);
+                    alert('Hata: ' + fetchError.message);
+                    return;
+                  }
+                  
+                  console.log(`📊 ${allPosts?.length || 0} post bulundu`);
+                  
+                  if (!allPosts?.length) { 
+                    alert('Hiç post bulunamadı.'); 
+                    return; 
+                  }
+                  
+                  let fixed = 0;
+                  let totalImprovements = 0;
+                  
+                  for (const p of allPosts) {
+                    console.log(`🔧 İşleniyor: ${p.title}`);
+                    const seo = enhanceSeo(p.title || '', p.content || '', p.categories || []);
+                    console.log(`   - ${seo.improvements.length} iyileştirme: ${seo.improvements.join(', ')}`);
+                    
+                    const { error: updateError } = await supabase.from('user_posts').update({ content: seo.content }).eq('id', p.id);
+                    
+                    if (updateError) {
+                      console.error(`❌ ${p.title} güncellenemedi:`, updateError);
+                    } else {
+                      fixed++;
+                      totalImprovements += seo.improvements.length;
+                    }
+                  }
+                  
+                  console.log(`✅ Tamamlandı: ${fixed} post işlendi, ${totalImprovements} iyileştirme`);
+                  alert(`✅ ${fixed} post işlendi.\n📊 Toplam ${totalImprovements} iyileştirme yapıldı.`);
+                } catch (err: any) {
+                  console.error('❌ SEO düzeltme hatası:', err);
+                  alert('Hata oluştu: ' + err.message);
                 }
-                alert(`✅ ${fixed} post işlendi.\n📊 Toplam ${totalImprovements} iyileştirme yapıldı.`);
               }} style={{ background: 'transparent', color: '#2ea44f', border: '1px solid #2ea44f33', padding: '8px 15px', borderRadius: '6px', cursor: 'pointer', fontSize: '12px', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '8px' }}>
               <i className="fa-solid fa-wand-magic-sparkles"></i> SEO Toplu Düzelt
             </button>
