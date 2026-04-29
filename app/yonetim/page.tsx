@@ -6,6 +6,7 @@ import { writeLog, LOG_LABELS, ActivityLog, LogAction } from '../lib/activityLog
 import { sendNotification } from '../lib/notifications';
 import { enhanceSeo } from '../lib/seoEnhancer';
 import { localPosts } from '../lib/localPosts';
+import { invalidatePostCache } from '../lib/blogger';
 import { useRouter } from 'next/navigation';
 
 type Tab = 'posts' | 'all_posts' | 'users' | 'comments' | 'logs';
@@ -339,6 +340,10 @@ export default function YonetimPage() {
                     }
                   }
                   
+                  // Cache'i temizle
+                  invalidatePostCache();
+                  console.log('🗑️ Post cache temizlendi');
+                  
                   console.log(`✅ Tamamlandı: ${fixed} post işlendi, ${totalImprovements} iyileştirme`);
                   alert(`✅ ${fixed} post işlendi.\n📊 Toplam ${totalImprovements} iyileştirme yapıldı.`);
                 } catch (err: any) {
@@ -363,7 +368,11 @@ export default function YonetimPage() {
                       restored++;
                     }
                   }
-                  alert(`${restored} yazı kurtarıldı.`); fetchPosts(); fetchStats();
+                  // Cache'i temizle
+                  invalidatePostCache();
+                  alert(`${restored} yazı kurtarıldı.`); 
+                  fetchPosts(); 
+                  fetchStats();
                 } catch (e: any) { alert(e.message); }
               }} style={{ background: 'transparent', color: '#00a8cc', border: '1px solid #00a8cc33', padding: '8px 15px', borderRadius: '6px', cursor: 'pointer', fontSize: '12px', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '8px' }}>
               <i className="fa-solid fa-life-ring"></i> Eksikleri Kurtar
