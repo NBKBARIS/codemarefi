@@ -71,7 +71,7 @@ import { getApprovedPosts, UserPost } from './userPosts';
 
 // ── İstemci tarafı in-memory cache ───────────────────────────
 const postCache = new Map<string, { data: any; ts: number }>();
-const POST_CACHE_TTL = 5 * 60 * 1000; // 5 dakika
+const POST_CACHE_TTL = 30 * 1000; // 30 saniye - daha hızlı güncelleme için
 
 function getCache<T>(key: string): T | null {
   const entry = postCache.get(key);
