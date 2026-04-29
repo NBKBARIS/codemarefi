@@ -63,7 +63,7 @@ export default function IletisimPage() {
               <i className="fa-brands fa-discord" style={{ fontSize: '40px', color: '#5865F2', marginBottom: '20px' }}></i>
               <h3 style={{ fontSize: '20px', color: '#fff', marginBottom: '10px' }}>Topluluk & Chat</h3>
               <p style={{ color: '#666', fontSize: '14px', marginBottom: '20px' }}>Geliştiricilerle tanışmak ve anlık yardım almak için:</p>
-              <a href="https://discord.gg/dRMY8zW" target="_blank" rel="noreferrer" style={{ 
+              <a href="https://discord.gg/xhg337eHw6" target="_blank" rel="noreferrer" style={{ 
                 display: 'inline-block', 
                 background: '#5865F2', 
                 color: '#fff', 
