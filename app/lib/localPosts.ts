@@ -580,5 +580,291 @@ function baglan(channel) {
         <strong style="color: #00ff80;">İPUCU:</strong> Domain alırken otomatik yenileme ayarlarını kontrol edin. Bazı sağlayıcılar ilk yıl ucuz, sonraki yıllarda pahalı olabiliyor!
       </div>
     `
+  },
+  {
+    id: '19',
+    title: 'TypeScript ile Tip Güvenli Kod Yazmak: Başlangıç Rehberi',
+    slug: 'typescript-tip-guvenli-kod-yazmak',
+    author: 'NBK BARIŞ',
+    authorId: NBK_USER_ID,
+    published: '2026-04-30T10:00:00.000Z',
+    updated: '2026-04-30T10:00:00.000Z',
+    categories: ['JavaScript', 'Genel Konular', 'Tavsiyemiz'],
+    thumbnail: 'https://images.unsplash.com/photo-1516116216624-53e697fedbea?q=80&w=1200&auto=format&fit=crop',
+    commentCount: 0,
+    content: `
+      <div style="background: rgba(49, 120, 198, 0.1); border-left: 4px solid #3178c6; padding: 15px; margin-bottom: 20px; border-radius: 4px;">
+        <strong style="color: #3178c6; font-size: 18px;">TypeScript ile Tanışın!</strong>
+        <p style="margin-top: 10px; color: #ccc;">JavaScript'in süper güçlü versiyonu olan TypeScript, kodunuzu daha güvenli ve bakımı kolay hale getirir.</p>
+      </div>
+      <p>JavaScript harika bir dil ama büyük projelerde tip hatalarıyla uğraşmak can sıkıcı olabiliyor. TypeScript tam da bu noktada devreye giriyor!</p>
+      <h3 style="color: #fff; margin-top: 25px;">TypeScript Neden Kullanmalıyız?</h3>
+      <ul>
+        <li><strong>Tip Güvenliği:</strong> Hataları kod yazarken yakala, runtime'da değil</li>
+        <li><strong>IntelliSense:</strong> VS Code'da muhteşem otomatik tamamlama</li>
+        <li><strong>Refactoring:</strong> Büyük kod tabanlarında güvenle değişiklik yap</li>
+      </ul>
+      <h3 style="color: #fff; margin-top: 25px;">İlk TypeScript Kodunuz</h3>
+      <pre><code>// Basit bir fonksiyon
+function selamla(isim: string): string {
+  return \`Merhaba, \${isim}!\`;
+}
+
+// Tip hatası verir!
+selamla(123); // ❌ Hata: number, string değil
+
+// Doğru kullanım
+selamla("CodeMareFi"); // ✅ Çalışır</code></pre>
+      <div style="background: rgba(230, 0, 0, 0.1); border: 1px solid #e60000; padding: 15px; border-radius: 4px; margin-top: 25px;">
+        <strong style="color: #e60000;">CodeMareFi Tavsiyesi:</strong>
+        <p style="color: #ccc; margin-top: 10px;">Yeni projelerinizde direkt TypeScript kullanın. Başta biraz zor gelse de, uzun vadede çok zaman kazandırır!</p>
+      </div>
+    `
+  },
+  {
+    id: '20',
+    title: 'Git ve GitHub Kullanımı: Versiyon Kontrolünde Ustalaşmak',
+    slug: 'git-github-kullanimi-versiyon-kontrolu',
+    author: 'NBK BARIŞ',
+    authorId: NBK_USER_ID,
+    published: '2026-04-30T09:00:00.000Z',
+    updated: '2026-04-30T09:00:00.000Z',
+    categories: ['Genel Konular', 'Tavsiyemiz'],
+    thumbnail: 'https://images.unsplash.com/photo-1556075798-4825dfaaf498?q=80&w=1200&auto=format&fit=crop',
+    commentCount: 0,
+    content: `
+      <div style="text-align: center; margin-bottom: 30px;">
+        <i class="fa-brands fa-github" style="font-size: 48px; display: inline-block; color: #fff;"></i>
+        <h2 style="color: #fff; margin-top: 10px;">Git ile Kod Yönetimi</h2>
+      </div>
+      <p>Profesyonel yazılım geliştirmede Git kullanmak artık bir zorunluluk. Peki Git nedir ve nasıl kullanılır?</p>
+      <h3 style="color: #fff; margin-top: 25px;">Git Nedir?</h3>
+      <p>Git, kodunuzun her değişikliğini kaydeden ve gerektiğinde eski versiyonlara dönmenizi sağlayan bir versiyon kontrol sistemidir.</p>
+      <h3 style="color: #fff; margin-top: 25px;">Temel Git Komutları</h3>
+      <pre><code># Yeni bir repo başlat
+git init
+
+# Değişiklikleri kaydet
+git add .
+git commit -m "İlk commit"
+
+# GitHub'a yükle
+git remote add origin https://github.com/kullanici/repo.git
+git push -u origin main</code></pre>
+      <h3 style="color: #fff; margin-top: 25px;">Branch (Dal) Kullanımı</h3>
+      <pre><code># Yeni bir dal oluştur
+git checkout -b yeni-ozellik
+
+# Değişiklikleri yap ve commit et
+git add .
+git commit -m "Yeni özellik eklendi"
+
+# Ana dala birleştir
+git checkout main
+git merge yeni-ozellik</code></pre>
+      <div style="background: rgba(0, 255, 128, 0.1); border-left: 4px solid #00ff80; padding: 15px; border-radius: 4px; margin-top: 20px;">
+        <strong style="color: #00ff80;">İPUCU:</strong> Her özellik için ayrı branch açın. Bu sayede main branch'iniz her zaman stabil kalır!
+      </div>
+    `
+  },
+  {
+    id: '21',
+    title: 'MongoDB vs PostgreSQL: Hangi Veritabanını Seçmeliyim?',
+    slug: 'mongodb-vs-postgresql-veritabani-secimi',
+    author: 'NBK BARIŞ',
+    authorId: NBK_USER_ID,
+    published: '2026-04-30T08:00:00.000Z',
+    updated: '2026-04-30T08:00:00.000Z',
+    categories: ['Genel Konular', 'Yazılım-Haberleri'],
+    thumbnail: 'https://images.unsplash.com/photo-1544383835-bda2bc66a55d?q=80&w=1200&auto=format&fit=crop',
+    commentCount: 0,
+    content: `
+      <p>Yeni bir proje başlatırken en önemli kararlardan biri veritabanı seçimi. MongoDB mu, PostgreSQL mi? İşte detaylı karşılaştırma!</p>
+      <h3 style="color: #fff; margin-top: 25px;">MongoDB - NoSQL Veritabanı</h3>
+      <p>MongoDB, döküman tabanlı (document-based) bir NoSQL veritabanıdır. Verilerinizi JSON benzeri formatta saklar.</p>
+      <h4 style="color: #2ea44f;">Avantajları:</h4>
+      <ul>
+        <li>Esnek şema yapısı - istediğiniz zaman alan ekleyebilirsiniz</li>
+        <li>Hızlı prototipleme için ideal</li>
+        <li>Yatay ölçeklendirme (horizontal scaling) kolay</li>
+      </ul>
+      <h4 style="color: #e60000;">Dezavantajları:</h4>
+      <ul>
+        <li>Karmaşık ilişkisel sorgular zor</li>
+        <li>ACID garantisi sınırlı (transaction desteği var ama)</li>
+      </ul>
+      <h3 style="color: #fff; margin-top: 25px;">PostgreSQL - İlişkisel Veritabanı</h3>
+      <p>PostgreSQL, güçlü ve açık kaynaklı bir SQL veritabanıdır. Veri bütünlüğü konusunda çok katı.</p>
+      <h4 style="color: #2ea44f;">Avantajları:</h4>
+      <ul>
+        <li>Güçlü ACID garantisi</li>
+        <li>Karmaşık JOIN sorguları mükemmel çalışır</li>
+        <li>JSON desteği ile NoSQL gibi de kullanılabilir</li>
+      </ul>
+      <h4 style="color: #e60000;">Dezavantajları:</h4>
+      <ul>
+        <li>Şema değişiklikleri daha zahmetli</li>
+        <li>Yatay ölçeklendirme MongoDB'ye göre daha zor</li>
+      </ul>
+      <div style="background: rgba(230, 0, 0, 0.1); border: 1px solid #e60000; padding: 15px; border-radius: 4px; margin-top: 25px;">
+        <strong style="color: #e60000;">CodeMareFi Tavsiyesi:</strong>
+        <p style="color: #ccc; margin-top: 10px;">E-ticaret, finans gibi veri bütünlüğünün kritik olduğu projelerde PostgreSQL, sosyal medya, blog gibi esnek yapılar için MongoDB tercih edin!</p>
+      </div>
+    `
+  },
+  {
+    id: '22',
+    title: 'Docker ile Konteyner Teknolojisine Giriş',
+    slug: 'docker-konteyner-teknolojisine-giris',
+    author: 'NBK BARIŞ',
+    authorId: NBK_USER_ID,
+    published: '2026-04-29T16:00:00.000Z',
+    updated: '2026-04-29T16:00:00.000Z',
+    categories: ['Genel Konular', 'Tavsiyemiz'],
+    thumbnail: 'https://images.unsplash.com/photo-1605745341112-85968b19335b?q=80&w=1200&auto=format&fit=crop',
+    commentCount: 0,
+    content: `
+      <div style="background: rgba(33, 150, 243, 0.1); border-left: 4px solid #2196f3; padding: 15px; margin-bottom: 20px; border-radius: 4px;">
+        <strong style="color: #2196f3; font-size: 18px;">Docker ile Tanışın!</strong>
+        <p style="margin-top: 10px; color: #ccc;">"Benim bilgisayarımda çalışıyor" sorununa son veren teknoloji: Docker!</p>
+      </div>
+      <p>Docker, uygulamalarınızı konteynerler içinde çalıştırmanızı sağlayan bir platformdur. Peki bu ne demek?</p>
+      <h3 style="color: #fff; margin-top: 25px;">Docker Nedir?</h3>
+      <p>Basitçe söylemek gerekirse, Docker uygulamanızı ve tüm bağımlılıklarını (dependencies) bir paket içine koyar. Bu paket her yerde aynı şekilde çalışır.</p>
+      <h3 style="color: #fff; margin-top: 25px;">İlk Docker Container'ınız</h3>
+      <pre><code># Node.js uygulaması için Dockerfile
+FROM node:18-alpine
+WORKDIR /app
+COPY package*.json ./
+RUN npm install
+COPY . .
+EXPOSE 3000
+CMD ["npm", "start"]</code></pre>
+      <pre><code># Image oluştur
+docker build -t my-app .
+
+# Container çalıştır
+docker run -p 3000:3000 my-app</code></pre>
+      <h3 style="color: #fff; margin-top: 25px;">Docker Compose ile Çoklu Servis</h3>
+      <pre><code>version: '3.8'
+services:
+  app:
+    build: .
+    ports:
+      - "3000:3000"
+  db:
+    image: postgres:15
+    environment:
+      POSTGRES_PASSWORD: secret</code></pre>
+      <div style="background: rgba(0, 255, 128, 0.1); border-left: 4px solid #00ff80; padding: 15px; border-radius: 4px; margin-top: 20px;">
+        <strong style="color: #00ff80;">İPUCU:</strong> Docker öğrenmek başta zor gelebilir ama production'da hayat kurtarır. Mutlaka öğrenin!
+      </div>
+    `
+  },
+  {
+    id: '23',
+    title: 'Web Güvenliği: XSS ve SQL Injection Saldırılarından Korunma',
+    slug: 'web-guvenligi-xss-sql-injection-korunma',
+    author: 'NBK BARIŞ',
+    authorId: NBK_USER_ID,
+    published: '2026-04-29T15:00:00.000Z',
+    updated: '2026-04-29T15:00:00.000Z',
+    categories: ['Siber-Güvenlik', 'Genel Konular', 'Tavsiyemiz'],
+    thumbnail: 'https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1200&auto=format&fit=crop',
+    commentCount: 0,
+    content: `
+      <div style="background: rgba(230, 0, 0, 0.1); border-left: 4px solid #e60000; padding: 15px; margin-bottom: 20px; border-radius: 4px;">
+        <strong style="color: #e60000; font-size: 18px;">⚠️ GÜVENLİK ÖNEMLİDİR!</strong>
+        <p style="margin-top: 10px; color: #ccc;">Web uygulamanız ne kadar güvenli? Bu rehberde en yaygın saldırı türlerinden nasıl korunacağınızı öğreneceksiniz.</p>
+      </div>
+      <p>Web güvenliği, her geliştiricinin bilmesi gereken kritik bir konu. İşte en yaygın saldırı türleri ve korunma yöntemleri!</p>
+      <h3 style="color: #fff; margin-top: 25px;">1. XSS (Cross-Site Scripting) Saldırıları</h3>
+      <p>Saldırgan, sitenize kötü amaçlı JavaScript kodu enjekte eder.</p>
+      <h4 style="color: #e60000;">Kötü Örnek:</h4>
+      <pre><code>// Kullanıcı inputunu direkt HTML'e yazmak
+document.getElementById('output').innerHTML = userInput; // ❌ TEHLİKELİ!</code></pre>
+      <h4 style="color: #2ea44f;">Güvenli Örnek:</h4>
+      <pre><code>// Input'u escape et
+document.getElementById('output').textContent = userInput; // ✅ GÜVENLİ
+
+// React kullanıyorsan zaten korumalı
+&lt;div&gt;{userInput}&lt;/div&gt; // ✅ GÜVENLİ</code></pre>
+      <h3 style="color: #fff; margin-top: 25px;">2. SQL Injection Saldırıları</h3>
+      <p>Saldırgan, SQL sorgularınıza kötü amaçlı kod enjekte eder.</p>
+      <h4 style="color: #e60000;">Kötü Örnek:</h4>
+      <pre><code>// String concatenation ile sorgu
+const query = \`SELECT * FROM users WHERE email = '\${email}'\`; // ❌ TEHLİKELİ!</code></pre>
+      <h4 style="color: #2ea44f;">Güvenli Örnek:</h4>
+      <pre><code>// Parameterized query kullan
+const query = 'SELECT * FROM users WHERE email = $1';
+await db.query(query, [email]); // ✅ GÜVENLİ</code></pre>
+      <h3 style="color: #fff; margin-top: 25px;">3. CSRF (Cross-Site Request Forgery)</h3>
+      <p>Kullanıcının oturumunu kullanarak istemediği işlemler yaptırılır.</p>
+      <h4 style="color: #2ea44f;">Korunma:</h4>
+      <ul>
+        <li>CSRF token kullan</li>
+        <li>SameSite cookie attribute'ü kullan</li>
+        <li>Kritik işlemlerde şifre doğrulaması iste</li>
+      </ul>
+      <div style="background: rgba(230, 0, 0, 0.1); border: 1px solid #e60000; padding: 15px; border-radius: 4px; margin-top: 25px;">
+        <strong style="color: #e60000;">CodeMareFi Tavsiyesi:</strong>
+        <p style="color: #ccc; margin-top: 10px;">Güvenlik bir özellik değil, zorunluluktur! Her zaman kullanıcı inputlarına güvenmeyin ve validate edin.</p>
+      </div>
+    `
+  },
+  {
+    id: '24',
+    title: 'Responsive Web Tasarım: Mobil Uyumlu Siteler Yapmak',
+    slug: 'responsive-web-tasarim-mobil-uyumlu',
+    author: 'NBK BARIŞ',
+    authorId: NBK_USER_ID,
+    published: '2026-04-29T14:00:00.000Z',
+    updated: '2026-04-29T14:00:00.000Z',
+    categories: ['Web-Tasarım', 'CSS', 'Html', 'Tavsiyemiz'],
+    thumbnail: 'https://images.unsplash.com/photo-1559028012-481c04fa702d?q=80&w=1200&auto=format&fit=crop',
+    commentCount: 0,
+    content: `
+      <div style="text-align: center; margin-bottom: 30px;">
+        <i class="fa-solid fa-mobile-screen-button" style="font-size: 48px; display: inline-block; color: #e60000;"></i>
+        <h2 style="color: #fff; margin-top: 10px;">Mobil Öncelikli Tasarım</h2>
+      </div>
+      <p>Günümüzde internet trafiğinin %60'ından fazlası mobil cihazlardan geliyor. Siteniz mobil uyumlu değilse, kullanıcılarınızın yarısını kaybediyorsunuz!</p>
+      <h3 style="color: #fff; margin-top: 25px;">Media Queries ile Responsive Tasarım</h3>
+      <pre><code>/* Mobil öncelikli yaklaşım */
+.container {
+  width: 100%;
+  padding: 15px;
+}
+
+/* Tablet */
+@media (min-width: 768px) {
+  .container {
+    width: 750px;
+    margin: 0 auto;
+  }
+}
+
+/* Desktop */
+@media (min-width: 1200px) {
+  .container {
+    width: 1140px;
+  }
+}</code></pre>
+      <h3 style="color: #fff; margin-top: 25px;">Flexbox ile Esnek Layout</h3>
+      <pre><code>.card-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.card {
+  flex: 1 1 300px; /* Minimum 300px, esnek büyüme */
+}</code></pre>
+      <h3 style="color: #fff; margin-top: 25px;">Viewport Meta Tag</h3>
+      <pre><code>&lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;</code></pre>
+      <div style="background: rgba(0, 255, 128, 0.1); border-left: 4px solid #00ff80; padding: 15px; border-radius: 4px; margin-top: 20px;">
+        <strong style="color: #00ff80;">İPUCU:</strong> Tasarımınızı yaparken önce mobil için tasarlayın, sonra büyük ekranlara uyarlayın (Mobile-First yaklaşımı)!
+      </div>
+    `
   }
 ];
