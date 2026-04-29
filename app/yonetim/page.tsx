@@ -5,7 +5,7 @@ import { getPendingPosts, approvePost, deletePost, UserPost } from '../lib/userP
 import { writeLog, LOG_LABELS, ActivityLog, LogAction } from '../lib/activityLog';
 import { sendNotification } from '../lib/notifications';
 import { enhanceSeo } from '../lib/seoEnhancer';
-import { localPosts } from '../app/lib/localPosts';
+import { localPosts } from '../lib/localPosts';
 import { useRouter } from 'next/navigation';
 
 type Tab = 'posts' | 'users' | 'comments' | 'logs';
