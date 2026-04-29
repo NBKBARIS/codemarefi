@@ -372,10 +372,33 @@ export default function Leaderboard() {
           <span style={{ letterSpacing: '1px' }}>SKOR TABLOSU</span>
         </div>
         {lastUpdated && (
-          <span style={{ fontSize: '9px', color: '#555', fontWeight: 400 }}>
-            <i className="fa-solid fa-rotate" style={{ marginRight: '3px', color: '#2ea44f' }}></i>
-            {lastUpdated.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
-          </span>
+          <button 
+            onClick={() => {
+              // Butona basıldığında manuel olarak veriyi yenile
+              setLoading(true);
+              fetchLeaders();
+            }}
+            title="Skor Tablosunu Yenile"
+            style={{ 
+              background: 'transparent',
+              border: 'none',
+              fontSize: '9px', 
+              color: '#888', 
+              fontWeight: 400,
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '4px',
+              padding: '2px 6px',
+              borderRadius: '4px',
+              transition: 'all 0.2s'
+            }}
+            onMouseEnter={e => { e.currentTarget.style.color = '#fff'; e.currentTarget.style.background = '#222'; }}
+            onMouseLeave={e => { e.currentTarget.style.color = '#888'; e.currentTarget.style.background = 'transparent'; }}
+          >
+            <i className={`fa-solid fa-rotate ${loading ? 'fa-spin' : ''}`} style={{ color: '#2ea44f' }}></i>
+            {lastUpdated.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' })}
+          </button>
         )}
       </div>
 
