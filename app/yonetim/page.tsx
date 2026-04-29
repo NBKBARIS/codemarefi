@@ -229,9 +229,9 @@ export default function YonetimPage() {
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
             <button
               onClick={async () => {
-                if (!confirm('Tüm onaylı gönderilere SEO düzeltmesi uygulanacak. Devam?')) return;
-                const { data: allPosts } = await supabase.from('user_posts').select('*').eq('is_approved', true);
-                if (!allPosts?.length) { alert('Onaylı gönderi yok.'); return; }
+                if (!confirm('Tüm gönderilere (onaylı + onaysız) SEO düzeltmesi uygulanacak. Devam?')) return;
+                const { data: allPosts } = await supabase.from('user_posts').select('*');
+                if (!allPosts?.length) { alert('Gönderi yok.'); return; }
                 let fixed = 0;
                 for (const p of allPosts) {
                   const seo = enhanceSeo(p.title, p.content, p.categories);

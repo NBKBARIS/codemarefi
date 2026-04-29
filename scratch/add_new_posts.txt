@@ -1,0 +1,11 @@
+Yeni postlar localPosts.ts'ye manuel olarak eklenecek.
+
+ID 19-24 arası 6 yeni post:
+- TypeScript ile Tip Güvenli Kod Yazmak
+- Git ve GitHub Kullanımı
+- MongoDB vs PostgreSQL
+- Docker ile Konteyner Teknolojisi
+- Web Güvenliği: XSS ve SQL Injection
+- Responsive Web Tasarım
+
+Tüm postlar NBK BARIŞ adına.
