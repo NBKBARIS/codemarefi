@@ -28,7 +28,7 @@ const usernameBlacklist = [
 export function hasBadWords(text: string): boolean {
   if (!text) return false;
   
-  // "codemarefi" kelimesini izin ver (site adı)
+  // "codemarefi" ve "ekibi" kelimelerini izin ver
   const lowerText = text.toLowerCase();
   if (lowerText.includes('codemarefi') || lowerText.includes('code mare fi')) {
     // codemarefi içeriyorsa, onu geçici olarak temizle
@@ -42,11 +42,13 @@ export function hasBadWords(text: string): boolean {
     .replace(/[1!]/g, 'i')
     .replace(/[3]/g, 'e')
     .replace(/[4]/g, 'a')
-    .replace(/\s+/g, '');
+    .replace(/\s+/g, ' '); // Boşlukları tek boşluğa çevir (tamamen kaldırma)
 
   return badWords.some(word => {
     const clean = word.toLowerCase();
-    return normalized.includes(clean) || new RegExp(clean, 'gi').test(text);
+    // Kelime sınırları ile kontrol et (tam kelime eşleşmesi)
+    const wordBoundaryRegex = new RegExp(`\\b${clean}\\b`, 'gi');
+    return wordBoundaryRegex.test(normalized);
   });
 }
 
