@@ -15,6 +15,9 @@
 // NBK BARIŞ kullanıcısının UUID'si (Supabase Authentication'dan alındı)
 const NBK_USER_ID = 'b0cd3649-e54a-49f2-a8ed-da7a8561bd3b';
 
+// İkas kullanıcısının UUID'si
+const IKAS_USER_ID = 'e2a270ed-39b1-4de8-8b22-4784dbfe27ca';
+
 export const localPosts: LocalPost[] = [
   {
     id: "1",
@@ -515,6 +518,66 @@ function baglan(channel) {
       <div style="background: rgba(0, 255, 128, 0.1); border-left: 4px solid #00ff80; padding: 15px; border-radius: 4px; margin-top: 20px;">
         <strong style="color: #00ff80;">Gelecek Planlarımız:</strong> 
         Yakın zamanda kullanıcılar arası özel mesajlaşma ve kod snippet'lerini interaktif olarak test edebileceğiniz canlı bir editörü sitemize entegre edeceğiz. Bizimle kalın!
+      </div>
+    `
+  },
+  {
+    id: '17',
+    title: 'Ücretsiz VDS Hakkında Detaylar',
+    slug: 'ucretsiz-vds-hakkinda-detaylar',
+    author: 'ikas',
+    authorId: IKAS_USER_ID,
+    published: '2026-04-28T14:00:00.000Z',
+    updated: '2026-04-28T14:00:00.000Z',
+    categories: ['Tavsiyemiz', 'Genel Konular'],
+    thumbnail: 'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?q=80&w=1200&auto=format&fit=crop',
+    commentCount: 0,
+    content: `
+      <div style="background: rgba(88, 101, 242, 0.1); border-left: 4px solid #5865F2; padding: 15px; margin-bottom: 20px; border-radius: 4px;">
+        <strong style="color: #5865F2; font-size: 18px;">Ücretsiz VDS Konusunda Hazırladığımız Bu Rehberde</strong>
+        <p style="margin-top: 10px; color: #ccc;">Bu konu hakkında daha fazla bilgi almak için yorum bölümünden sorularınızı iletebilirsiniz. Topluluğumuz size yardımcı olmaktan memnuniyet duyar.</p>
+      </div>
+      <p>Ücretsiz VDS konusunda hazırladığımız bu rehberde, size en iyi ücretsiz VDS sağlayıcılarını ve bunları nasıl kullanabileceğinizi anlatacağız.</p>
+      <h3 style="color: #fff; margin-top: 25px;">VDS Nedir?</h3>
+      <p>VDS (Virtual Dedicated Server), sanal özel sunucu anlamına gelir. Kendi sunucunuzu kurmak ve yönetmek için ideal bir çözümdür.</p>
+      <h3 style="color: #fff; margin-top: 25px;">Ücretsiz VDS Sağlayıcıları</h3>
+      <ul>
+        <li>Oracle Cloud - Always Free Tier</li>
+        <li>Google Cloud Platform - 300$ Kredi</li>
+        <li>AWS Free Tier - 12 Ay Ücretsiz</li>
+      </ul>
+      <div style="background: #2b1d1d; border: 1px solid #e60000; padding: 15px; border-radius: 4px; margin-top: 20px;">
+        <strong style="color: #e60000;">UYARI:</strong> Ücretsiz servislerde kaynak limitleri vardır. Projenizin ihtiyaçlarına göre seçim yapın!
+      </div>
+    `
+  },
+  {
+    id: '18',
+    title: 'En Ucuz Şekilde Domain Satın Alma Rehberi',
+    slug: 'en-ucuz-sekilde-domain-satin-alma',
+    author: 'ikas',
+    authorId: IKAS_USER_ID,
+    published: '2026-04-27T16:30:00.000Z',
+    updated: '2026-04-27T16:30:00.000Z',
+    categories: ['Tavsiyemiz', 'Web-Tasarım'],
+    thumbnail: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=1200&auto=format&fit=crop',
+    commentCount: 0,
+    content: `
+      <div style="text-align: center; margin-bottom: 30px;">
+        <i class="fa-solid fa-globe" style="font-size: 48px; display: inline-block; color: #e60000;"></i>
+        <h2 style="color: #fff; margin-top: 10px;">Domain Alırken Dikkat Edilmesi Gerekenler</h2>
+      </div>
+      <p>Web siteniz için domain almak istiyorsanız, en uygun fiyatlı seçenekleri bu rehberde bulabilirsiniz.</p>
+      <h3 style="color: #fff; margin-top: 25px;">Popüler Domain Sağlayıcıları</h3>
+      <ul>
+        <li><strong>Namecheap:</strong> İlk yıl için çok uygun fiyatlar</li>
+        <li><strong>Porkbun:</strong> Gizlilik koruması ücretsiz</li>
+        <li><strong>Cloudflare Registrar:</strong> Maliyet fiyatına domain</li>
+      </ul>
+      <h3 style="color: #fff; margin-top: 25px;">Domain Uzantısı Seçimi</h3>
+      <p>.com uzantısı en popüler olsa da, .dev, .io, .tech gibi alternatifler de projeleriniz için harika seçenekler olabilir.</p>
+      <div style="background: rgba(0, 255, 128, 0.1); border-left: 4px solid #00ff80; padding: 15px; border-radius: 4px; margin-top: 20px;">
+        <strong style="color: #00ff80;">İPUCU:</strong> Domain alırken otomatik yenileme ayarlarını kontrol edin. Bazı sağlayıcılar ilk yıl ucuz, sonraki yıllarda pahalı olabiliyor!
       </div>
     `
   }
