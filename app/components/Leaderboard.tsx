@@ -64,27 +64,32 @@ export default function Leaderboard() {
   // ── Veri çekme ──────────────────────────────────────────────
   const fetchLeaders = useCallback(async () => {
     try {
-      // Paylaşım — ayrı sorgu ile + localPosts ekle
+      // Paylaşım — Supabase + localPosts
       const { data: postData } = await supabase
         .from('user_posts')
         .select('author_id')
         .eq('is_approved', true)
         .limit(200);
 
+      const postCounts: Record<string, number> = {};
+      
+      // Supabase postlarını say
       if (postData && postData.length > 0) {
-        const postCounts: Record<string, number> = {};
         postData.forEach((row: any) => {
           if (!row.author_id) return;
           postCounts[row.author_id] = (postCounts[row.author_id] || 0) + 1;
         });
-        
-        // localPosts'taki postları da say
-        localPosts.forEach(p => {
-          if (p.authorId) {
-            postCounts[p.authorId] = (postCounts[p.authorId] || 0) + 1;
-          }
-        });
-        
+      }
+      
+      // localPosts'taki postları da say
+      localPosts.forEach(p => {
+        if (p.authorId) {
+          postCounts[p.authorId] = (postCounts[p.authorId] || 0) + 1;
+        }
+      });
+      
+      // En az 1 postu olanları al
+      if (Object.keys(postCounts).length > 0) {
         const topPostIds = Object.entries(postCounts).sort((a, b) => b[1] - a[1]).slice(0, 10).map(([id]) => id);
         const { data: postProfiles } = await supabase.from('profiles').select('id, full_name, avatar_url, role').in('id', topPostIds);
         if (postProfiles) {
