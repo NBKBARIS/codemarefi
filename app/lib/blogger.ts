@@ -71,7 +71,7 @@ import { getApprovedPosts, UserPost } from './userPosts';
 
 // ── İstemci tarafı in-memory cache ───────────────────────────
 const postCache = new Map<string, { data: any; ts: number }>();
-const POST_CACHE_TTL = 5 * 60 * 1000; // 5 dakika
+const POST_CACHE_TTL = 1000; // 1 saniye - test için çok kısa
 
 function getCache<T>(key: string): T | null {
   const entry = postCache.get(key);
@@ -109,7 +109,11 @@ async function getMergedPosts(): Promise<BlogPost[]> {
     slug: p.id
   }));
 
-  const bloggerPosts: BlogPost[] = localPosts.map(p => ({ ...p, url: `/post/${p.id}`, authorId: p.authorId })) as BlogPost[];
+  const bloggerPosts: BlogPost[] = localPosts.map(p => ({ 
+    ...p, 
+    url: `/post/${p.id}`,
+    authorId: p.authorId || undefined // Kesinlikle aktar
+  })) as BlogPost[];
   const localIds = new Set(localPosts.map(p => p.id));
   const localTitles = new Set(localPosts.map(p => p.title.trim().toLowerCase()));
 
