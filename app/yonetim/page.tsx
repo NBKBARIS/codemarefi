@@ -304,16 +304,17 @@ export default function YonetimPage() {
             <button onClick={async () => {
                 if (!confirm('Tüm gönderilere SEO düzeltmesi uygulanacak. Devam?')) return;
                 const { data: allPosts } = await supabase.from('user_posts').select('*');
-                if (!allPosts?.length) return;
+                if (!allPosts?.length) { alert('Hiç post bulunamadı.'); return; }
                 let fixed = 0;
+                let totalImprovements = 0;
                 for (const p of allPosts) {
-                  const seo = enhanceSeo(p.title, p.content, p.categories);
-                  if (seo.improvements.length > 0) {
-                    await supabase.from('user_posts').update({ content: seo.content }).eq('id', p.id);
-                    fixed++;
-                  }
+                  const seo = enhanceSeo(p.title, p.content, p.categories || []);
+                  // Her zaman güncelle, improvement olsun olmasın (SEO skoru için)
+                  await supabase.from('user_posts').update({ content: seo.content }).eq('id', p.id);
+                  fixed++;
+                  totalImprovements += seo.improvements.length;
                 }
-                alert(`${fixed} post düzeltildi.`);
+                alert(`✅ ${fixed} post işlendi.\n📊 Toplam ${totalImprovements} iyileştirme yapıldı.`);
               }} style={{ background: 'transparent', color: '#2ea44f', border: '1px solid #2ea44f33', padding: '8px 15px', borderRadius: '6px', cursor: 'pointer', fontSize: '12px', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '8px' }}>
               <i className="fa-solid fa-wand-magic-sparkles"></i> SEO Toplu Düzelt
             </button>
