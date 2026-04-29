@@ -2,6 +2,7 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import { supabase } from '@/app/lib/supabase';
+import { localPosts } from '@/app/lib/localPosts';
 import Link from 'next/link';
 
 interface UserProfile {
@@ -96,15 +97,21 @@ export default function PublicProfilePage() {
           }
         }
 
-        // Onaylı gönderiler
-        const { data: postsData, count } = await supabase
+        // Onaylı gönderiler (Supabase + localPosts)
+        const { data: postsData, count: supabaseCount } = await supabase
           .from('user_posts')
           .select('id, title, created_at, slug', { count: 'exact' })
           .eq('author_id', profileData.id)
           .eq('is_approved', true)
           .order('created_at', { ascending: false });
         
-        setPostCount(count ?? 0);
+        // localPosts'taki bu kullanıcının postlarını say
+        const localPostCount = localPosts.filter(p => p.authorId === profileData.id).length;
+        
+        // Toplam post sayısı
+        const totalCount = (supabaseCount ?? 0) + localPostCount;
+        
+        setPostCount(totalCount);
         setPosts(postsData || []);
       } else {
         setError(true);

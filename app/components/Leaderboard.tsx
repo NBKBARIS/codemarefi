@@ -1,6 +1,7 @@
 'use client';
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { supabase } from '../lib/supabase';
+import { localPosts } from '../lib/localPosts';
 import Link from 'next/link';
 
 type LeaderEntry = {
@@ -63,7 +64,7 @@ export default function Leaderboard() {
   // ── Veri çekme ──────────────────────────────────────────────
   const fetchLeaders = useCallback(async () => {
     try {
-      // Paylaşım — ayrı sorgu ile
+      // Paylaşım — ayrı sorgu ile + localPosts ekle
       const { data: postData } = await supabase
         .from('user_posts')
         .select('author_id')
@@ -76,6 +77,14 @@ export default function Leaderboard() {
           if (!row.author_id) return;
           postCounts[row.author_id] = (postCounts[row.author_id] || 0) + 1;
         });
+        
+        // localPosts'taki postları da say
+        localPosts.forEach(p => {
+          if (p.authorId) {
+            postCounts[p.authorId] = (postCounts[p.authorId] || 0) + 1;
+          }
+        });
+        
         const topPostIds = Object.entries(postCounts).sort((a, b) => b[1] - a[1]).slice(0, 10).map(([id]) => id);
         const { data: postProfiles } = await supabase.from('profiles').select('id, full_name, avatar_url, role').in('id', topPostIds);
         if (postProfiles) {
@@ -135,31 +144,44 @@ export default function Leaderboard() {
         }
       }
 
-      // Aktiflik — Supabase user_activity tablosundan bu haftanın verilerini çek
-      const weekKey = getWeekKey();
-      const { data: activityData } = await supabase
-        .from('user_activity')
-        .select('user_id, seconds')
-        .eq('week_key', weekKey)
-        .order('seconds', { ascending: false })
-        .limit(10);
+      // Aktiflik — Son 7 gün içinde yorum yapanları say
+      const sevenDaysAgo = new Date();
+      sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+      
+      const { data: recentComments } = await supabase
+        .from('comments')
+        .select('user_id')
+        .gte('created_at', sevenDaysAgo.toISOString())
+        .eq('is_approved', true);
 
-      if (activityData && activityData.length > 0) {
-        const actIds = activityData.map((a: any) => a.user_id);
+      if (recentComments && recentComments.length > 0) {
+        const activityCounts: Record<string, number> = {};
+        recentComments.forEach((c: any) => {
+          if (!c.user_id) return;
+          activityCounts[c.user_id] = (activityCounts[c.user_id] || 0) + 1;
+        });
+        
+        const topActivityIds = Object.entries(activityCounts)
+          .sort((a, b) => b[1] - a[1])
+          .slice(0, 10)
+          .map(([id]) => id);
+        
         const { data: actProfiles } = await supabase
           .from('profiles')
           .select('id, full_name, avatar_url, role')
-          .in('id', actIds);
+          .in('id', topActivityIds);
 
         if (actProfiles) {
-          const list = activityData.map((a: any) => {
-            const prof = actProfiles.find((p: any) => p.id === a.user_id);
+          const list = topActivityIds.map(uid => {
+            const prof = actProfiles.find((p: any) => p.id === uid);
+            // Yorum sayısını saniyeye çevir (her yorum = 60 saniye aktiflik)
+            const seconds = activityCounts[uid] * 60;
             return {
-              user_id: a.user_id,
+              user_id: uid,
               full_name: prof?.full_name || 'Anonim',
               avatar_url: prof?.avatar_url || null,
               role: prof?.role || 'member',
-              seconds: a.seconds || 0,
+              seconds: seconds,
             };
           });
           setActivityLeaders(list);
@@ -174,50 +196,6 @@ export default function Leaderboard() {
     } finally {
       setLoading(false);
     }
-  }, []);
-
-  // ── Aktiflik takibi: Supabase user_activity tablosuna kaydet ──
-  useEffect(() => {
-    let userId: string | null = null;
-    const weekKey = getWeekKey();
-
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      userId = session?.user?.id ?? null;
-    });
-
-    const tick = setInterval(async () => {
-      if (!userId) return;
-      try {
-        // upsert: varsa seconds'a 300 ekle, yoksa yeni kayıt oluştur
-        await supabase.rpc('increment_activity', {
-          p_user_id: userId,
-          p_week_key: weekKey,
-          p_seconds: 300,
-        });
-      } catch {
-        // RPC yoksa manuel upsert
-        const { data: existing } = await supabase
-          .from('user_activity')
-          .select('seconds')
-          .eq('user_id', userId)
-          .eq('week_key', weekKey)
-          .single();
-
-        if (existing) {
-          await supabase
-            .from('user_activity')
-            .update({ seconds: (existing.seconds || 0) + 300, updated_at: new Date().toISOString() })
-            .eq('user_id', userId)
-            .eq('week_key', weekKey);
-        } else {
-          await supabase
-            .from('user_activity')
-            .insert({ user_id: userId, week_key: weekKey, seconds: 300 });
-        }
-      }
-    }, 5 * 60 * 1000); // her 5 dakikada bir
-
-    return () => clearInterval(tick);
   }, []);
 
   // ── İlk yükleme + 5 dakikada bir otomatik yenile (istek tasarrufu) ──
