@@ -289,7 +289,7 @@ export default function YonetimPage() {
 
                     const noteMarker = "CodeMareFi Notu:";
                     if (content.split(noteMarker).length > 2) {
-                      const divPattern = /<div style="background:rgba\(230,0,0,0\.08\);[^>]*>[\s\S]*?<\/div>/gi;
+                      const divPattern = /<div style="background:\s*rgba\(230,\s*0,\s*0,\s*0\.08\);[^>]*>[\s\S]*?<\/div>/gi;
                       let firstFound = false;
                       content = content.replace(divPattern, (match) => {
                         if (match.includes(noteMarker)) {
