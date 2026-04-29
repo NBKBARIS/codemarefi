@@ -16,7 +16,7 @@ interface Props {
 }
 
 export default function AuthorBadge({ authorName, authorId }: Props) {
-  const finalAuthorId = authorId || (authorName.toUpperCase().includes('NBK') ? 'e2a270ed-39b1-4de8-8b22-4784dbfe27ca' : undefined);
+  const finalAuthorId = authorId || (authorName.toUpperCase().includes('NBK') ? 'b0cd3649-e54a-49f2-a8ed-da7a8561bd3b' : undefined);
   const [role, setRole] = useState<string | null>(null);
 
   useEffect(() => {

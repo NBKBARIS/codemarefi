@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>UUID Bul</title>
+</head>
+<body>
+    <h1>Senin UUID'ni Bulalım</h1>
+    <button onclick="findUUID()">UUID'mi Bul</button>
+    <div id="result" style="margin-top: 20px; font-family: monospace;"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        const { createClient } = supabase;
+        const supabaseClient = createClient(
+            'https://mvhlvnnocklutgljueid.supabase.co',
+            'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im12aGx2bm5vY2tsdXRnbGp1ZWlkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzcyMTk4NjQsImV4cCI6MjA5Mjc5NTg2NH0.H0rnNtYLzF3jX9WZuqY8NHRFgEgYWGogxS5sg_-uNAE'
+        );
+
+        async function findUUID() {
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = 'Aranıyor...';
+
+            // Giriş yapmış kullanıcıyı al
+            const { data: { user } } = await supabaseClient.auth.getUser();
+            
+            if (user) {
+                resultDiv.innerHTML = `
+                    <h2 style="color: green;">✅ Bulundu!</h2>
+                    <p><strong>Senin UUID'n:</strong></p>
+                    <p style="background: #f0f0f0; padding: 10px; border: 2px solid #e60000; font-size: 18px;">
+                        ${user.id}
+                    </p>
+                    <p><strong>Email:</strong> ${user.email}</p>
+                    <p>Bu UUID'yi kopyala ve bana gönder!</p>
+                `;
+            } else {
+                resultDiv.innerHTML = `
+                    <h2 style="color: red;">❌ Giriş Yapmalısın!</h2>
+                    <p>Önce siteye giriş yap, sonra bu sayfayı yenile ve tekrar dene.</p>
+                `;
+            }
+        }
+    </script>
+</body>
+</html>

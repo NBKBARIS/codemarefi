@@ -12,8 +12,8 @@
   commentCount: number;
 }
 
-// NBK BARIŞ kullanıcısının UUID'si (AuthorBadge'den alındı)
-const NBK_USER_ID = 'e2a270ed-39b1-4de8-8b22-4784dbfe27ca';
+// NBK BARIŞ kullanıcısının UUID'si (Supabase Authentication'dan alındı)
+const NBK_USER_ID = 'b0cd3649-e54a-49f2-a8ed-da7a8561bd3b';
 
 export const localPosts: LocalPost[] = [
   {
