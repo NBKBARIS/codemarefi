@@ -100,11 +100,6 @@ export default function Leaderboard() {
         }
       });
       
-      // DEBUG: Post sayılarını konsola yazdır
-      console.log('📊 Leaderboard Post Counts:', postCounts);
-      console.log('📊 NBK Post Count:', postCounts['b0cd3649-e54a-49f2-a8ed-da7a8561bd3b']);
-      console.log('📊 ikas Post Count:', postCounts['e2a270ed-39b1-4de8-8b22-4784dbfe27ca']);
-      
       // En az 1 postu olanları al
       if (Object.keys(postCounts).length > 0) {
         const topPostIds = Object.entries(postCounts).sort((a, b) => b[1] - a[1]).slice(0, 10).map(([id]) => id);
