@@ -71,7 +71,7 @@ import { getApprovedPosts, UserPost } from './userPosts';
 
 // ── İstemci tarafı in-memory cache ───────────────────────────
 const postCache = new Map<string, { data: any; ts: number }>();
-const POST_CACHE_TTL = 30 * 1000; // 30 saniye (debug için kısalttık)
+const POST_CACHE_TTL = 10 * 1000; // 10 saniye - çok kısa tutuyoruz test için
 
 function getCache<T>(key: string): T | null {
   const entry = postCache.get(key);
@@ -83,14 +83,14 @@ function setPostCache(key: string, data: any) {
   postCache.set(key, { data, ts: Date.now() });
 }
 
-// Tüm merged postları cache'le
+// Tüm merged postları cache'le - DEVRE DIŞI (test için)
 let mergedPostsCache: { data: BlogPost[]; ts: number } | null = null;
 
 async function getMergedPosts(): Promise<BlogPost[]> {
-  // Cache geçerliyse direkt dön
-  if (mergedPostsCache && Date.now() - mergedPostsCache.ts < POST_CACHE_TTL) {
-    return mergedPostsCache.data;
-  }
+  // Cache'i devre dışı bırak - her zaman yeni veri çek
+  // if (mergedPostsCache && Date.now() - mergedPostsCache.ts < POST_CACHE_TTL) {
+  //   return mergedPostsCache.data;
+  // }
 
   const approved = await getApprovedPosts();
   
@@ -109,7 +109,7 @@ async function getMergedPosts(): Promise<BlogPost[]> {
     slug: p.id
   }));
 
-  const bloggerPosts: BlogPost[] = localPosts.map(p => ({ ...p, url: `/post/${p.id}` })) as BlogPost[];
+  const bloggerPosts: BlogPost[] = localPosts.map(p => ({ ...p, url: `/post/${p.id}`, authorId: p.authorId })) as BlogPost[];
   const localIds = new Set(localPosts.map(p => p.id));
   const localTitles = new Set(localPosts.map(p => p.title.trim().toLowerCase()));
 
@@ -119,6 +119,14 @@ async function getMergedPosts(): Promise<BlogPost[]> {
     new Date(b.published).getTime() - new Date(a.published).getTime()
   );
 
+  console.log('🔍 POST SAYILARI:', {
+    'Local': bloggerPosts.length,
+    'Supabase Onaylı': approved.length, 
+    'Filtrelenmiş': filteredUserPosts.length,
+    'TOPLAM': merged.length
+  });
+
+  // Cache'e kaydet
   mergedPostsCache = { data: merged, ts: Date.now() };
   return merged;
 }
@@ -133,19 +141,15 @@ export function invalidatePostCache() {
 export async function fetchPosts(maxResults = 10, startIndex = 1, label?: string): Promise<{ posts: BlogPost[]; total: number }> {
   let allPosts = await getMergedPosts();
   
-  console.log(`🔍 fetchPosts çağrıldı - maxResults: ${maxResults}, startIndex: ${startIndex}, label: ${label || 'yok'}`);
-  console.log(`📚 Toplam post sayısı (filtreleme öncesi): ${allPosts.length}`);
-  
   if (label) {
     allPosts = allPosts.filter(p => p.categories.includes(label));
-    console.log(`🏷️ Label filtrelendi (${label}): ${allPosts.length} post kaldı`);
   }
 
   const total = allPosts.length;
   const start = startIndex - 1;
   const paginated = allPosts.slice(start, start + maxResults);
   
-  console.log(`✂️ Slice: ${start} - ${start + maxResults}, Dönen: ${paginated.length} post`);
+  console.log(`✂️ fetchPosts: Toplam=${total}, Start=${start}, Max=${maxResults}, Dönen=${paginated.length}`);
 
   return { posts: paginated, total };
 }
