@@ -256,7 +256,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
             setStep('verify');
             setTimer(60);
             setCanResend(false);
-            setMessage({ type: 'success', text: 'E-posta adresine 6 haneli doğrulama kodu gönderildi!' });
+            setMessage({ type: 'success', text: 'E-posta adresine doğrulama kodu gönderildi!' });
           } else {
             setMessage({ type: 'success', text: 'Kayıt Başarılı! Protokoller Hazır.' });
             setTimeout(() => setIsLogin(true), 1500);
@@ -508,8 +508,8 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
                 value={otpCode}
                 onChange={e => setOtpCode(e.target.value)}
                 required
-                placeholder="6 Haneli Kod"
-                maxLength={6}
+                placeholder="Doğrulama Kodu"
+                maxLength={8}
                 style={{
                   width: '100%',
                   padding: '15px',
@@ -518,9 +518,9 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
                   color: '#fff',
                   outline: 'none',
                   fontFamily: 'monospace',
-                  fontSize: '24px',
+                  fontSize: '20px',
                   textAlign: 'center',
-                  letterSpacing: '8px'
+                  letterSpacing: '6px'
                 }}
               />
               <p style={{ color: '#888', fontSize: '11px', marginTop: '10px', textAlign: 'center' }}>
