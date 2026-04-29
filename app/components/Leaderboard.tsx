@@ -210,11 +210,11 @@ export default function Leaderboard() {
     const tick = setInterval(async () => {
       if (!userId) return;
       try {
-        // upsert: varsa seconds'a 60 ekle (her 1 dakikada bir), yoksa yeni kayıt oluştur
+        // upsert: varsa seconds'a 300 ekle (her 5 dakikada bir), yoksa yeni kayıt oluştur
         await supabase.rpc('increment_activity', {
           p_user_id: userId,
           p_week_key: weekKey,
-          p_seconds: 60,
+          p_seconds: 300,
         });
       } catch {
         // RPC yoksa manuel upsert
@@ -228,16 +228,16 @@ export default function Leaderboard() {
         if (existing) {
           await supabase
             .from('user_activity')
-            .update({ seconds: (existing.seconds || 0) + 60, updated_at: new Date().toISOString() })
+            .update({ seconds: (existing.seconds || 0) + 300, updated_at: new Date().toISOString() })
             .eq('user_id', userId)
             .eq('week_key', weekKey);
         } else {
           await supabase
             .from('user_activity')
-            .insert({ user_id: userId, week_key: weekKey, seconds: 60 });
+            .insert({ user_id: userId, week_key: weekKey, seconds: 300 });
         }
       }
-    }, 60 * 1000); // Her 1 dakikada bir veritabanını güncelle
+    }, 5 * 60 * 1000); // Supabase limitlerini korumak için her 5 dakikada bir veritabanını güncelle
 
     return () => clearInterval(tick);
   }, []);
