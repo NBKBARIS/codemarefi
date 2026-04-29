@@ -1,4 +1,4 @@
-export interface LocalPost {
+﻿export interface LocalPost {
   id: string;
   title: string;
   slug: string;
@@ -299,11 +299,14 @@ app.listen(3000, () => {
   {
     id: '10',
     title: 'React Server Components Nedir? Next.js 14 ile Kullanımı',
+    slug: 'react-server-components-nextjs-14',
     author: 'NBK BARIŞ',
     authorId: NBK_USER_ID,
     published: '2026-04-29T10:00:00.000Z',
+    updated: '2026-04-29T10:00:00.000Z',
     categories: ['Web-Tasarım', 'JavaScript'],
     thumbnail: 'https://images.unsplash.com/photo-1633356122544-f134324a6cee?q=80&w=1200&auto=format&fit=crop',
+    commentCount: 0,
     content: `
       <p>Next.js 14 ile birlikte React ekosisteminde köklü bir değişiklik yaşandı. Artık bileşenlerimiz varsayılan olarak sunucuda çalışıyor. Peki bu ne anlama geliyor ve projelerimizde nasıl kullanabiliriz?</p>
       <h3 style="color: #fff; margin-top: 25px;">React Server Components (RSC) Nedir?</h3>
@@ -334,11 +337,14 @@ export default async function PostList() {
   {
     id: '11',
     title: 'Supabase ile Backend Yazmadan Proje Geliştirmek',
+    slug: 'supabase-backend-yazmadan-proje',
     author: 'NBK BARIŞ',
     authorId: NBK_USER_ID,
     published: '2026-04-28T15:30:00.000Z',
+    updated: '2026-04-28T15:30:00.000Z',
     categories: ['Yazılım-Haberleri', 'Siber-Güvenlik'],
     thumbnail: 'https://images.unsplash.com/photo-1555949963-aa79dcee981c?q=80&w=1200&auto=format&fit=crop',
+    commentCount: 0,
     content: `
       <p>Günümüzde hızlı proje geliştirmek ve hemen canlıya almak (time-to-market) çok önemli. Supabase, açık kaynaklı bir Firebase alternatifi olarak tam da bu noktada hayat kurtarıyor.</p>
       <h3 style="color: #fff; margin-top: 25px;">Neden Supabase?</h3>
@@ -356,11 +362,14 @@ USING (auth.uid() = author_id);</code></pre>
   {
     id: '12',
     title: 'Modern CSS Frameworkleri: Tailwind vs Bootstrap 2026',
+    slug: 'tailwind-vs-bootstrap-2026',
     author: 'NBK BARIŞ',
     authorId: NBK_USER_ID,
     published: '2026-04-27T14:15:00.000Z',
+    updated: '2026-04-27T14:15:00.000Z',
     categories: ['Web-Tasarım', 'CSS'],
     thumbnail: 'https://images.unsplash.com/photo-1507721999472-8ed4421c4af2?q=80&w=1200&auto=format&fit=crop',
+    commentCount: 0,
     content: `
       <p>Web tasarım dünyasında yıllardır süren bir tartışma var: Utility-first (Tailwind) mi yoksa Component-based (Bootstrap) frameworkler mi daha iyi? 2026 yılında bu durum nereye geldi?</p>
       <h3 style="color: #fff; margin-top: 25px;">Tailwind CSS'in Yükselişi</h3>
@@ -375,11 +384,14 @@ USING (auth.uid() = author_id);</code></pre>
   {
     id: '13',
     title: 'Yapay Zeka Destekli Kodlama: Geleceğin Yazılımcısı Olmak',
+    slug: 'yapay-zeka-destekli-kodlama',
     author: 'NBK BARIŞ',
     authorId: NBK_USER_ID,
     published: '2026-04-26T09:45:00.000Z',
+    updated: '2026-04-26T09:45:00.000Z',
     categories: ['Yapay-Zeka', 'Genel Konular'],
     thumbnail: 'https://images.unsplash.com/photo-1620712943543-bcc4688e7485?q=80&w=1200&auto=format&fit=crop',
+    commentCount: 0,
     content: `
       <p>Yapay zeka araçları artık kod yazma sürecimizin ayrılmaz bir parçası oldu. ChatGPT, Copilot ve diğer yapay zeka asistanları işimizi elimizden mi alacak, yoksa bizi birer süper kahramana mı dönüştürecek?</p>
       <h3 style="color: #fff; margin-top: 25px;">Kod Yazmaktan Sorun Çözmeye Geçiş</h3>
