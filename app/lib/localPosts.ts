@@ -1,4 +1,4 @@
-﻿export interface LocalPost {
+export interface LocalPost {
   id: string;
   title: string;
   slug: string;
@@ -294,6 +294,104 @@ app.listen(3000, () => {
         <strong style="color: #e60000;">CodeMareFi Tavsiyesi:</strong>
         <p style="color: #ccc; margin-top: 10px;">API güvenliği için mutlaka JWT authentication ve rate limiting kullanın!</p>
       </div>
+    `
+  {
+    id: '10',
+    title: 'React Server Components Nedir? Next.js 14 ile Kullanımı',
+    author: 'NBK BARIŞ',
+    authorId: 'e2a270ed-39b1-4de8-8b22-4784dbfe27ca',
+    published: '2026-04-29T10:00:00.000Z',
+    categories: ['Web-Tasarım', 'JavaScript'],
+    thumbnail: 'https://images.unsplash.com/photo-1633356122544-f134324a6cee?q=80&w=1200&auto=format&fit=crop',
+    content: `
+      <p>Next.js 14 ile birlikte React ekosisteminde köklü bir değişiklik yaşandı. Artık bileşenlerimiz varsayılan olarak sunucuda çalışıyor. Peki bu ne anlama geliyor ve projelerimizde nasıl kullanabiliriz?</p>
+      <h3 style="color: #fff; margin-top: 25px;">React Server Components (RSC) Nedir?</h3>
+      <p>Server Components, adından da anlaşılacağı gibi sadece sunucuda render edilen React bileşenleridir. Bu bileşenlerin kodları ve içerdikleri kütüphaneler istemciye (tarayıcıya) gönderilmez. Bu sayede JavaScript bundle boyutu ciddi oranda düşer.</p>
+      <ul>
+        <li>Daha hızlı sayfa yüklenmesi (Zero Bundle Size)</li>
+        <li>Doğrudan veritabanına erişim</li>
+        <li>Daha iyi SEO performansı</li>
+      </ul>
+      <h3 style="color: #fff; margin-top: 25px;">Nasıl Kullanılır?</h3>
+      <pre><code>import { db } from '@/lib/db';
+
+// Bu bileşen sadece sunucuda çalışır
+export default async function PostList() {
+  const posts = await db.query('SELECT * FROM posts');
+  
+  return (
+    &lt;ul&gt;
+      {posts.map(post =&gt; (
+        &lt;li key={post.id}&gt;{post.title}&lt;/li&gt;
+      ))}
+    &lt;/ul&gt;
+  );
+}</code></pre>
+      <p>Gördüğünüz gibi, doğrudan SQL sorgusu yazabiliyoruz. Herhangi bir API endpoint'i oluşturmamıza gerek kalmıyor.</p>
+    `
+  },
+  {
+    id: '11',
+    title: 'Supabase ile Backend Yazmadan Proje Geliştirmek',
+    author: 'NBK BARIŞ',
+    authorId: 'e2a270ed-39b1-4de8-8b22-4784dbfe27ca',
+    published: '2026-04-28T15:30:00.000Z',
+    categories: ['Yazılım-Haberleri', 'Siber-Güvenlik'],
+    thumbnail: 'https://images.unsplash.com/photo-1555949963-aa79dcee981c?q=80&w=1200&auto=format&fit=crop',
+    content: `
+      <p>Günümüzde hızlı proje geliştirmek ve hemen canlıya almak (time-to-market) çok önemli. Supabase, açık kaynaklı bir Firebase alternatifi olarak tam da bu noktada hayat kurtarıyor.</p>
+      <h3 style="color: #fff; margin-top: 25px;">Neden Supabase?</h3>
+      <p>Supabase arka planda standart bir PostgreSQL veritabanı kullanır. Bu demek oluyor ki verileriniz asla özel bir sisteme kilitli kalmaz (vendor lock-in yok). İstediğiniz zaman veritabanını dışa aktarıp kendi sunucunuza geçebilirsiniz.</p>
+      <h3 style="color: #fff; margin-top: 25px;">Güvenlik (Row Level Security)</h3>
+      <p>Frontend üzerinden doğrudan veritabanına sorgu atıyorsak güvenlik nasıl sağlanıyor? Cevap: Row Level Security (RLS).</p>
+      <pre><code>// Sadece kendi gönderilerini silebilir kuralı (SQL)
+CREATE POLICY "Kullanıcılar kendi gönderilerini silebilir"
+ON user_posts
+FOR DELETE
+USING (auth.uid() = author_id);</code></pre>
+      <p>Bu politika sayesinde, frontend tarafından gönderilen silme istekleri Supabase tarafından otomatik olarak denetlenir. Eğer oturum açmış kullanıcının ID'si (auth.uid), gönderinin yazar ID'sine eşit değilse işlem reddedilir.</p>
+    `
+  },
+  {
+    id: '12',
+    title: 'Modern CSS Frameworkleri: Tailwind vs Bootstrap 2026',
+    author: 'NBK BARIŞ',
+    authorId: 'e2a270ed-39b1-4de8-8b22-4784dbfe27ca',
+    published: '2026-04-27T14:15:00.000Z',
+    categories: ['Web-Tasarım', 'CSS'],
+    thumbnail: 'https://images.unsplash.com/photo-1507721999472-8ed4421c4af2?q=80&w=1200&auto=format&fit=crop',
+    content: `
+      <p>Web tasarım dünyasında yıllardır süren bir tartışma var: Utility-first (Tailwind) mi yoksa Component-based (Bootstrap) frameworkler mi daha iyi? 2026 yılında bu durum nereye geldi?</p>
+      <h3 style="color: #fff; margin-top: 25px;">Tailwind CSS'in Yükselişi</h3>
+      <p>Tailwind, size hazır bileşenler vermek yerine CSS özelliklerini sınıflar aracılığıyla kullanmanızı sağlar. Başlarda HTML'i kirlettiği düşünülse de, React ve Vue gibi komponent tabanlı kütüphanelerle mükemmel bir uyum yakaladı.</p>
+      <pre><code>&lt;button class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded transition-colors"&gt;
+  Tıkla
+&lt;/button&gt;</code></pre>
+      <h3 style="color: #fff; margin-top: 25px;">Bootstrap Hala Yaşıyor mu?</h3>
+      <p>Evet, özellikle kurumsal projelerde ve hızlı admin paneli geliştirmelerinde Bootstrap hala vazgeçilmez. Ancak modern ve özgün tasarımlar arayan startup'lar çoktan Tailwind'e geçiş yaptı bile.</p>
+    `
+  },
+  {
+    id: '13',
+    title: 'Yapay Zeka Destekli Kodlama: Geleceğin Yazılımcısı Olmak',
+    author: 'NBK BARIŞ',
+    authorId: 'e2a270ed-39b1-4de8-8b22-4784dbfe27ca',
+    published: '2026-04-26T09:45:00.000Z',
+    categories: ['Yapay-Zeka', 'Genel Konular'],
+    thumbnail: 'https://images.unsplash.com/photo-1620712943543-bcc4688e7485?q=80&w=1200&auto=format&fit=crop',
+    content: `
+      <p>Yapay zeka araçları artık kod yazma sürecimizin ayrılmaz bir parçası oldu. ChatGPT, Copilot ve diğer yapay zeka asistanları işimizi elimizden mi alacak, yoksa bizi birer süper kahramana mı dönüştürecek?</p>
+      <h3 style="color: #fff; margin-top: 25px;">Kod Yazmaktan Sorun Çözmeye Geçiş</h3>
+      <p>Gelecekte yazılımcıların ana görevi sadece kod yazmak değil, sistemleri tasarlamak ve yapay zekaya doğru komutları (prompt) vermek olacak. Syntaks hatalarıyla uğraşmak yerine mimari kararlara odaklanacağız.</p>
+      <blockquote style="border-left: 4px solid #e60000; padding-left: 15px; margin: 20px 0; font-style: italic; color: #aaa;">
+        "Yapay zeka yazılımcıların yerini almayacak, yapay zeka kullanan yazılımcılar kullanmayanların yerini alacak."
+      </blockquote>
+      <h3 style="color: #fff; margin-top: 25px;">Kendimizi Nasıl Geliştirmeliyiz?</h3>
+      <ul>
+        <li>Temel algoritma ve veri yapılarını iyi öğrenin.</li>
+        <li>Sistem tasarımı (System Design) konularına ağırlık verin.</li>
+        <li>AI asistanlarını birer yardımcı olarak günlük iş akışınıza entegre edin.</li>
+      </ul>
     `
   }
 ];
