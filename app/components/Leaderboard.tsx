@@ -107,13 +107,12 @@ export default function Leaderboard() {
         if (postProfiles) {
           setPostLeaders(topPostIds.map(uid => {
             const prof = postProfiles.find((p: any) => p.id === uid);
-            const count = prof?.full_name?.toUpperCase().includes('NBK') ? Math.max(8, postCounts[uid] || 0) : postCounts[uid];
             return { 
               user_id: uid, 
               full_name: prof?.full_name || 'Anonim', 
               avatar_url: prof?.avatar_url || null, 
               role: prof?.role || 'member', 
-              count: count
+              count: postCounts[uid]
             };
           }));
         }
