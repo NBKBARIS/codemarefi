@@ -29,7 +29,7 @@ export default function HakkimizdaPage() {
               <i className="fa-solid fa-rocket" style={{ fontSize: '32px', color: '#e60000', marginBottom: '15px' }}></i>
               <h3 style={{ color: '#fff', fontSize: '20px', marginBottom: '10px' }}>Hikayemiz</h3>
               <p style={{ color: '#888', fontSize: '14px', lineHeight: 1.7 }}>
-                CodeMareFi, <strong>19 Ağustos 2019</strong> tarihinde kurucumuz <strong>MareFi</strong> tarafından, yazılım dünyasına yeni adım atanlara rehberlik etmek amacıyla hayata geçirildi.
+                CodeMareFi, <strong>19 Ağustos 2019</strong> tarihinde kurucumuz <strong>NBK BARIŞ</strong> tarafından, yazılım dünyasına yeni adım atanlara rehberlik etmek amacıyla hayata geçirildi.
               </p>
             </div>
             <div style={{ background: '#111', border: '1px solid #1e1e1e', padding: '30px', borderRadius: '12px' }}>
