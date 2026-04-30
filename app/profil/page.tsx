@@ -199,6 +199,46 @@ export default function ProfilePage() {
             </div>
           </div>
 
+          {/* Discord Doğrulama Kodu */}
+          {profile?.discord_verification_code && (
+            <div style={{ background: 'linear-gradient(135deg, rgba(88,101,242,0.1), rgba(230,0,0,0.1))', border: '2px solid #5865f2', borderRadius: '12px', padding: '20px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '12px' }}>
+                <i className="fa-brands fa-discord" style={{ fontSize: '24px', color: '#5865f2' }}></i>
+                <div>
+                  <h3 style={{ color: '#fff', fontSize: '14px', fontWeight: 900, letterSpacing: '1px', margin: 0 }}>DISCORD DOĞRULAMA</h3>
+                  <p style={{ color: '#888', fontSize: '11px', margin: '2px 0 0 0' }}>Discord sunucusunda doğrulanmak için bu kodu kullan</p>
+                </div>
+              </div>
+              <div style={{ background: 'rgba(0,0,0,0.5)', border: '1px solid #5865f2', borderRadius: '8px', padding: '16px', textAlign: 'center' }}>
+                <p style={{ color: '#888', fontSize: '10px', marginBottom: '8px', letterSpacing: '1px' }}>SENİN ÖZEL KODUN</p>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px' }}>
+                  <code style={{ color: '#5865f2', fontSize: '24px', fontWeight: 900, letterSpacing: '4px', fontFamily: 'monospace', textShadow: '0 0 10px rgba(88,101,242,0.5)' }}>
+                    {profile.discord_verification_code}
+                  </code>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      navigator.clipboard.writeText(profile.discord_verification_code);
+                      setMessage({ type: 'success', text: 'Kod kopyalandı!' });
+                      setTimeout(() => setMessage({ type: '', text: '' }), 2000);
+                    }}
+                    style={{ background: '#5865f2', border: 'none', borderRadius: '6px', padding: '8px 12px', color: '#fff', cursor: 'pointer', fontSize: '12px', transition: 'all 0.2s' }}
+                    onMouseEnter={e => (e.currentTarget.style.background = '#4752c4')}
+                    onMouseLeave={e => (e.currentTarget.style.background = '#5865f2')}
+                  >
+                    <i className="fa-solid fa-copy"></i>
+                  </button>
+                </div>
+              </div>
+              <div style={{ marginTop: '12px', background: 'rgba(230,0,0,0.1)', border: '1px solid #e60000', borderRadius: '6px', padding: '12px' }}>
+                <p style={{ color: '#e60000', fontSize: '11px', margin: 0, lineHeight: 1.6 }}>
+                  <i className="fa-solid fa-circle-info" style={{ marginRight: '6px' }}></i>
+                  Discord sunucusunda <code style={{ background: 'rgba(0,0,0,0.3)', padding: '2px 6px', borderRadius: '4px', color: '#5865f2' }}>/dogrula {profile.discord_verification_code}</code> komutunu kullan
+                </p>
+              </div>
+            </div>
+          )}
+
           {/* Sosyal Medya Linkleri */}
           <div>
             <label style={{ display: 'block', color: '#e60000', marginBottom: '12px', fontSize: '11px', fontWeight: 900, letterSpacing: '1.5px' }}>
