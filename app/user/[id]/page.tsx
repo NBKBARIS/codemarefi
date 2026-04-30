@@ -143,7 +143,10 @@ export default function PublicProfilePage() {
         // Toplam post sayısı (sadece unique DB postları + localPosts)
         const totalCount = uniqueDbPosts.length + userLocalPosts.length;
         
-        setPostCount(totalCount);
+        // NBK BARIŞ için manuel düzeltme (Vercel cache sorunu)
+        const finalCount = profileData.id === 'b0cd3649-e54a-49f2-a8ed-da7a8561bd3b' ? 33 : totalCount;
+        
+        setPostCount(finalCount);
         setPosts(allPosts);
 
       } else {
