@@ -47,6 +47,7 @@ export async function submitUserPost(post: Omit<UserPost, 'id' | 'is_approved' |
       const postUrl = `https://codemarefi.com/post/${newPost.id}`;
       const categories = Array.isArray(post.categories) ? post.categories.join(', ') : 'Genel';
       
+      // 1. Yeni postlar kanalına bildirim (herkese açık)
       await fetch('https://discord.com/api/webhooks/1499330498760278108/cVPRUsQ8_Kt6SPtaNi5_V9wCUNQuVAuW-hhCehxOoWGvUYa6DMbDOvR1pI9IFezPUma2', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -59,6 +60,50 @@ export async function submitUserPost(post: Omit<UserPost, 'id' | 'is_approved' |
             thumbnail: { url: post.thumbnail_url },
             footer: { text: 'CodeMareFi • Yeni Post' },
             timestamp: new Date().toISOString()
+          }]
+        })
+      });
+      
+      // 2. Post onay kanalına bildirim (moderatörler için - butonlu)
+      await fetch('https://discord.com/api/webhooks/POST_ONAY_WEBHOOK_BURAYA', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          content: `<@&MODERATOR_ROLE_ID> Yeni gönderi onay bekliyor!`,
+          embeds: [{
+            color: 0xffa500,
+            title: `⏳ ${post.title}`,
+            url: postUrl,
+            description: `**Yazar:** ${authorName}\n**Kategoriler:** ${categories}\n**Post ID:** \`${newPost.id}\``,
+            thumbnail: { url: post.thumbnail_url },
+            footer: { text: 'Post Onay Sistemi' },
+            timestamp: new Date().toISOString()
+          }],
+          components: [{
+            type: 1,
+            components: [
+              {
+                type: 2,
+                style: 3,
+                label: 'Onayla',
+                custom_id: `approve_post_${newPost.id}`,
+                emoji: { name: '✅' }
+              },
+              {
+                type: 2,
+                style: 4,
+                label: 'Reddet',
+                custom_id: `reject_post_${newPost.id}`,
+                emoji: { name: '❌' }
+              },
+              {
+                type: 2,
+                style: 5,
+                label: 'Görüntüle',
+                url: postUrl,
+                emoji: { name: '👁️' }
+              }
+            ]
           }]
         })
       });

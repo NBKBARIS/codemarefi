@@ -112,9 +112,9 @@ export default function Leaderboard() {
       });
 
       
-      // En az 1 postu olanları al
+      // En az 1 postu olanları al (Top 15)
       if (Object.keys(postCounts).length > 0) {
-        const topPostIds = Object.entries(postCounts).sort((a, b) => b[1] - a[1]).slice(0, 10).map(([id]) => id);
+        const topPostIds = Object.entries(postCounts).sort((a, b) => b[1] - a[1]).slice(0, 15).map(([id]) => id);
         const { data: postProfiles } = await supabase.from('profiles').select('id, full_name, avatar_url, role').in('id', topPostIds);
         if (postProfiles) {
           setPostLeaders(topPostIds.map(uid => {
@@ -146,10 +146,10 @@ export default function Leaderboard() {
           counts[row.user_id] = (counts[row.user_id] || 0) + 1;
         });
 
-        // Top 10 user_id'yi al
+        // Top 15 user_id'yi al
         const topIds = Object.entries(counts)
           .sort((a, b) => b[1] - a[1])
-          .slice(0, 10)
+          .slice(0, 15)
           .map(([id]) => id);
 
         // Profilleri ayrı çek
@@ -173,14 +173,14 @@ export default function Leaderboard() {
         }
       }
 
-      // Aktiflik — user_activity tablosundan bu haftanın verilerini çek
+      // Aktiflik — user_activity tablosundan bu haftanın verilerini çek (Top 15)
       const weekKey = getWeekKey();
       const { data: activityData } = await supabase
         .from('user_activity')
         .select('user_id, seconds')
         .eq('week_key', weekKey)
         .order('seconds', { ascending: false })
-        .limit(10);
+        .limit(15);
 
       if (activityData && activityData.length > 0) {
         const actIds = activityData.map((a: any) => a.user_id);
@@ -450,7 +450,7 @@ export default function Leaderboard() {
       </div>
 
       {/* Liste */}
-      <div style={{ padding: '10px 0', minHeight: '80px' }}>
+      <div style={{ padding: '10px 0', minHeight: '80px', maxHeight: '400px', overflowY: 'auto' }}>
         {renderList(
           activeEntries as any,
           tab === 'activity' ? 'seconds' : 'count',
@@ -468,6 +468,21 @@ export default function Leaderboard() {
         @keyframes pulse-green {
           0%, 100% { opacity: 1; transform: scale(1); }
           50% { opacity: 0.4; transform: scale(0.8); }
+        }
+        
+        /* Özel scrollbar tasarımı */
+        .sidebar-widget > div:nth-child(3)::-webkit-scrollbar {
+          width: 6px;
+        }
+        .sidebar-widget > div:nth-child(3)::-webkit-scrollbar-track {
+          background: #0a0a0a;
+        }
+        .sidebar-widget > div:nth-child(3)::-webkit-scrollbar-thumb {
+          background: #e60000;
+          border-radius: 3px;
+        }
+        .sidebar-widget > div:nth-child(3)::-webkit-scrollbar-thumb:hover {
+          background: #ff0000;
         }
       `}</style>
     </div>

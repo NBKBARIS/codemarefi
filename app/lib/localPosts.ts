@@ -868,3 +868,9 @@ await db.query(query, [email]); // ✅ GÜVENLİ</code></pre>
     `
   }
 ];
+
+
+// ID'ye göre local post bul (bildirim sistemi için)
+export function getLocalPostById(id: string): LocalPost | undefined {
+  return localPosts.find(post => post.id === id);
+}

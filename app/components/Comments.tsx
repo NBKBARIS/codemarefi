@@ -402,7 +402,7 @@ export default function Comments({ postId }: { postId: string }) {
 
       // Gönderi sahibine bildirim gönder
       try {
-        // Gönderi sahibini bul (user_posts tablosundan)
+        // Önce user_posts tablosundan kontrol et
         const { data: postData } = await supabase
           .from('user_posts')
           .select('author_id')
@@ -418,8 +418,24 @@ export default function Comments({ postId }: { postId: string }) {
             content.trim().slice(0, 80) + (content.trim().length > 80 ? '...' : ''),
             postId,
           );
+        } else {
+          // user_posts'ta yoksa localPosts'tan kontrol et
+          const { getLocalPostById } = await import('../lib/localPosts');
+          const localPost = getLocalPostById(postId);
+          
+          if (localPost?.authorId && localPost.authorId !== (user?.id ?? null)) {
+            // Local post sahibine bildirim gönder
+            await sendNotification(
+              localPost.authorId,
+              'comment',
+              `${authorName.trim()} gönderine yorum yaptı`,
+              content.trim().slice(0, 80) + (content.trim().length > 80 ? '...' : ''),
+              postId,
+            );
+          }
         }
-      } catch {
+      } catch (err) {
+        console.error('Bildirim gönderme hatası:', err);
         // bildirim hatası sessizce geç
       }
     }
