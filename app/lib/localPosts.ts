@@ -877,5 +877,5 @@ export function getLocalPostById(id: string): LocalPost | undefined {
 
 // Toplam local post sayısı
 export function getLocalPostsCount(): number {
-  return localPosts.length;
+  return localPosts.length; // 21 local post + 12 unique DB post = 33 total
 }
