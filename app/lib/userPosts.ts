@@ -31,6 +31,43 @@ export async function submitUserPost(post: Omit<UserPost, 'id' | 'is_approved' |
     .select();
   
   if (error) throw error;
+  
+  // Discord'a bildirim gönder
+  if (data && data.length > 0) {
+    const newPost = data[0];
+    try {
+      // Yazar bilgisini al
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('full_name')
+        .eq('id', post.author_id)
+        .single();
+      
+      const authorName = profile?.full_name || 'Bilinmeyen';
+      const postUrl = `https://codemarefi.com/post/${newPost.id}`;
+      const categories = Array.isArray(post.categories) ? post.categories.join(', ') : 'Genel';
+      
+      await fetch('https://discord.com/api/webhooks/1499330498760278108/cVPRUsQ8_Kt6SPtaNi5_V9wCUNQuVAuW-hhCehxOoWGvUYa6DMbDOvR1pI9IFezPUma2', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          embeds: [{
+            color: 0xe60000,
+            title: `📝 ${post.title}`,
+            url: postUrl,
+            description: `**Yazar:** ${authorName}\n**Kategoriler:** ${categories}\n\n⏳ **Durum:** Onay bekliyor`,
+            thumbnail: { url: post.thumbnail_url },
+            footer: { text: 'CodeMareFi • Yeni Post' },
+            timestamp: new Date().toISOString()
+          }]
+        })
+      });
+    } catch (webhookError) {
+      console.error('Discord webhook hatası:', webhookError);
+      // Webhook hatası post eklemeyi engellemez
+    }
+  }
+  
   return data;
 }
 
@@ -66,6 +103,39 @@ export async function approvePost(id: string) {
 
   if (error) throw error;
   await clearBloggerCache();
+  
+  // Discord'a onay bildirimi gönder
+  try {
+    const { data: post } = await supabase
+      .from('user_posts')
+      .select('title, thumbnail_url, author_id, categories, profiles(full_name)')
+      .eq('id', id)
+      .single();
+    
+    if (post) {
+      const authorName = post.profiles?.full_name || 'Bilinmeyen';
+      const postUrl = `https://codemarefi.com/post/${id}`;
+      const categories = Array.isArray(post.categories) ? post.categories.join(', ') : 'Genel';
+      
+      await fetch('https://discord.com/api/webhooks/1499330498760278108/cVPRUsQ8_Kt6SPtaNi5_V9wCUNQuVAuW-hhCehxOoWGvUYa6DMbDOvR1pI9IFezPUma2', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          embeds: [{
+            color: 0x2ea44f,
+            title: `✅ ${post.title}`,
+            url: postUrl,
+            description: `**Yazar:** ${authorName}\n**Kategoriler:** ${categories}\n\n✅ **Durum:** Onaylandı ve yayında!`,
+            thumbnail: { url: post.thumbnail_url },
+            footer: { text: 'CodeMareFi • Post Onaylandı' },
+            timestamp: new Date().toISOString()
+          }]
+        })
+      });
+    }
+  } catch (webhookError) {
+    console.error('Discord webhook hatası:', webhookError);
+  }
 }
 
 export async function updatePost(id: string, updates: { title: string; content: string; categories: string[] }) {
