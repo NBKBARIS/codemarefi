@@ -874,3 +874,8 @@ await db.query(query, [email]); // ✅ GÜVENLİ</code></pre>
 export function getLocalPostById(id: string): LocalPost | undefined {
   return localPosts.find(post => post.id === id);
 }
+
+// Toplam local post sayısı
+export function getLocalPostsCount(): number {
+  return localPosts.length;
+}
