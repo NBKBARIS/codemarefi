@@ -103,7 +103,7 @@ export default function Sidebar() {
           </div>
           <p style={{ color: '#888', fontSize: '13px', lineHeight: 1.5 }}>
             CodeMareFi'ye Destek olmak istiyorum ama nasıl bilmiyorum diyorsan eğer;<br/>
-            Sitemizdeki reklamlara tıklayarak, Bizi sosyal mecralarda arkadaşlarınıza önererek destek olabilirsiniz.<br/><br/>
+            Bizi sosyal mecralarda arkadaşlarınıza önererek, Discord sunucumuza katılarak ve içeriklerimizi paylaşarak destek olabilirsiniz.<br/><br/>
             Bu sayede daha çok kod ve gelişmiş sistemleri paylaşmamıza teşvik etmiş olursunuz.
           </p>
         </div>

@@ -46,10 +46,10 @@ export default function HakkimizdaPage() {
             <h2 style={{ fontSize: '24px', color: '#fff', marginBottom: '30px', textAlign: 'center' }}>Neler Paylaşıyoruz?</h2>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '25px' }}>
               {[
-                { icon: 'fa-robot', title: 'Discord Bot', desc: '300+ Hazır Komut' },
-                { icon: 'fa-bolt', title: 'Altyapılar', desc: 'Modern & Hızlı' },
-                { icon: 'fa-pen-nib', title: 'Blogger', desc: 'Özel Eklentiler' },
-                { icon: 'fa-code', title: 'Web Tasarım', desc: 'HTML / CSS / JS' }
+                { icon: 'fa-robot', title: 'Discord Bot', desc: 'Komutlar & Altyapılar' },
+                { icon: 'fa-code', title: 'Web Tasarım', desc: 'HTML / CSS / JS / React' },
+                { icon: 'fa-server', title: 'Backend', desc: 'Node.js / Next.js / API' },
+                { icon: 'fa-database', title: 'Veritabanı', desc: 'Supabase / PostgreSQL' }
               ].map((item, i) => (
                 <div key={i} style={{ textAlign: 'center' }}>
                   <i className={`fa-solid ${item.icon}`} style={{ fontSize: '24px', color: '#e60000', marginBottom: '10px' }}></i>
