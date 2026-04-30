@@ -1,6 +1,7 @@
 'use client';
 import { useState, useEffect, useRef, useCallback } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { fetchPosts, formatDate, BlogPost } from './lib/blogger';
 import PostCard from './components/PostCard';
@@ -111,7 +112,7 @@ export default function HomePage() {
             <div className="post-ticker-bar">
               <Link href={tickerPosts[tickerIdx]?.url || '#'} className="post-ticker-content" style={{ textDecoration: 'none' }}>
                 {tickerPosts[tickerIdx]?.thumbnail && (
-                  <img src={tickerPosts[tickerIdx].thumbnail} alt="" className="post-ticker-img" />
+                  <Image src={tickerPosts[tickerIdx].thumbnail} alt="" width={60} height={60} className="post-ticker-img" style={{ objectFit: 'cover' }} />
                 )}
                 <div className="post-ticker-info">
                   <div className="post-ticker-meta">
@@ -279,7 +280,7 @@ export default function HomePage() {
                 {heroPosts.filter((_, i) => i !== heroIdx).slice(0, 4).map((p, idx) => (
                   <div key={p.id} className="featured-small" onClick={() => router.push(p.url)} style={{ cursor: 'pointer' }}>
                     {p.thumbnail && (
-                      <img src={p.thumbnail} alt="" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }} />
+                      <Image src={p.thumbnail} alt="" fill style={{ objectFit: 'cover' }} sizes="(max-width: 768px) 100vw, 300px" />
                     )}
                     <div className="featured-small-overlay"></div>
                     <div style={{ position: 'absolute', top: '8px', left: '8px', zIndex: 2 }}>

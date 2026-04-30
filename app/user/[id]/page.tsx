@@ -1,6 +1,7 @@
 'use client';
 import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
+import Image from 'next/image';
 import { supabase } from '@/app/lib/supabase';
 import { localPosts } from '@/app/lib/localPosts';
 import Link from 'next/link';
@@ -183,10 +184,12 @@ export default function PublicProfilePage() {
       {/* Banner Area */}
       <div style={{ height: '200px', background: 'linear-gradient(45deg, #e60000 0%, #000 100%)', position: 'relative' }}>
         <div style={{ position: 'absolute', bottom: '-60px', left: '50%', transform: 'translateX(-50%)', textAlign: 'center' }}>
-          <img 
+          <Image 
             src={profile.avatar_url || 'https://api.dicebear.com/7.x/avataaars/svg?seed=Felix'} 
             alt={profile.full_name} 
-            style={{ width: '120px', height: '120px', borderRadius: '50%', border: '4px solid #0a0a0a', background: '#111', objectFit: 'cover' }}
+            width={120}
+            height={120}
+            style={{ borderRadius: '50%', border: '4px solid #0a0a0a', background: '#111', objectFit: 'cover' }}
           />
         </div>
       </div>

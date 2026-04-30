@@ -1,8 +1,10 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Image from 'next/image';
 import { supabase, clearLastSeen } from '../lib/supabase';
 import { useRouter } from 'next/navigation';
+import imageCompression from 'browser-image-compression';
 
 const SOCIAL_FIELDS = [
   { key: 'github',    icon: 'fa-github',    label: 'GitHub',    placeholder: 'https://github.com/kullanici',    color: '#fff',     pattern: /^https:\/\/(www\.)?github\.com\/.+/i },
@@ -122,13 +124,39 @@ export default function ProfilePage() {
     setUpdating(true);
     try {
       const file = e.target.files[0];
-      const filePath = `${user.id}-${Math.random()}.${file.name.split('.').pop()}`;
-      const { error: uploadError } = await supabase.storage.from('avatars').upload(filePath, file);
+      
+      // Dosya boyutu kontrolü (max 5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        throw new Error('Dosya boyutu 5MB\'dan küçük olmalı!');
+      }
+      
+      // Resim sıkıştırma ayarları
+      const options = {
+        maxSizeMB: 0.5, // Maksimum 500KB
+        maxWidthOrHeight: 400, // Maksimum 400px (profil resmi için yeterli)
+        useWebWorker: true,
+        fileType: 'image/webp', // Modern format
+      };
+      
+      setMessage({ type: 'info', text: 'Resim optimize ediliyor...' });
+      
+      // Resmi sıkıştır
+      const compressedFile = await imageCompression(file, options);
+      
+      console.log(`Orijinal: ${(file.size / 1024).toFixed(2)} KB → Sıkıştırılmış: ${(compressedFile.size / 1024).toFixed(2)} KB`);
+      
+      const filePath = `${user.id}-${Date.now()}.webp`;
+      const { error: uploadError } = await supabase.storage.from('avatars').upload(filePath, compressedFile, {
+        cacheControl: '31536000', // 1 yıl cache
+        upsert: true
+      });
+      
       if (uploadError) throw uploadError;
+      
       const { data: { publicUrl } } = supabase.storage.from('avatars').getPublicUrl(filePath);
       await supabase.from('profiles').upsert({ id: user.id, avatar_url: publicUrl, updated_at: new Date().toISOString() });
       setProfile({ ...profile, avatar_url: publicUrl });
-      setMessage({ type: 'success', text: 'Fotoğraf güncellendi.' });
+      setMessage({ type: 'success', text: `Fotoğraf güncellendi! (${(compressedFile.size / 1024).toFixed(0)} KB)` });
       
       // Navbar'ı güncelle
       window.dispatchEvent(new Event('profile-updated'));
@@ -180,7 +208,7 @@ export default function ProfilePage() {
           <div style={{ position: 'relative', width: '120px', height: '120px', marginBottom: '16px' }}>
             <div style={{ width: '100%', height: '100%', borderRadius: '50%', padding: '3px', background: 'linear-gradient(45deg, #e60000, #333)', boxShadow: '0 0 20px rgba(230,0,0,0.25)' }}>
               {profile?.avatar_url ? (
-                <img src={profile.avatar_url} alt="Avatar" style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }} />
+                <Image src={profile.avatar_url} alt="Avatar" width={114} height={114} style={{ borderRadius: '50%', objectFit: 'cover' }} />
               ) : (
                 <div style={{ width: '100%', height: '100%', borderRadius: '50%', background: '#111', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                   <i className="fa-solid fa-user-secret" style={{ fontSize: '48px', color: '#333' }}></i>

@@ -1,6 +1,7 @@
 'use client';
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { BlogPost, formatDate } from '../lib/blogger';
 import { supabase } from '../lib/supabase';
 
@@ -65,7 +66,14 @@ export default function PostCard({ post }: PostCardProps) {
       {/* Thumbnail */}
       <div className="post-card-thumb-wrap">
         {post.thumbnail ? (
-          <img src={post.thumbnail} alt={post.title} loading="lazy" />
+          <Image 
+            src={post.thumbnail} 
+            alt={post.title} 
+            width={400} 
+            height={250} 
+            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+            loading="lazy"
+          />
         ) : (
           <div style={{ width: '100%', height: '100%', background: '#1e1e1e', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <i className="fa-solid fa-image" style={{ color: '#444', fontSize: '32px' }}></i>

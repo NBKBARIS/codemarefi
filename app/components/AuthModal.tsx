@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Image from 'next/image';
 import { hasBadWords, hasUsernameViolation } from '../lib/badWords';
 import { supabase } from '../lib/supabase';
 
@@ -385,7 +386,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
 
         {/* Robot Animation Icon */}
         <div style={{ textAlign: 'center', marginBottom: '20px' }}>
-          <img src="/images/robot.svg" alt="Robot" style={{ width: '60px', height: '60px' }} />
+          <Image src="/images/robot.svg" alt="Robot" width={60} height={60} />
         </div>
 
         <button 

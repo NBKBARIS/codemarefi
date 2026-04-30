@@ -1,5 +1,6 @@
 'use client';
 import { useState, useEffect, useRef } from 'react';
+import Image from 'next/image';
 import { supabase, updateLastSeen, isSessionExpiredByInactivity, clearLastSeen } from '../lib/supabase';
 import AuthModal from './AuthModal';
 import NotificationBell from './NotificationBell';
@@ -245,7 +246,13 @@ export default function Navbar() {
                     <NotificationBell userId={user.id} />
                     <Link href="/profil" style={{ display: 'flex', alignItems: 'center', gap: '8px', textDecoration: 'none', color: '#fff' }}>
                       {profile?.avatar_url ? (
-                        <img src={profile.avatar_url} alt="avatar" style={{ width: '24px', height: '24px', borderRadius: '50%', objectFit: 'cover', border: '1px solid #e60000' }} />
+                        <Image 
+                          src={profile.avatar_url} 
+                          alt="avatar" 
+                          width={24} 
+                          height={24} 
+                          style={{ borderRadius: '50%', objectFit: 'cover', border: '1px solid #e60000' }} 
+                        />
                       ) : (
                         <div style={{ width: '24px', height: '24px', borderRadius: '50%', background: '#333', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid #e60000' }}>
                           <i className="fa-solid fa-user" style={{ fontSize: '10px', color: '#fff' }}></i>
@@ -299,10 +306,13 @@ export default function Navbar() {
       {/* ── HEADER: LOGO + AD ── */}
       <div className="site-header">
         <Link href="/" style={{ textDecoration: 'none' }} className="site-logo">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
+          <Image
             src="/logo.png"
             alt="CodeMareFi"
+            width={300}
+            height={90}
+            priority
+            style={{ width: 'auto', height: 'auto', maxHeight: '90px' }}
           />
         </Link>
         {/* Reklam alanı */}

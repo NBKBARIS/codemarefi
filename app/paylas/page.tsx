@@ -1,5 +1,6 @@
 'use client';
 import { useState, useEffect } from 'react';
+import Image from 'next/image';
 import { supabase } from '../lib/supabase';
 import { submitUserPost } from '../lib/userPosts';
 import { hasBadWords } from '../lib/badWords';
@@ -322,7 +323,7 @@ export default function PaylasPage() {
                 onMouseLeave={e => (e.currentTarget.style.borderColor = '#333')}
               >
                 {imagePreview ? (
-                  <img src={imagePreview} alt="Preview" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  <Image src={imagePreview} alt="Preview" width={400} height={250} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                 ) : (
                   <div style={{ textAlign: 'center', color: '#555' }}>
                     <i className="fa-solid fa-cloud-arrow-up" style={{ fontSize: '30px', marginBottom: '10px' }}></i>
