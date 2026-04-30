@@ -39,6 +39,7 @@ export default function ProfilePage() {
   const [socialLinks, setSocialLinks] = useState<Record<string, string>>({});
   const [socialVisible, setSocialVisible] = useState<Record<string, boolean>>({});
   const [message, setMessage] = useState({ type: '', text: '' });
+  const [codeVisible, setCodeVisible] = useState(false); // Discord kodu görünürlüğü
   const router = useRouter();
 
   useEffect(() => {
@@ -47,6 +48,11 @@ export default function ProfilePage() {
       setUser(session.user);
       fetchProfile(session.user.id);
     });
+    
+    // Sayfa değiştiğinde kodu otomatik sansürle
+    return () => {
+      setCodeVisible(false);
+    };
   }, [router]);
 
   const fetchProfile = async (userId: string) => {
@@ -213,21 +219,33 @@ export default function ProfilePage() {
                 <p style={{ color: '#888', fontSize: '10px', marginBottom: '8px', letterSpacing: '1px' }}>SENİN ÖZEL KODUN</p>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px' }}>
                   <code style={{ color: '#5865f2', fontSize: '24px', fontWeight: 900, letterSpacing: '4px', fontFamily: 'monospace', textShadow: '0 0 10px rgba(88,101,242,0.5)' }}>
-                    {profile.discord_verification_code}
+                    {codeVisible ? profile.discord_verification_code : '••••-••••-••••'}
                   </code>
                   <button
                     type="button"
-                    onClick={() => {
-                      navigator.clipboard.writeText(profile.discord_verification_code);
-                      setMessage({ type: 'success', text: 'Kod kopyalandı!' });
-                      setTimeout(() => setMessage({ type: '', text: '' }), 2000);
-                    }}
-                    style={{ background: '#5865f2', border: 'none', borderRadius: '6px', padding: '8px 12px', color: '#fff', cursor: 'pointer', fontSize: '12px', transition: 'all 0.2s' }}
-                    onMouseEnter={e => (e.currentTarget.style.background = '#4752c4')}
-                    onMouseLeave={e => (e.currentTarget.style.background = '#5865f2')}
+                    onClick={() => setCodeVisible(!codeVisible)}
+                    style={{ background: codeVisible ? '#ffa500' : '#5865f2', border: 'none', borderRadius: '6px', padding: '8px 12px', color: '#fff', cursor: 'pointer', fontSize: '12px', transition: 'all 0.2s' }}
+                    onMouseEnter={e => (e.currentTarget.style.opacity = '0.8')}
+                    onMouseLeave={e => (e.currentTarget.style.opacity = '1')}
+                    title={codeVisible ? 'Kodu Gizle' : 'Kodu Göster'}
                   >
-                    <i className="fa-solid fa-copy"></i>
+                    <i className={`fa-solid ${codeVisible ? 'fa-eye-slash' : 'fa-eye'}`}></i>
                   </button>
+                  {codeVisible && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        navigator.clipboard.writeText(profile.discord_verification_code);
+                        setMessage({ type: 'success', text: 'Kod kopyalandı!' });
+                        setTimeout(() => setMessage({ type: '', text: '' }), 2000);
+                      }}
+                      style={{ background: '#2ea44f', border: 'none', borderRadius: '6px', padding: '8px 12px', color: '#fff', cursor: 'pointer', fontSize: '12px', transition: 'all 0.2s' }}
+                      onMouseEnter={e => (e.currentTarget.style.background = '#26843d')}
+                      onMouseLeave={e => (e.currentTarget.style.background = '#2ea44f')}
+                    >
+                      <i className="fa-solid fa-copy"></i>
+                    </button>
+                  )}
                 </div>
               </div>
               <div style={{ marginTop: '12px', background: 'rgba(230,0,0,0.1)', border: '1px solid #e60000', borderRadius: '6px', padding: '12px' }}>
