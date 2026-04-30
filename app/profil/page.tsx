@@ -107,6 +107,9 @@ export default function ProfilePage() {
       if (error) throw error;
       setMessage({ type: 'success', text: 'Profil güncellendi!' });
       fetchProfile(user.id);
+      
+      // Navbar'ı güncelle
+      window.dispatchEvent(new Event('profile-updated'));
     } catch (error: any) {
       setMessage({ type: 'error', text: error.message || 'Hata oluştu.' });
     } finally {
@@ -126,6 +129,9 @@ export default function ProfilePage() {
       await supabase.from('profiles').upsert({ id: user.id, avatar_url: publicUrl, updated_at: new Date().toISOString() });
       setProfile({ ...profile, avatar_url: publicUrl });
       setMessage({ type: 'success', text: 'Fotoğraf güncellendi.' });
+      
+      // Navbar'ı güncelle
+      window.dispatchEvent(new Event('profile-updated'));
     } catch (error: any) {
       setMessage({ type: 'error', text: error.message || 'Yükleme başarısız.' });
     } finally {

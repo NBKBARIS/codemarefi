@@ -78,6 +78,16 @@ export default function Navbar() {
     } else {
       setProfile(null);
     }
+    
+    // Profil güncellendiğinde navbar'ı yenile
+    const handleProfileUpdate = () => {
+      if (user) {
+        supabase.from('profiles').select('*').eq('id', user.id).single().then(({ data }) => setProfile(data));
+      }
+    };
+    
+    window.addEventListener('profile-updated', handleProfileUpdate);
+    return () => window.removeEventListener('profile-updated', handleProfileUpdate);
   }, [user]);
 
   useEffect(() => {
