@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { CATEGORIES } from '../lib/blogger';
 import Leaderboard from './Leaderboard';
 
-export default function Sidebar() {
+export default function Sidebar({ hideSearch = false }: { hideSearch?: boolean }) {
   const [time, setTime] = useState<Date | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -37,6 +37,7 @@ export default function Sidebar() {
   return (
     <aside className="sidebar">
       {/* SİTE İÇİ ÖZEL ARAMA ve YENİ WIDGETLAR */}
+      {!hideSearch && (
       <div style={{ marginBottom: '10px' }}>
         <h3 style={{ fontSize: '13px', color: '#aaa', borderBottom: '1px solid #333', paddingBottom: '8px', marginBottom: '15px', textTransform: 'uppercase', letterSpacing: '1px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           SİTE İÇİ ÖZEL ARAMA
@@ -108,6 +109,7 @@ export default function Sidebar() {
           </p>
         </div>
       </div>
+      )}
 
       {/* KATEGORİLER */}
       <div className="sidebar-widget">

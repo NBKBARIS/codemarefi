@@ -144,7 +144,7 @@ function SearchContent() {
             </div>
           )}
         </div>
-        <Sidebar />
+        <Sidebar hideSearch={true} />
       </div>
     </>
   );

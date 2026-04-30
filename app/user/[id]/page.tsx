@@ -286,105 +286,64 @@ export default function PublicProfilePage() {
           );
         })()}
 
-        {/* Recent Activity */}
-        <div style={{ textAlign: 'left' }}>
-          <h3 style={{ borderBottom: '2px solid #e60000', display: 'inline-block', paddingBottom: '5px', marginBottom: '20px' }}>
-            <i className="fa-solid fa-pen-nib" style={{ marginRight: '10px', color: '#e60000' }}></i>
-            Gönderiler
-          </h3>
-
-          {posts.length === 0 ? (
-            <div style={{ padding: '40px', textAlign: 'center', background: '#111', borderRadius: '12px', color: '#555' }}>
-              Henüz gönderi bulunmuyor.
-            </div>
-          ) : (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
-              {posts.map((post) => {
-                // localPost mu yoksa Supabase post mu kontrol et
-                const isLocalPost = localPosts.some(lp => lp.id === post.id);
-                const postUrl = isLocalPost ? `/post/${post.id}` : `/post/${post.id}`;
-                const isApproved = post.is_approved !== false; // undefined veya true ise onaylı
-                
-                return (
-                  <Link 
-                    key={post.id} 
-                    href={postUrl}
-                    style={{ 
-                      background: '#111', 
-                      padding: '15px', 
-                      borderRadius: '10px', 
-                      borderLeft: `4px solid ${isApproved ? '#e60000' : '#ffa500'}`, 
-                      textDecoration: 'none', 
-                      transition: 'all 0.2s',
-                      opacity: isApproved ? 1 : 0.7
-                    }}
-                    onMouseEnter={(e) => e.currentTarget.style.background = '#1a1a1a'}
-                    onMouseLeave={(e) => e.currentTarget.style.background = '#111'}
-                  >
-                    <div style={{ fontSize: '11px', color: isApproved ? '#e60000' : '#ffa500', marginBottom: '5px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                      <span>
-                        <i className="fa-solid fa-pen-nib" style={{ marginRight: '5px' }}></i>
-                        Gönderi • {post.created_at && !isNaN(new Date(post.created_at).getTime()) ? new Date(post.created_at).toLocaleDateString('tr-TR') : 'Bilinmiyor'}
-                      </span>
-                      {!isApproved && (
-                        <span style={{ 
-                          background: '#ffa500', 
-                          color: '#000', 
-                          padding: '2px 8px', 
-                          borderRadius: '4px', 
-                          fontSize: '9px', 
-                          fontWeight: 700,
-                          textTransform: 'uppercase'
-                        }}>
-                          <i className="fa-solid fa-clock" style={{ marginRight: '4px' }}></i>
-                          Onay Bekliyor
-                        </span>
-                      )}
-                    </div>
-                    <div style={{ fontSize: '16px', color: '#fff', fontWeight: 700, marginBottom: '5px' }}>
-                      {post.title}
-                    </div>
-                    <div style={{ fontSize: '12px', color: '#888', display: 'flex', alignItems: 'center', gap: '5px' }}>
-                      Devamını Oku <i className="fa-solid fa-arrow-right" style={{ fontSize: '10px' }}></i>
-                    </div>
-                  </Link>
-                );
-              })}
-            </div>
-          )}
+        {/* Hakkında / Bio Bölümü */}
+        <div style={{ textAlign: 'center', background: 'linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 100%)', padding: '40px', borderRadius: '12px', border: '1px solid #222', marginBottom: '30px' }}>
+          <i className="fa-solid fa-quote-left" style={{ fontSize: '24px', color: '#e60000', marginBottom: '15px', opacity: 0.5 }}></i>
+          <p style={{ color: '#aaa', fontSize: '16px', lineHeight: 1.8, fontStyle: 'italic', maxWidth: '600px', margin: '0 auto 20px' }}>
+            {profile?.role === 'admin' 
+              ? 'CodeMareFi topluluğunun kurucusu ve yöneticisi. Yazılım dünyasına yeni adım atanlara rehberlik etmek için buradayım.' 
+              : profile?.role === 'mod'
+              ? 'CodeMareFi moderatör ekibinin bir parçasıyım. Topluluğumuzu güvenli ve kaliteli tutmak için çalışıyorum.'
+              : profile?.role === 'author'
+              ? 'CodeMareFi yazarıyım. Bilgi ve deneyimlerimi toplulukla paylaşmaktan mutluluk duyuyorum.'
+              : 'CodeMareFi topluluğunun değerli bir üyesiyim. Öğrenmek ve paylaşmak için buradayım.'}
+          </p>
+          <i className="fa-solid fa-quote-right" style={{ fontSize: '24px', color: '#e60000', opacity: 0.5 }}></i>
         </div>
 
-        {/* Comments Section */}
-        {comments.length > 0 && (
-          <div style={{ textAlign: 'left', marginTop: '40px' }}>
-            <h3 style={{ borderBottom: '2px solid #007bff', display: 'inline-block', paddingBottom: '5px', marginBottom: '20px' }}>
-              <i className="fa-solid fa-comments" style={{ marginRight: '10px', color: '#007bff' }}></i>
-              Son Yorumlar
-            </h3>
-
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
-              {comments.slice(0, 10).map((comment) => (
-                <div key={comment.id} style={{ background: '#111', padding: '15px', borderRadius: '10px', borderLeft: '4px solid #007bff' }}>
-                  <div style={{ fontSize: '11px', color: '#007bff', marginBottom: '5px' }}>
-                    <i className="fa-solid fa-comment" style={{ marginRight: '5px' }}></i>
-                    Yorum • {comment.created_at && !isNaN(new Date(comment.created_at).getTime()) ? new Date(comment.created_at).toLocaleDateString('tr-TR') : 'Bilinmiyor'}
-                  </div>
-                  <div style={{ fontSize: '14px', color: '#ddd', fontStyle: 'italic', marginBottom: '10px' }}>
-                    "{comment.content}"
-                  </div>
-                  <Link 
-                    href={`/post/${comment.post_id}`} 
-                    style={{ fontSize: '12px', color: '#888', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '5px' }}
-                    onMouseEnter={(e) => e.currentTarget.style.color = '#007bff'}
-                    onMouseLeave={(e) => e.currentTarget.style.color = '#888'}
-                  >
-                    Konuyu Gör <i className="fa-solid fa-arrow-right" style={{ fontSize: '10px' }}></i>
-                  </Link>
-                </div>
-              ))}
+        {/* Aktivite Özeti */}
+        <div style={{ background: '#111', padding: '30px', borderRadius: '12px', border: '1px solid #222' }}>
+          <h3 style={{ fontSize: '18px', color: '#fff', marginBottom: '20px', textAlign: 'center' }}>
+            <i className="fa-solid fa-chart-line" style={{ marginRight: '10px', color: '#e60000' }}></i>
+            Topluluk Katkısı
+          </h3>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: '20px' }}>
+            <div style={{ textAlign: 'center' }}>
+              <div style={{ fontSize: '32px', marginBottom: '8px' }}>
+                {postCount > 20 ? '🔥' : postCount > 10 ? '⭐' : postCount > 5 ? '✨' : '📝'}
+              </div>
+              <div style={{ color: '#666', fontSize: '12px' }}>
+                {postCount > 20 ? 'Aktif Yazar' : postCount > 10 ? 'Deneyimli' : postCount > 5 ? 'Katılımcı' : 'Yeni Başlayan'}
+              </div>
+            </div>
+            <div style={{ textAlign: 'center' }}>
+              <div style={{ fontSize: '32px', marginBottom: '8px' }}>
+                {comments.length > 50 ? '💬' : comments.length > 20 ? '🗨️' : comments.length > 10 ? '💭' : '📢'}
+              </div>
+              <div style={{ color: '#666', fontSize: '12px' }}>
+                {comments.length > 50 ? 'Çok Aktif' : comments.length > 20 ? 'Aktif' : comments.length > 10 ? 'Katılımcı' : 'Yeni'}
+              </div>
+            </div>
+            <div style={{ textAlign: 'center' }}>
+              <div style={{ fontSize: '32px', marginBottom: '8px' }}>
+                {(() => {
+                  const joinDate = new Date(profile.created_at);
+                  const now = new Date();
+                  const days = Math.floor((now.getTime() - joinDate.getTime()) / (1000 * 60 * 60 * 24));
+                  return days > 365 ? '👑' : days > 180 ? '🎖️' : days > 90 ? '🏅' : '🆕';
+                })()}
+              </div>
+              <div style={{ color: '#666', fontSize: '12px' }}>
+                {(() => {
+                  const joinDate = new Date(profile.created_at);
+                  const now = new Date();
+                  const days = Math.floor((now.getTime() - joinDate.getTime()) / (1000 * 60 * 60 * 24));
+                  return days > 365 ? 'Veteran' : days > 180 ? 'Deneyimli' : days > 90 ? 'Üye' : 'Yeni Üye';
+                })()}
+              </div>
             </div>
           </div>
-        )}
+        </div>
 
       </div>
     </div>
