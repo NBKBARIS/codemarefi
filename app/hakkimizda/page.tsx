@@ -19,7 +19,7 @@ export default function HakkimizdaPage() {
             <h1 style={{ fontSize: '42px', fontWeight: 900, color: '#fff', marginBottom: '20px', textTransform: 'uppercase', letterSpacing: '4px' }}>Hakkımızda</h1>
             <div style={{ width: '60px', height: '4px', background: '#e60000', margin: '0 auto 20px' }}></div>
             <p style={{ color: '#eee', fontSize: '18px', maxWidth: '700px', margin: '0 auto', lineHeight: 1.6, fontWeight: 500 }}>
-              2019'dan beri Türkiye'nin en büyük Discord bot ve web geliştirme topluluklarından birine ev sahipliği yapıyoruz.
+              Türkiye'nin yeni nesil kod paylaşım platformu. Discord bot kodları, web geliştirme ve yazılım eğitimleri.
             </p>
           </div>
 
@@ -29,14 +29,14 @@ export default function HakkimizdaPage() {
               <i className="fa-solid fa-rocket" style={{ fontSize: '32px', color: '#e60000', marginBottom: '15px' }}></i>
               <h3 style={{ color: '#fff', fontSize: '20px', marginBottom: '10px' }}>Hikayemiz</h3>
               <p style={{ color: '#888', fontSize: '14px', lineHeight: 1.7 }}>
-                CodeMareFi, <strong>19 Ağustos 2019</strong> tarihinde kurucumuz <strong>NBK BARIŞ</strong> tarafından, yazılım dünyasına yeni adım atanlara rehberlik etmek amacıyla hayata geçirildi.
+                CodeMareFi, <strong>2025</strong> yılında kurucumuz <strong>NBK BARIŞ</strong> tarafından, yazılım öğrenmek isteyenlere modern ve kaliteli içerikler sunmak amacıyla kuruldu.
               </p>
             </div>
             <div style={{ background: '#111', border: '1px solid #1e1e1e', padding: '30px', borderRadius: '12px' }}>
               <i className="fa-solid fa-bullseye" style={{ fontSize: '32px', color: '#e60000', marginBottom: '15px' }}></i>
               <h3 style={{ color: '#fff', fontSize: '20px', marginBottom: '10px' }}>Misyonumuz</h3>
               <p style={{ color: '#888', fontSize: '14px', lineHeight: 1.7 }}>
-                Karmaşık kod yapılarını en basit ve anlaşılır haliyle topluluğa sunmak, Türkçe kaynak eksikliğini gidermek ve kaliteli bir paylaşım ortamı oluşturmak.
+                Türkçe yazılım kaynaklarını zenginleştirmek, Discord bot geliştirme ve web teknolojilerini herkes için erişilebilir kılmak.
               </p>
             </div>
           </div>

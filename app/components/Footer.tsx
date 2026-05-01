@@ -70,7 +70,7 @@ export default function Footer() {
           maxWidth: '1000px',
           margin: '0 auto 20px'
         }}>
-          <span style={{ color: '#e60000', fontWeight: 'bold' }}>Copyright © 2019-2026.</span> CodeMareFi | Blogger Eklentileri ve Discord Bot Kod Paylaşım Kodlara Dair Herşey | Tüm Haklarını Sakladık Bulamasın Boşuna Yorma Kendini.
+          <span style={{ color: '#e60000', fontWeight: 'bold' }}>Copyright © 2025-2026.</span> CodeMareFi - Türkiye'nin Yeni Nesil Kod Paylaşım Platformu | Discord Bot Kodları, Web Geliştirme ve Yazılım Eğitimleri
         </div>
 
         {/* Keywords Line */}

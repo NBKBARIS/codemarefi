@@ -82,15 +82,15 @@ export default function Sidebar({ hideSearch = false }: { hideSearch?: boolean }
         {/* GÜNÜN SÖZÜ WIDGET */}
         <div style={{ marginBottom: '20px' }}>
           <h3 style={{ fontSize: '13px', color: '#aaa', borderBottom: '1px solid #333', paddingBottom: '8px', marginBottom: '15px', textTransform: 'uppercase', letterSpacing: '1px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '20px' }}>
-            CODEMAREFI ÖZEL GÜNÜN SÖZÜ
+            GÜNÜN SÖZÜ
             <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#e60000', display: 'inline-block' }}></span>
           </h3>
           <div style={{ background: '#1a1a1a', padding: '30px 20px', borderRadius: '4px', textAlign: 'center', border: '1px solid #222' }}>
             <p style={{ color: '#eee', fontSize: '16px', fontWeight: '700', lineHeight: 1.6, marginBottom: '20px', fontStyle: 'italic' }}>
-              "Yerinde söz söylemesini bilen, özür dilemek zorunda kalmaz. [Fatih Sultan Mehmed]"
+              "Kod yazmak bir sanattır, paylaşmak ise bir sorumluluktur."
             </p>
             <p style={{ color: '#888', fontSize: '12px', fontWeight: '500' }}>
-              CodeMareFi İyi Günler, İyi Kodlamalar Diler...
+              CodeMareFi - İyi Kodlamalar Diler
             </p>
           </div>
         </div>
@@ -99,13 +99,13 @@ export default function Sidebar({ hideSearch = false }: { hideSearch?: boolean }
         <div style={{ background: '#111', padding: '0 20px 20px', textAlign: 'center' }}>
           <div style={{ borderTop: '1px solid #333', paddingTop: '15px', marginBottom: '15px' }}>
             <p style={{ color: '#ddd', fontSize: '12px', fontWeight: 'bold', letterSpacing: '0.5px' }}>
-              08.19.2019 BU YANA YAYINDAYIZ
+              2025'TEN BERİ AKTİF
             </p>
           </div>
           <p style={{ color: '#888', fontSize: '13px', lineHeight: 1.5 }}>
-            CodeMareFi'ye Destek olmak istiyorum ama nasıl bilmiyorum diyorsan eğer;<br/>
-            Bizi sosyal mecralarda arkadaşlarınıza önererek, Discord sunucumuza katılarak ve içeriklerimizi paylaşarak destek olabilirsiniz.<br/><br/>
-            Bu sayede daha çok kod ve gelişmiş sistemleri paylaşmamıza teşvik etmiş olursunuz.
+            CodeMareFi'yi desteklemek ister misin?<br/>
+            Discord sunucumuza katılarak, içeriklerimizi sosyal medyada paylaşarak ve arkadaşlarına önererek bize destek olabilirsin.<br/><br/>
+            Desteğin sayesinde daha kaliteli içerikler üretmeye devam ediyoruz!
           </p>
         </div>
       </div>

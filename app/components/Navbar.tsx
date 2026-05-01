@@ -7,14 +7,14 @@ import NotificationBell from './NotificationBell';
 import Link from 'next/link';
 
 const GREEN_MSGS = [
-  'Sitemizden En İyi Şekilde Yararlanabilmek için GOOGLE Chrome Kullanmanızı Tavsiye Ederiz {CodeMareFi}',
-  'TÜRKİYENİN EN BÜYÜK VE KALİTELİ DİSCORD BOT KOD PAYLAŞIM SİTESİ {CodeMareFi}',
-  'Yorum Yaparak Ve Paylaşarak Bize Destek Olabilirsiniz {CodeMareFi}',
+  'Modern teknolojilerle geliştirilmiş yeni nesil kod paylaşım platformu {CodeMareFi}',
+  'Discord bot kodları, web geliştirme ve yazılım eğitimleri tek platformda {CodeMareFi}',
+  'Topluluğumuza katılarak bilgi paylaşımına destek olabilirsiniz {CodeMareFi}',
 ];
 const RED_MSGS = [
-  'Ücretli BOT yazıyorum diyenlere inanmayın Aynı botu ve kodları CodeMareFi de ücretsiz bulabilirsiniz {MareFi}',
-  'DİSCORD BOT KODLARI VE 900 YE YAKIN DİSCORD BOT KOMUTLARI YAKINDA PAYLAŞILACAKTIR TAKİPTE KALIN {MareFi}',
-  'CodeMareFi Sitemizde Bulunan Herhangi Bir Konularda Aldığınız Hatayı Yorumlarda Belirtiniz {MareFi}',
+  'Kaliteli ve özgün içerikler için CodeMareFi\'yi takip edin {MareFi}',
+  'Discord sunucumuza katılarak topluluğumuzun bir parçası olun {MareFi}',
+  'Sorularınız için Discord sunucumuzdan veya yorum bölümünden bize ulaşabilirsiniz {MareFi}',
 ];
 
 function useTypewriter(msgs: string[], charDelay = 60, deleteDelay = 30, pause = 2800) {
