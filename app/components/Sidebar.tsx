@@ -96,12 +96,7 @@ export default function Sidebar({ hideSearch = false }: { hideSearch?: boolean }
         </div>
 
         {/* Destek Metni Widget */}
-        <div style={{ background: '#111', padding: '0 20px 20px', textAlign: 'center' }}>
-          <div style={{ borderTop: '1px solid #333', paddingTop: '15px', marginBottom: '15px' }}>
-            <p style={{ color: '#ddd', fontSize: '12px', fontWeight: 'bold', letterSpacing: '0.5px' }}>
-              2025'TEN BERİ AKTİF
-            </p>
-          </div>
+        <div style={{ background: '#111', padding: '20px', textAlign: 'center' }}>
           <p style={{ color: '#888', fontSize: '13px', lineHeight: 1.5 }}>
             CodeMareFi'yi desteklemek ister misin?<br/>
             Discord sunucumuza katılarak, içeriklerimizi sosyal medyada paylaşarak ve arkadaşlarına önererek bize destek olabilirsin.<br/><br/>
