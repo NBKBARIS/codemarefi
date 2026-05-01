@@ -112,12 +112,12 @@ export default function Leaderboard() {
       });
 
       
-      // En az 1 postu olanları al (Top 15)
+      // En az 1 postu olanları al (Top 15) — Anonim kullanıcıları filtrele
       if (Object.keys(postCounts).length > 0) {
         const topPostIds = Object.entries(postCounts).sort((a, b) => b[1] - a[1]).slice(0, 15).map(([id]) => id);
         const { data: postProfiles } = await supabase.from('profiles').select('id, full_name, avatar_url, role').in('id', topPostIds);
         if (postProfiles) {
-          setPostLeaders(topPostIds.map(uid => {
+          const leaders = topPostIds.map(uid => {
             const prof = postProfiles.find((p: any) => p.id === uid);
             return { 
               user_id: uid, 
@@ -126,7 +126,8 @@ export default function Leaderboard() {
               role: prof?.role || 'member', 
               count: postCounts[uid]
             };
-          }));
+          }).filter(e => e.full_name !== 'Anonim'); // Anonim kullanıcıları kaldır
+          setPostLeaders(leaders);
         }
       }
 
@@ -199,7 +200,7 @@ export default function Leaderboard() {
               role: prof?.role || 'member',
               seconds: a.seconds || 0,
             };
-          });
+          }).filter(e => e.full_name !== 'Anonim'); // Anonim kullanıcıları kaldır
           setActivityLeaders(list);
         }
       } else {
