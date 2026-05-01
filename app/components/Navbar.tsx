@@ -304,15 +304,15 @@ export default function Navbar() {
       </div>
 
       {/* ── HEADER: LOGO + AD ── */}
-      <div className="site-header" style={{ justifyContent: 'center' }}>
+      <div className="site-header" style={{ justifyContent: 'center', padding: '30px 15px' }}>
         <Link href="/" style={{ textDecoration: 'none' }} className="site-logo">
           <Image
             src="/logo.png"
             alt="CodeMareFi"
-            width={550}
-            height={165}
+            width={700}
+            height={210}
             priority
-            style={{ width: 'auto', height: 'auto', maxHeight: '150px' }}
+            style={{ width: '700px', height: 'auto', maxWidth: '95%' }}
           />
         </Link>
       </div>
