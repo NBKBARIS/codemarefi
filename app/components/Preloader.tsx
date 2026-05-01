@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { usePathname } from 'next/navigation';
 
-const FINAL_TEXT = "''CodeMareFi''{<@CMF$_#>}Yükleniyor...";
+const FINAL_TEXT = ">> CodeMareFi << Yükleniyor...";
 const CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+{}[]|;:<>?,./";
 
 export default function Preloader() {
