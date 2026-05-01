@@ -25,7 +25,7 @@ export default function Footer() {
         {/* Stylized Logo Image */}
         <div style={{ marginBottom: '30px' }}>
           <img 
-            src="/logo.png" 
+            src="/codemarefi logo.png" 
             alt="CodeMareFi" 
             style={{ 
               maxWidth: '450px', 
