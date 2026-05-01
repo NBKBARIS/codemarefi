@@ -309,10 +309,10 @@ export default function Navbar() {
           <Image
             src="/logo.png"
             alt="CodeMareFi"
-            width={450}
-            height={135}
+            width={550}
+            height={165}
             priority
-            style={{ width: 'auto', height: 'auto', maxHeight: '120px' }}
+            style={{ width: 'auto', height: 'auto', maxHeight: '150px' }}
           />
         </Link>
       </div>
