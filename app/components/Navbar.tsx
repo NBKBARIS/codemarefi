@@ -309,7 +309,7 @@ export default function Navbar() {
           <img
             src="/codemarefi-logo.png"
             alt="CodeMareFi"
-            style={{ maxWidth: '100%', height: 'auto', maxHeight: '220px', display: 'block' }}
+            style={{ maxWidth: '100%', height: 'auto', maxHeight: '220px', display: 'block', filter: 'drop-shadow(0 0 20px rgba(230,0,0,0.25))' }}
           />
         </Link>
       </div>
