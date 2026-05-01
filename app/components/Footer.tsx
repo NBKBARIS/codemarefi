@@ -28,7 +28,7 @@ export default function Footer() {
             src="/logo.png" 
             alt="CodeMareFi" 
             style={{ 
-              maxWidth: '300px', 
+              maxWidth: '450px', 
               height: 'auto',
               filter: 'drop-shadow(0 0 10px rgba(230,0,0,0.3))'
             }} 

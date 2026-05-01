@@ -304,19 +304,17 @@ export default function Navbar() {
       </div>
 
       {/* ── HEADER: LOGO + AD ── */}
-      <div className="site-header">
+      <div className="site-header" style={{ justifyContent: 'center' }}>
         <Link href="/" style={{ textDecoration: 'none' }} className="site-logo">
           <Image
             src="/logo.png"
             alt="CodeMareFi"
-            width={300}
-            height={90}
+            width={500}
+            height={150}
             priority
-            style={{ width: 'auto', height: 'auto', maxHeight: '90px' }}
+            style={{ width: 'auto', height: 'auto', maxHeight: '140px' }}
           />
         </Link>
-        {/* Reklam alanı */}
-        <div style={{ flex: 1, maxWidth: '760px', height: '90px', marginLeft: '20px' }} className="header-ad"></div>
       </div>
 
       {/* ── STICKY NAVBAR ── */}
