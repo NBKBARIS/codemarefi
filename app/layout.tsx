@@ -42,13 +42,13 @@ export const metadata: Metadata = {
     url: 'https://www.codemarefi.com.tr',
     siteName: 'CodeMareFi',
     locale: 'tr_TR',
-    images: [{ url: '/codemarefi-logo.png', width: 1200, height: 630, alt: 'CodeMareFi Logo' }],
+    images: [{ url: 'https://www.codemarefi.com.tr/codemarefi-logo.png', width: 1456, height: 720, alt: 'CodeMareFi Logo' }],
   },
   twitter: {
     card: 'summary_large_image',
     title: 'CodeMareFi - Discord Bot Kodları & Yazılım',
     description: "Türkiye'nin en büyük Discord bot kod paylaşım platformu.",
-    images: ['/codemarefi-logo.png'],
+    images: ['https://www.codemarefi.com.tr/codemarefi-logo.png'],
     creator: '@mare_fi',
   },
   robots: {
