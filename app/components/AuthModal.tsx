@@ -241,6 +241,19 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
             return;
           }
 
+          // Server-side Turnstile doğrulaması
+          const verifyRes = await fetch('/api/verify-turnstile', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ token: turnstileToken }),
+          });
+          const verifyData = await verifyRes.json();
+          if (!verifyData.success) {
+            setMessage({ type: 'error', text: 'Bot doğrulaması başarısız! Lütfen tekrar deneyin.' });
+            setLoading(false);
+            return;
+          }
+
           const { data, error } = await supabase.auth.signUp({
             email,
             password,
