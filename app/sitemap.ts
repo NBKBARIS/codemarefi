@@ -10,7 +10,7 @@ const CATEGORIES = [
 ];
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = 'https://www.codemarefi.com';
+  const baseUrl = 'https://www.codemarefi.com.tr';
   const now = new Date();
 
   // Ana sayfalar
