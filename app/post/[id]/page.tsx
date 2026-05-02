@@ -40,7 +40,7 @@ export async function generateMetadata(
       title: post.title,
       description,
       type: 'article',
-      url: `https://www.codemarefi.com/post/${params.id}`,
+      url: `https://www.codemarefi.com.tr/post/${params.id}`,
       images: post.thumbnail ? [{ url: post.thumbnail, width: 1200, height: 630, alt: post.title }] : [],
       publishedTime: post.published,
       authors: [post.author],
@@ -53,7 +53,7 @@ export async function generateMetadata(
       images: post.thumbnail ? [post.thumbnail] : [],
     },
     alternates: {
-      canonical: `https://www.codemarefi.com/post/${params.id}`,
+      canonical: `https://www.codemarefi.com.tr/post/${params.id}`,
     },
   };
 }

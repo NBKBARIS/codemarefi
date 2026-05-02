@@ -23,7 +23,7 @@ export default function robots(): MetadataRoute.Robots {
         disallow: ['/yonetim', '/profil', '/auth/'],
       },
     ],
-    sitemap: 'https://www.codemarefi.com/sitemap.xml',
-    host: 'https://www.codemarefi.com',
+    sitemap: 'https://www.codemarefi.com.tr/sitemap.xml',
+    host: 'https://www.codemarefi.com.tr',
   };
 }

@@ -44,7 +44,7 @@ export async function submitUserPost(post: Omit<UserPost, 'id' | 'is_approved' |
         .single();
       
       const authorName = profile?.full_name || 'Bilinmeyen';
-      const postUrl = `https://codemarefi.com/post/${newPost.id}`;
+      const postUrl = `https://codemarefi.com.tr/post/${newPost.id}`;
       const categories = Array.isArray(post.categories) ? post.categories.join(', ') : 'Genel';
       
       // 1. Yeni postlar kanalına bildirim (herkese açık)
@@ -159,7 +159,7 @@ export async function approvePost(id: string) {
     
     if (post) {
       const authorName = post.profiles?.full_name || 'Bilinmeyen';
-      const postUrl = `https://codemarefi.com/post/${id}`;
+      const postUrl = `https://codemarefi.com.tr/post/${id}`;
       const categories = Array.isArray(post.categories) ? post.categories.join(', ') : 'Genel';
       
       await fetch('https://discord.com/api/webhooks/1499330498760278108/cVPRUsQ8_Kt6SPtaNi5_V9wCUNQuVAuW-hhCehxOoWGvUYa6DMbDOvR1pI9IFezPUma2', {

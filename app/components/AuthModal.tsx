@@ -104,7 +104,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
   const handleOAuthLogin = async (provider: 'google' | 'discord') => {
     const origin = typeof window !== 'undefined'
       ? window.location.origin.replace('http://', 'https://')
-      : 'https://www.codemarefi.com';
+      : 'https://www.codemarefi.com.tr';
 
     const { error } = await supabase.auth.signInWithOAuth({
       provider,
@@ -130,7 +130,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
     try {
       const origin = typeof window !== 'undefined'
         ? window.location.origin.replace('http://', 'https://')
-        : 'https://www.codemarefi.com';
+        : 'https://www.codemarefi.com.tr';
 
       const { error } = await supabase.auth.resetPasswordForEmail(email, {
         redirectTo: `${origin}/auth/callback`,

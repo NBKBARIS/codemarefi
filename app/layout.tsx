@@ -12,7 +12,7 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://www.codemarefi.com'),
+  metadataBase: new URL('https://www.codemarefi.com.tr'),
   title: {
     default: 'CodeMareFi - Discord Bot Kodları & Yazılım Platformu',
     template: '%s | CodeMareFi',
@@ -24,7 +24,7 @@ export const metadata: Metadata = {
     'web tasarım', 'yazılım geliştirme', 'kod paylaşım', 'codemarefi',
     'discord bot yapımı', 'discord bot 2026', 'türkçe discord bot',
   ],
-  authors: [{ name: 'NBK BARIŞ', url: 'https://www.codemarefi.com' }],
+  authors: [{ name: 'NBK BARIŞ', url: 'https://www.codemarefi.com.tr' }],
   creator: 'NBK BARIŞ',
   publisher: 'CodeMareFi',
   category: 'technology',
@@ -39,7 +39,7 @@ export const metadata: Metadata = {
     title: 'CodeMareFi - Discord Bot Kodları & Yazılım Platformu',
     description: "Türkiye'nin en büyük Discord bot kod paylaşım platformu. Ücretsiz bot kodları, yazılım rehberleri.",
     type: 'website',
-    url: 'https://www.codemarefi.com',
+    url: 'https://www.codemarefi.com.tr',
     siteName: 'CodeMareFi',
     locale: 'tr_TR',
     images: [{ url: '/logo.png', width: 1200, height: 630, alt: 'CodeMareFi Logo' }],
@@ -63,9 +63,9 @@ export const metadata: Metadata = {
     },
   },
   alternates: {
-    canonical: 'https://www.codemarefi.com',
+    canonical: 'https://www.codemarefi.com.tr',
     languages: {
-      'tr-TR': 'https://www.codemarefi.com',
+      'tr-TR': 'https://www.codemarefi.com.tr',
     },
   },
   verification: {
@@ -105,19 +105,19 @@ export default function RootLayout({
             '@context': 'https://schema.org',
             '@type': 'WebSite',
             name: 'CodeMareFi',
-            url: 'https://www.codemarefi.com',
+            url: 'https://www.codemarefi.com.tr',
             description: "Türkiye'nin en büyük Discord bot kod paylaşım platformu",
             inLanguage: 'tr-TR',
             potentialAction: {
               '@type': 'SearchAction',
-              target: { '@type': 'EntryPoint', urlTemplate: 'https://www.codemarefi.com/arama?q={search_term_string}' },
+              target: { '@type': 'EntryPoint', urlTemplate: 'https://www.codemarefi.com.tr/arama?q={search_term_string}' },
               'query-input': 'required name=search_term_string',
             },
             publisher: {
               '@type': 'Organization',
               name: 'CodeMareFi',
-              url: 'https://www.codemarefi.com',
-              logo: { '@type': 'ImageObject', url: 'https://www.codemarefi.com/logo.png' },
+              url: 'https://www.codemarefi.com.tr',
+              logo: { '@type': 'ImageObject', url: 'https://www.codemarefi.com.tr/logo.png' },
               sameAs: [
                 'https://www.facebook.com/CodeMareFi',
                 'https://twitter.com/mare_fi',
