@@ -17,7 +17,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
   const [password, setPassword] = useState('');
   const [fullName, setFullName] = useState('');
   const [otpCode, setOtpCode] = useState('');
-  const [timer, setTimer] = useState(60);
+  const [timer, setTimer] = useState(120);
   const [canResend, setCanResend] = useState(false);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState({ type: '', text: '' });
@@ -49,7 +49,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
     if (isOpen) {
       document.body.style.overflow = 'hidden';
       setStep('form');
-      setTimer(60);
+      setTimer(120);
       setCanResend(false);
       setMessage({ type: '', text: '' });
     } else {
@@ -95,7 +95,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
     if (error) {
       setMessage({ type: 'error', text: 'Kod gönderilemedi!' });
     } else {
-      setTimer(60);
+      setTimer(120);
       setCanResend(false);
       setMessage({ type: 'success', text: 'Yeni kod gönderildi!' });
     }
@@ -241,6 +241,15 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
             return;
           }
 
+          // IP rate limit kontrolü
+          const ipCheckRes = await fetch('/api/check-ip-limit', { method: 'POST' });
+          const ipCheckData = await ipCheckRes.json();
+          if (!ipCheckData.allowed) {
+            setMessage({ type: 'error', text: ipCheckData.error || 'Günlük kayıt limitine ulaştınız!' });
+            setLoading(false);
+            return;
+          }
+
           // Server-side Turnstile doğrulaması
           const verifyRes = await fetch('/api/verify-turnstile', {
             method: 'POST',
@@ -268,7 +277,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
           if (data.user && data.session === null) {
             // Verification required
             setStep('verify');
-            setTimer(60);
+            setTimer(120);
             setCanResend(false);
             setMessage({ type: 'success', text: 'E-posta adresine doğrulama kodu gönderildi!' });
             
