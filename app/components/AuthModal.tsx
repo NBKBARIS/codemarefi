@@ -68,7 +68,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
         if ((window as any).turnstile) {
           try {
             (window as any).turnstile.render('#turnstile-container', {
-              sitekey: '0x4AAAAAADEeXvHTwYJ1TIX9',
+              sitekey: '0x4AAAAAADH11kJWsUlNZkDX',
               callback: (token: string) => {
                 setTurnstileToken(token);
               },
