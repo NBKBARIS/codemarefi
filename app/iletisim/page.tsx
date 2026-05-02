@@ -42,7 +42,7 @@ export default function IletisimPage() {
               <i className="fa-solid fa-headset" style={{ fontSize: '40px', color: '#e60000', marginBottom: '20px' }}></i>
               <h3 style={{ fontSize: '20px', color: '#fff', marginBottom: '10px' }}>Resmi Destek</h3>
               <p style={{ color: '#666', fontSize: '14px', marginBottom: '20px' }}>Genel konular ve teknik destek için e-posta adresimiz:</p>
-              <a href="mailto:support@codemarefi.com" style={{ 
+              <a href="mailto:support@codemarefi.com.tr" style={{ 
                 display: 'inline-block', 
                 background: '#e60000', 
                 color: '#fff', 
@@ -55,7 +55,7 @@ export default function IletisimPage() {
               }}
               onMouseEnter={e => (e.currentTarget.style.transform = 'scale(1.05)')}
               onMouseLeave={e => (e.currentTarget.style.transform = 'scale(1)')}
-              >support@codemarefi.com</a>
+              >support@codemarefi.com.tr</a>
             </div>
 
             {/* Discord Kartı */}
